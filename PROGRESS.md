@@ -1,6 +1,6 @@
 # Progress
 
-Status: **Backend Modules 1–4 done** (Spring Boot 4.1; branches `module/1-scaffolding` → `module/2-farms` → `module/3-animals` → `module/4-groups`, each built on the previous). Next: connect the React app to the API.
+Status: **Backend Modules 1–4 done** (Spring Boot 4.1, branch `module/2-backend`). Next: connect the React app to the API.
 UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile screens); snapshot in docs/ui-design/module-1/. Tables and backend come after the UI is final.
 
 - [x] Module 1 UI design reviewed (owner comments applied: email-only login + Google, create account, update password, logo + footer on all pages, milk rate page, member DOB/sex/password, team filter)
@@ -17,13 +17,18 @@ UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile s
 - [x] Owner: keep all requirements (procurement, barn THI, etc.)
 - [x] Module 0 (part) — owner approved tables 1–5 (schema v4.2) for Modules 1–4
 - [ ] Module 0 (rest) — tables 6–13 and open questions in alerts.md
-- [x] Module 1 — scaffolding: `/backend` Maven project, Flyway V1, Supabase JWT, `GET /me`, problem+json errors, Swagger, CI (`module/1-scaffolding`)
-- [x] Module 2 — farms, settings, my profile and preferences, team members with owner-set password or email invite (`module/2-farms`)
-- [x] Module 3 — animals: add/edit, filters, status and exit, tag lookup, parents by id or tag, photos (Supabase Storage), CSV template/import/export (`module/3-animals`)
-- [x] Module 4 — groups: add/edit/delete, set animals, manager, animal counts (`module/4-groups`)
+- [x] Module 1 — scaffolding: `/backend` Maven project, Flyway V1, Supabase JWT, `GET /me`, problem+json errors, Swagger, CI
+- [x] Module 2 — farms, settings, my profile and preferences, team members with owner-set password or email invite
+- [x] Module 3 — animals: add/edit, filters, status and exit, tag lookup, parents by id or tag, photos (Supabase Storage), CSV template/import/export
+- [x] Module 4 — groups: add/edit/delete, set animals, manager, animal counts
 - [ ] api.md: Modules 5–15 rows still drafts
 - [ ] Frontend: replace the in-memory store with API calls + Supabase sign-in
 - [ ] Modules 5–15 — see PLAN.md
+
+## Branches
+- `main` — design docs and UI/UX
+- `module/1-ui` — React UI application
+- `module/2-backend` — Spring Boot application (Modules 1–4)
 
 ## Decisions
 - DB: Supabase Postgres; access only through Spring Boot; no RLS; roles in Spring Security.
