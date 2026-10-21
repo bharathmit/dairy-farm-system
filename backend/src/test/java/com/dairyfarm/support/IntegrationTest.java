@@ -2,16 +2,16 @@ package com.dairyfarm.support;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
-import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Full application against a real Postgres. Uses Testcontainers, or an existing database when
@@ -27,11 +27,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public abstract class IntegrationTest {
 
     private static final String EXTERNAL_URL = System.getenv("TEST_DATABASE_URL");
-    private static final PostgreSQLContainer<?> POSTGRES;
+    private static final PostgreSQLContainer POSTGRES;
 
     static {
         if (EXTERNAL_URL == null) {
-            POSTGRES = new PostgreSQLContainer<>("postgres:16-alpine");
+            POSTGRES = new PostgreSQLContainer("postgres:16-alpine");
             POSTGRES.start();
         } else {
             POSTGRES = null;
@@ -60,7 +60,7 @@ public abstract class IntegrationTest {
     protected MockMvc mvc;
 
     @Autowired
-    protected ObjectMapper json;
+    protected JsonMapper json;
 
     @Autowired
     protected JdbcTemplate jdbc;

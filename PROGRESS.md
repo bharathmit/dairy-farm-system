@@ -31,6 +31,7 @@ UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile s
 - Deployment: OpenShift later, not now.
 - Auth: email + password and Google sign-in (no phone OTP).
 - Worker logins: both owner-set password and email invite (owner's choice per member).
+- Backend: Spring Boot 4.1 (Spring Framework 7, Jackson 3, Hibernate 7), owner request.
 - JWT: checked against the project's JWKS; legacy HS256 secret supported via SUPABASE_JWT_SECRET.
 - Margin alert: total margin below X % (default 30 %), weekly; milking times stored in farm settings.
 - Reference sites are functional references only (text notes, no screenshots); UI is our own design.

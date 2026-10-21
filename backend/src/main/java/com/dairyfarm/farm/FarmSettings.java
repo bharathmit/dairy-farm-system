@@ -3,6 +3,8 @@ package com.dairyfarm.farm;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
@@ -17,8 +19,8 @@ public record FarmSettings(
         @DecimalMin(value = "0.0", message = "Milk rate can't be negative")
         @DecimalMax(value = "1000.0", message = "Milk rate looks too high")
         BigDecimal milkRate,
-        LocalTime morningMilking,
-        LocalTime eveningMilking,
+        @JsonFormat(pattern = "HH:mm") LocalTime morningMilking,
+        @JsonFormat(pattern = "HH:mm") LocalTime eveningMilking,
         @Min(value = 0, message = "Use a value from 0 to 100") @Max(value = 100, message = "Use a value from 0 to 100")
         Integer marginAlertPct,
         @Valid Notifications notifications) {
@@ -30,11 +32,11 @@ public record FarmSettings(
             Boolean checklist,
             @Min(value = 0, message = "Use 0, 1, 3 or 7") @Max(value = 7, message = "Use 0, 1, 3 or 7")
             Integer leadDays,
-            LocalTime reminderTime,
+            @JsonFormat(pattern = "HH:mm") LocalTime reminderTime,
             Boolean digest,
-            LocalTime digestTime,
-            LocalTime quietHoursStart,
-            LocalTime quietHoursEnd) {
+            @JsonFormat(pattern = "HH:mm") LocalTime digestTime,
+            @JsonFormat(pattern = "HH:mm") LocalTime quietHoursStart,
+            @JsonFormat(pattern = "HH:mm") LocalTime quietHoursEnd) {
 
         public static final Notifications DEFAULTS = new Notifications(true, true, true, true, 1,
                 LocalTime.of(8, 0), true, LocalTime.of(7, 0), LocalTime.of(22, 0), LocalTime.of(5, 0));

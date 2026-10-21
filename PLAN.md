@@ -1,6 +1,6 @@
 # Build plan
 
-Stack: React 18 + Vite + TypeScript + Tailwind (frontend) · Spring Boot 3 / Java 21, JPA/Hibernate,
+Stack: React 18 + Vite + TypeScript + Tailwind (frontend) · Spring Boot 4 / Java 21, JPA/Hibernate,
 Flyway, Spring Security OAuth2 resource server (backend) · Supabase Postgres + Supabase Auth.
 Deployment (OpenShift) is out of scope for now; backend stays container-ready.
 

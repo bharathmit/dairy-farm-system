@@ -1,6 +1,6 @@
 # Dairy Farm — backend
 
-Spring Boot 3.5 · Java 21 · JPA/Hibernate · Flyway · Supabase Postgres + Supabase Auth.
+Spring Boot 4.1 · Java 21 · Jackson 3 · JPA/Hibernate · Flyway · Supabase Postgres + Supabase Auth.
 The React app signs in with Supabase and calls this API with the Supabase access token.
 
 ## Run locally
