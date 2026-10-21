@@ -1,7 +1,12 @@
 # Progress
 
-Status: **UI-first. Owner reviewing UI design for Module 1 (login, logout, settings, animals, groups).**
+Status: **UI-first. Module 1 UI built as a clickable React app (in-memory sample data). Next: table design + backend for Module 1.**
 UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile screens); snapshot in docs/ui-design/module-1/. Tables and backend come after the UI is final.
+
+- [x] Module 1 UI design reviewed (owner comments applied: email-only login + Google, create account, update password, logo + footer on all pages, milk rate page, member DOB/sex/password, team filter)
+- [x] Module 1 UI app → `frontend/` (React 18 + Vite + TS + Tailwind), all 24 screens, in-memory store
+- [ ] Deploy UI to Cloudflare Pages (steps in docs/deploy.md — owner connects the repo)
+- [ ] Module 1 table design → then Spring Boot backend, replace in-memory store with API calls
 
 - [x] Reference site 1 (Farmleo) mapped → docs/reference/farmleo/pages.md, incl. all popups
 - [x] Alert requirements captured → docs/requirements/alerts.md
@@ -25,6 +30,9 @@ UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile s
 - Auth: email + password and Google sign-in (no phone OTP).
 - Margin alert: total margin below X % (default 30 %), weekly; milking times stored in farm settings.
 - Reference sites are functional references only (text notes, no screenshots); UI is our own design.
+- All records are saved online immediately; no offline mode or later sync.
+- Team members: owners set member passwords manually; no invites.
+- Frontend hosting: Cloudflare Pages free plan. Backend hosting (later, to decide): Render free (sleeps after 15 min, 512 MB) or Google Cloud Run free tier (card needed); OpenShift remains the long-term target.
 
 ## Notes / blockers
 - Owner asked: no code until the design is reviewed.
