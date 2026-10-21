@@ -35,6 +35,21 @@ Flyway creates the tables on start-up (`src/main/resources/db/migration`).
 3. **Authentication → URL configuration**: add the frontend URL to the redirect list (for invites
    and password reset).
 
+## API
+
+Base path `/api/v1`; farm data lives under `/api/v1/farms/{farmId}/…`. Every call needs
+`Authorization: Bearer <Supabase access token>`. Owners can do everything; workers can read the herd,
+groups and settings and add photos. Errors are `application/problem+json` with a plain-language
+`detail` (and `errors` per field for validation). Full list: `docs/api.md` and `/swagger-ui`.
+
+| Area | Endpoints |
+|---|---|
+| Me | `GET /me`, `PUT /me`, `PUT /me/preferences` |
+| Farms & settings | `GET/POST /farms`, `GET/PUT /farms/{farmId}`, `GET/PUT /farms/{farmId}/settings` |
+| Team | `/members` — add with no sign-in, an owner-set password, or an email invite |
+| Animals | `/animals` — search, summary, by tag, status, group, photos, CSV template/import/export |
+| Groups | `/groups` — CRUD and `PUT /groups/{id}/animals` |
+
 ## Tests
 
 ```bash

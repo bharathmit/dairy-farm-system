@@ -1,4 +1,7 @@
-# REST API — DRAFT for review
+# REST API
+
+**Built (Modules 1–4):** Me, Farms, Settings, Members, Animals, Groups — see `/swagger-ui` on the running
+backend for request and response shapes. Everything below them is still a draft for later modules.
 
 Base path `/api/v1`. JSON. Auth: `Authorization: Bearer <Supabase JWT>`.
 Spring Boot validates the JWT (OAuth 2.0 resource server, Supabase JWKS).
@@ -14,16 +17,20 @@ animals; they cannot delete, see finances or change settings.
 
 | Area | Method & path | Role |
 |---|---|---|
-| Me | `GET /me` (profile + farms and role per farm) — outside farm prefix | any |
-| Farms | `GET/POST /farms`, `PUT /farms/{farmId}` — outside farm prefix | any / O |
-| Members | `GET/POST /members`, `PUT /members/{id}/role`, `DELETE /members/{id}` | O |
-| Animals | `GET /animals` (search, species, group, status, sort) | O/W |
-| | `GET /animals/{id}` · `GET /animals/by-tag/{tag}` (QR lookup) | O/W |
+| Me | `GET /me` (profile, preferences, farms with role and herd size) · `PUT /me` (name, phone) · `PUT /me/preferences` (theme, language) — outside farm prefix | any |
+| Farms | `GET/POST /farms` — outside farm prefix · `GET /farms/{farmId}` · `PUT /farms/{farmId}` | any / O/W / O |
+| Settings | `GET /settings` · `PUT /settings` (partial: milk rate, milking times, margin %, notifications) | O/W / O |
+| Members | `GET/POST /members` · `GET/PUT/DELETE /members/{id}` · `PATCH /members/{id}/status` (active / left on) · `POST /members/{id}/invite` (resend). Sign-in per member: `login` NONE, PASSWORD (owner sets it) or INVITE (email link) | O |
+| Animals | `GET /animals` (q, species, category, status, sex, groupId, noGroup, sort=tag/name/newest/oldest, page, size) · `GET /animals/summary` | O/W |
+| | `GET /animals/{id}` · `GET /animals/by-tag/{tag}` (QR lookup) — prices hidden for workers | O/W |
 | | `POST /animals` · `PUT /animals/{id}` | O |
-| | `PATCH /animals/{id}/status` (sold/dead/transferred + exit details) | O |
+| | `PATCH /animals/{id}/status` (SOLD/DEAD/TRANSFERRED/ACTIVE + date, price, reason, party) · `PATCH /animals/{id}/group` | O |
 | | `DELETE /animals/{id}` · `POST /animals/bulk-delete` | O |
-| | `POST /animals/import` (CSV) · `GET /animals/import/template` | O |
-| | `POST /animals/{id}/photo` | O/W |
+| | `GET /animals/import/template` · `POST /animals/import?dryRun=true|false` (CSV) · `GET /animals/export.csv` | O |
+| | `POST /animals/{id}/photos` (multipart `file`) | O/W |
+| | `DELETE /animals/{id}/photos/{photoId}` | O |
+| Groups | `GET /groups` · `GET /groups/{id}` (with animals) | O/W |
+| | `POST /groups` · `PUT /groups/{id}` · `PUT /groups/{id}/animals` (set members) · `DELETE /groups/{id}` | O |
 | Lineage | `GET /animals/{id}/lineage` (parents, siblings, offspring) | O/W |
 | | `GET /animals/{id}/mate-risk?mateId=` (shared ancestors) | O |
 | Measurements | `GET/POST /animals/{id}/measurements` (weight, height, BCS) · `PUT/DELETE /measurements/{id}` | O/W (delete O) |
@@ -37,7 +44,6 @@ animals; they cannot delete, see finances or change settings.
 | Health schedules | `GET/POST/PUT/DELETE /health-schedules` | O |
 | Calf feeding | `GET/POST /animals/{id}/calf-feeding` · `PUT/DELETE /calf-feeding/{id}` | O/W |
 | Growth targets | `GET/PUT /growth-targets` | O |
-| Groups | `GET/POST/PUT/DELETE /groups` · `PUT /groups/{id}/members` | O (GET O/W) |
 | Feed items | `GET/POST/PUT /feed-items` · `GET /feed-items/stock` | O (GET O/W) |
 | Feed | `GET/POST /feed-records` · `PUT/DELETE /feed-records/{id}` | O/W (delete O) |
 | | `GET /feed-records/summary` (used, cost, avg/day, days of stock left) | O |
@@ -61,7 +67,6 @@ animals; they cannot delete, see finances or change settings.
 | | `GET /reports/pnl?scope=farm|animal&animalId=` | O |
 | | `GET /reports/metrics/{metric}/animals` (drill-down behind a KPI) | O |
 | Export | `GET /export/{animals|feed|yield|finance|report}.csv` · `GET /reports/summary.pdf` · drill-down CSV/PDF | O |
-| Settings | `GET/PUT /settings` | O |
 
 Errors: RFC 7807 `application/problem+json`. Validation with Jakarta Bean Validation.
 API docs: springdoc OpenAPI at `/swagger-ui`.
