@@ -37,8 +37,8 @@ export default function MilkSheet() {
       else if (c.lastLitres != null) { v[c.animalId] = c.lastLitres.toFixed(1); pre = true }
       else v[c.animalId] = ''
     }
-    // A sheet that was saved before: cows without a value were skipped.
-    if (s.sessionLitres != null && s.cows.some((c) => c.litres != null)) {
+    // A session that was saved before: cows without a value were skipped.
+    if (s.saved) {
       for (const c of s.cows) if (c.litres == null) sk.add(c.animalId)
     }
     setValues(v); setSkipped(sk); setPrefilled(pre)

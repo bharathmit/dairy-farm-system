@@ -49,7 +49,7 @@ export interface SheetCow {
   inWithdrawal: boolean; withdrawalUntil?: string | null
 }
 export interface MilkSheet {
-  date: string; session: Session; sessionLitres?: number | null; otherSessionLitres?: number | null
+  date: string; session: Session; saved: boolean; sessionLitres?: number | null; otherSessionLitres?: number | null
   dayLitres?: number | null; withheldLitres?: number | null; cows: SheetCow[]
 }
 export interface Expectation {
@@ -146,11 +146,14 @@ const parse = (iso: string) => { const [y, m, d] = iso.slice(0, 10).split('-').m
 export const dayLabel = (iso: string) => parse(iso).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
 /** "21 Oct" */
 export const shortDate = (iso?: string | null) => (iso ? parse(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '—')
-/** "Sat 24 Oct, 6:00 PM" */
+/** The farm's clock (same as the backend's FARM_ZONE), so milking times read the same from any country. */
+export const FARM_TIME_ZONE = 'Asia/Kolkata'
+/** "Sat 24 Oct, 6:00 PM" in farm time */
 export const dateTimeLabel = (iso?: string | null) => {
   if (!iso) return '—'
   const d = new Date(iso)
-  return `${d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}, ${d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`
+  const timeZone = FARM_TIME_ZONE
+  return `${d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', timeZone })}, ${d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone })}`
 }
 export const weekdayShort = (iso: string) => parse(iso).toLocaleDateString('en-GB', { weekday: 'short' })
 
