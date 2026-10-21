@@ -1,0 +1,42 @@
+# Render Blueprint for the backend API (Dashboard → New → Blueprint → pick this repo).
+# Values marked `sync: false` are secrets or not known yet: Render asks for them when the
+# Blueprint is created, and they never live in the repo.
+services:
+  - type: web
+    name: dairy-farm-api
+    runtime: docker
+    region: singapore
+    plan: free
+    branch: main
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /actuator/health
+    # Deploy a new commit on main only after the GitHub CI checks (backend tests) pass.
+    autoDeployTrigger: checksPass
+    buildFilter:
+      paths:
+        - backend/**
+    envVars:
+      - key: SUPABASE_URL
+        value: https://kyxfsuqhdllcfqhondte.supabase.co
+      - key: SUPABASE_PHOTO_BUCKET
+        value: animal-photos
+      - key: DB_USER
+        value: postgres.kyxfsuqhdllcfqhondte
+      # Session pooler URL from Supabase → Connect, e.g.
+      # jdbc:postgresql://aws-…-ap-northeast-1.pooler.supabase.com:5432/postgres?sslmode=require
+      - key: DB_URL
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      # The Cloudflare Pages address, e.g. https://dairy-farm.pages.dev (comma-separate several).
+      - key: CORS_ORIGINS
+        sync: false
+      # e.g. https://dairy-farm.pages.dev/update-password
+      - key: INVITE_REDIRECT_URL
+        sync: false
+      # The free instance has 512 MB and a small CPU share: keep the heap modest and start fast.
+      - key: JAVA_TOOL_OPTIONS
+        value: -XX:MaxRAMPercentage=60 -XX:+UseSerialGC -XX:TieredStopAtLevel=1 -Xss512k

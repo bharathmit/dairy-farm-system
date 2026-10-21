@@ -1,3 +1,7 @@
+server:
+  # Hosts such as Render set PORT; locally it stays 8080.
+  port: ${PORT:8080}
+
 spring:
   application:
     name: dairy-farm
