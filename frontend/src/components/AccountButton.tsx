@@ -12,7 +12,7 @@ export function LogoutDialog({ onClose }: { onClose: () => void }) {
       <p className="m-0 mb-5 text-[15px] leading-normal text-ink-2">You'll need to sign in again to use the app on this phone.</p>
       <div className="grid grid-cols-2 gap-3">
         <button type="button" onClick={onClose} className="h-12 rounded-xl border border-line bg-white font-semibold text-ink">Cancel</button>
-        <button type="button" onClick={() => { signOut(); nav('/login') }} className="h-12 rounded-xl bg-danger font-semibold text-white">Log out</button>
+        <button type="button" onClick={() => { void signOut().then(() => nav('/login')) }} className="h-12 rounded-xl bg-danger font-semibold text-white">Log out</button>
       </div>
     </Dialog>
   )

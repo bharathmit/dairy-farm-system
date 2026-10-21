@@ -87,6 +87,11 @@ npm run build    # production build into dist/
 
 ## Current state
 
-- Data is sample data held in memory. It resets on reload. Any email and password signs in.
-- The backend API runs on Render (above); connecting the frontend to it, through a `VITE_API_URL`
-  variable, is the next step.
+- Sign-in is Supabase Auth (email + password; Google once it is turned on in Supabase).
+- All data goes through the backend API and is stored in Supabase.
+- `frontend/.env` holds the public build settings (API address, Supabase URL and publishable key);
+  for local development against a local backend, put `VITE_API_URL=http://localhost:8080/api/v1`
+  in `frontend/.env.local`.
+- Supabase → **Authentication → URL Configuration → Redirect URLs** must allow the site:
+  `https://dairy-farm-system.bharathkumar-feb14.workers.dev/**` (sign-up confirmation, Google,
+  password reset and invites all return there).

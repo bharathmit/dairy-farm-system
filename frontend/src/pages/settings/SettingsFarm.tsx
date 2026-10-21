@@ -13,10 +13,10 @@ export default function SettingsFarm() {
   const [located, setLocated] = useState(false)
   const set = (k: keyof typeof f) => (e: { target: { value: string } }) => setF((s) => ({ ...s, [k]: e.target.value }))
 
-  const save = (e: FormEvent) => {
+  const save = async (e: FormEvent) => {
     e.preventDefault()
     if (!f.name.trim()) { notify('Farm name is required'); return }
-    updateFarm({ ...f, name: f.name.trim() })
+    if (!(await updateFarm({ ...f, name: f.name.trim() }))) return
     notify('Farm profile saved')
     nav('/settings')
   }

@@ -4,21 +4,27 @@ import { Footer, LogoRow, PasswordInput, Screen } from '../../components/ui'
 import { useStore } from '../../data/store'
 
 export default function CreateAccount() {
-  const { signUp } = useStore()
+  const { signUp, signInWithGoogle } = useStore()
   const nav = useNavigate()
   const [f, setF] = useState({ name: '', farm: '', email: '', phone: '', pw: '', pw2: '' })
   const [terms, setTerms] = useState(false)
   const [error, setError] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [sent, setSent] = useState(false)
   const set = (k: keyof typeof f) => (e: { target: { value: string } }) => setF((s) => ({ ...s, [k]: e.target.value }))
 
-  const submit = (e: FormEvent) => {
+  const submit = async (e: FormEvent) => {
     e.preventDefault()
     if (!f.name.trim() || !f.farm.trim() || !f.email.trim() || !f.pw) return setError('Fill in all fields marked *.')
     if (f.pw.length < 8) return setError('Password must be at least 8 characters.')
     if (f.pw !== f.pw2) return setError('Passwords do not match.')
     if (!terms) return setError('Please agree to the Terms and Privacy policy.')
-    signUp(f.name.trim(), f.email.trim(), f.farm.trim())
-    nav('/farms')
+    setError('')
+    setBusy(true)
+    const result = await signUp({ name: f.name.trim(), email: f.email.trim(), phone: f.phone.trim() || undefined, farmName: f.farm.trim(), password: f.pw })
+    setBusy(false)
+    if (result === 'signed-in') nav('/farms')
+    else if (result === 'confirm-email') setSent(true)
   }
 
   return (
@@ -41,11 +47,16 @@ export default function CreateAccount() {
           </label>
         </div>
         {error && <p role="alert" className="m-0 mb-1 text-sm font-medium text-danger-text">{error}</p>}
-        <button type="submit" className="btn mt-2">Create account</button>
+        {sent && (
+          <div role="status" className="mb-1 rounded-xl bg-brand-soft px-4 py-3 text-sm leading-snug text-[#1C3A28]">
+            <b>Check your inbox.</b> We sent a link to {f.email.trim()}. Open it to confirm your email, then sign in — your farm is created on first sign-in.
+          </div>
+        )}
+        <button type="submit" className="btn mt-2" disabled={busy || sent}>{busy ? 'Creating account…' : 'Create account'}</button>
       </form>
 
       <div className="my-5 flex items-center gap-3 text-[13px] text-ink-3"><div className="h-px flex-1 bg-[#D3D8CF]" />or<div className="h-px flex-1 bg-[#D3D8CF]" /></div>
-      <button type="button" className="btn2" onClick={() => { signUp('Bharath', 'bharath@example.com', 'Villupuram Dairy'); nav('/farms') }}>Sign up with Google</button>
+      <button type="button" className="btn2" onClick={() => { void signInWithGoogle() }}>Sign up with Google</button>
 
       <div className="mt-auto pt-6 text-center text-sm text-ink-3">Already have an account? <Link to="/login" className="font-semibold">Sign in</Link></div>
       <Footer className="pb-0" />

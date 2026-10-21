@@ -94,7 +94,7 @@ export default function GroupDetail() {
           <p className="m-0 mb-5 text-[15px] leading-normal text-ink-2">"{g.name}" will be deleted. Its {list.length} {list.length === 1 ? 'animal stays' : 'animals stay'} in the herd without a group.</p>
           <div className="grid grid-cols-2 gap-3">
             <button type="button" onClick={() => setConfirm(false)} className="h-12 rounded-xl border border-line bg-white font-semibold text-ink">Cancel</button>
-            <button type="button" onClick={() => { deleteGroup(g.id); notify('Group deleted'); nav('/groups', { replace: true }) }} className="h-12 rounded-xl bg-danger font-semibold text-white">Delete</button>
+            <button type="button" onClick={async () => { if (await deleteGroup(g.id)) { notify('Group deleted'); nav('/groups', { replace: true }) } }} className="h-12 rounded-xl bg-danger font-semibold text-white">Delete</button>
           </div>
         </Dialog>
       )}

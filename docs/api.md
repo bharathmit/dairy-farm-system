@@ -22,6 +22,7 @@ animals; they cannot delete, see finances or change settings.
 | Settings | `GET /settings` · `PUT /settings` (partial: milk rate, milking times, margin %, notifications) | O/W / O |
 | Members | `GET/POST /members` · `GET/PUT/DELETE /members/{id}` · `PATCH /members/{id}/status` (active / left on) · `POST /members/{id}/invite` (resend). Sign-in per member: `login` NONE, PASSWORD (owner sets it) or INVITE (email link) | O |
 | Animals | `GET /animals` (q, species, category, status, sex, groupId, noGroup, sort=tag/name/newest/oldest, page, size) · `GET /animals/summary` | O/W |
+| | `GET /animals/details` (same filters, full records with parents and photo links — used by the app) | O/W |
 | | `GET /animals/{id}` · `GET /animals/by-tag/{tag}` (QR lookup) — prices hidden for workers | O/W |
 | | `POST /animals` · `PUT /animals/{id}` | O |
 | | `PATCH /animals/{id}/status` (SOLD/DEAD/TRANSFERRED/ACTIVE + date, price, reason, party) · `PATCH /animals/{id}/group` | O |

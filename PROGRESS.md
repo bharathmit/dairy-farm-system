@@ -22,7 +22,8 @@ UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile s
 - [x] Module 3 — animals: add/edit, filters, status and exit, tag lookup, parents by id or tag, photos (Supabase Storage), CSV template/import/export
 - [x] Module 4 — groups: add/edit/delete, set animals, manager, animal counts
 - [ ] api.md: Modules 5–15 rows still drafts
-- [ ] Frontend: replace the in-memory store with API calls + Supabase sign-in
+- [x] Frontend: in-memory store replaced with API calls + Supabase sign-in (checked end to end in a browser)
+- [ ] Open: Google sign-in (needs Google OAuth in Supabase); milk/flags/days-in-milk fields wait for later modules
 - [ ] Modules 5–15 — see PLAN.md
 
 ## Branches

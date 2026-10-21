@@ -32,9 +32,9 @@ export default function SettingsMilkRate() {
   const marginPct = income > 0 ? Math.round((margin / income) * 100) : 0
   const below = marginPct < pct
 
-  const save = () => {
+  const save = async () => {
     if (!(rateNum > 0)) { notify('Enter a milk rate above ₹0'); return }
-    updateSettings({ milkRate: rateNum, morningMilking: morning, eveningMilking: evening, marginAlertPct: pct })
+    if (!(await updateSettings({ milkRate: rateNum, morningMilking: morning, eveningMilking: evening, marginAlertPct: pct }))) return
     notify('Milk rate & margins saved')
     nav('/settings')
   }

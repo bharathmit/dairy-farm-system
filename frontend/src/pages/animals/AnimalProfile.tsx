@@ -9,7 +9,7 @@ type ExitStatus = 'Sold' | 'Dead' | 'Transferred'
 const REASONS = ['Low milk yield (cull)', 'Fertility problem (cull)', 'Age / replacement', 'Male calf sale', 'Illness', 'Other']
 
 function StatusSheet({ animal, onClose }: { animal: Animal; onClose: () => void }) {
-  const { groups, saveAnimal, deleteAnimal, notify } = useStore()
+  const { groups, changeAnimalStatus, moveAnimal, deleteAnimal, notify } = useStore()
   const nav = useNavigate()
   const [status, setStatus] = useState<ExitStatus>('Sold')
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10))
@@ -24,9 +24,9 @@ function StatusSheet({ animal, onClose }: { animal: Animal; onClose: () => void 
     try { await navigator.clipboard.writeText(animal.tag); notify(`Copied ${animal.tag}`) } catch { notify('Could not copy') }
   }
 
-  const markExit = () => {
+  const markExit = async () => {
     const p = price.trim() === '' ? undefined : Number(price.replace(/,/g, ''))
-    saveAnimal({ ...animal, status, groupId: undefined, exit: { date, price: status === 'Sold' ? p : undefined, reason, buyer: buyer.trim() || undefined } })
+    if (!(await changeAnimalStatus(animal.id, status, { date, price: status === 'Sold' ? p : undefined, reason, buyer: buyer.trim() || undefined }))) return
     notify(`${animal.tag} marked as ${status.toLowerCase()}`)
     nav('/animals')
   }
@@ -46,9 +46,9 @@ function StatusSheet({ animal, onClose }: { animal: Animal; onClose: () => void 
                   id="mg"
                   className="inp"
                   value={animal.groupId ?? ''}
-                  onChange={(e) => {
+                  onChange={async (e) => {
                     const g = groups.find((x) => x.id === e.target.value)
-                    saveAnimal({ ...animal, groupId: g?.id })
+                    if (!(await moveAnimal(animal.id, g?.id))) return
                     notify(g ? `Moved to ${g.name}` : 'Removed from group')
                     onClose()
                   }}
@@ -73,7 +73,10 @@ function StatusSheet({ animal, onClose }: { animal: Animal; onClose: () => void 
               <button type="button" className="btn mt-4" onClick={markExit}>Mark as {status.toLowerCase()}</button>
             </>
           ) : (
-            <div className="my-3 rounded-xl bg-track p-3 text-sm text-ink-2">This animal is <b>{animal.status.toLowerCase()}</b>{animal.exit ? ` since ${fmtDate(animal.exit.date)} · ${animal.exit.reason}` : ''}.</div>
+            <>
+              <div className="my-3 rounded-xl bg-track p-3 text-sm text-ink-2">This animal is <b>{animal.status.toLowerCase()}</b>{animal.exit ? ` since ${fmtDate(animal.exit.date)}${animal.exit.reason ? ` · ${animal.exit.reason}` : ''}` : ''}.</div>
+              <button type="button" className="btn2" onClick={async () => { if (await changeAnimalStatus(animal.id, 'Active')) { notify(`${animal.tag} is active again`); onClose() } }}>Mark as active again</button>
+            </>
           )}
           <button type="button" onClick={() => setConfirmDelete(true)} className="mt-2 h-11 w-full border-0 bg-transparent text-[15px] font-semibold text-danger">Delete animal (owner only)</button>
         </div>
@@ -84,7 +87,7 @@ function StatusSheet({ animal, onClose }: { animal: Animal; onClose: () => void 
           <p className="m-0 mb-5 text-[15px] leading-normal text-ink-2">This removes the animal and its records for good. To keep history, mark it as sold, dead or transferred instead.</p>
           <div className="grid grid-cols-2 gap-3">
             <button type="button" onClick={() => setConfirmDelete(false)} className="h-12 rounded-xl border border-line bg-white font-semibold text-ink">Cancel</button>
-            <button type="button" onClick={() => { deleteAnimal(animal.id); notify(`${animal.tag} deleted`); nav('/animals') }} className="h-12 rounded-xl bg-danger font-semibold text-white">Delete</button>
+            <button type="button" onClick={async () => { if (await deleteAnimal(animal.id)) { notify(`${animal.tag} deleted`); nav('/animals') } }} className="h-12 rounded-xl bg-danger font-semibold text-white">Delete</button>
           </div>
         </Dialog>
       )}
@@ -102,11 +105,14 @@ const TABS = ['Overview', 'Health', 'Breeding', 'Milk', 'Weight', 'Family']
 
 export default function AnimalProfile() {
   const { id } = useParams()
-  const { animals, groups, notify } = useStore()
+  const { animals, groups, loading, notify } = useStore()
   const [sheet, setSheet] = useState(false)
   const a = animals.find((x) => x.id === id)
   const later = () => notify('Coming in a later module')
 
+  if (!a && loading) {
+    return <Screen><TopBar title="Animal" back="/animals" /><p className="px-5 text-ink-3" role="status">Loading…</p></Screen>
+  }
   if (!a) {
     return (
       <Screen>
@@ -137,7 +143,9 @@ export default function AnimalProfile() {
       </div>
 
       <div className="flex items-center gap-3.5 px-4 pb-4 pt-1">
-        <div className="flex h-[84px] w-[84px] shrink-0 items-center justify-center rounded-[18px] bg-[#DCE7DE] font-bold text-brand">Photo</div>
+        {a.photos?.[0]?.url
+          ? <img src={a.photos[0].url} alt={`${a.tag} photo`} className="h-[84px] w-[84px] shrink-0 rounded-[18px] object-cover" />
+          : <div className="flex h-[84px] w-[84px] shrink-0 items-center justify-center rounded-[18px] bg-[#DCE7DE] font-bold text-brand">Photo</div>}
         <div className="min-w-0 flex-1">
           <h1 className="m-0 text-2xl font-bold">{a.tag} {a.name && <span className="font-medium text-ink-2">{a.name}</span>}</h1>
           <div className="mt-0.5 text-sm text-ink-3">{[a.species, a.breed, a.sex, ageText(a.dob)].filter(Boolean).join(' · ')}</div>

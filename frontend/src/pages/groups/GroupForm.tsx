@@ -33,6 +33,7 @@ export default function GroupForm() {
   const [query, setQuery] = useState('')
   const [filters, setFilters] = useState<string[]>([])
   const [error, setError] = useState('')
+  const [busy, setBusy] = useState(false)
 
   const workers = members.filter((m) => m.role === 'Worker' && m.active)
   const pool = animals.filter((a) => a.status === 'Active' && a.species === species)
@@ -51,7 +52,8 @@ export default function GroupForm() {
   const toggle = (aid: string) => setSelected((s) => (s.includes(aid) ? s.filter((x) => x !== aid) : [...s, aid]))
   const close = existing ? `/groups/${existing.id}` : '/groups'
 
-  const save = () => {
+  const save = async () => {
+    if (busy) return
     if (!name.trim()) { setError('Enter a group name'); return }
     const g: Group = {
       id: existing?.id ?? newId('g'),
@@ -63,9 +65,12 @@ export default function GroupForm() {
       color,
       notes: notes.trim() || undefined,
     }
-    saveGroup(g, selected.filter((sid) => pool.some((a) => a.id === sid)))
+    setBusy(true)
+    const saved = await saveGroup(g, selected.filter((sid) => pool.some((a) => a.id === sid)))
+    setBusy(false)
+    if (!saved) return
     notify(editing ? 'Group saved' : 'Group created')
-    nav(`/groups/${g.id}`, { replace: true })
+    nav(`/groups/${saved.id}`, { replace: true })
   }
 
   if (id && !existing) {

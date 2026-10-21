@@ -28,7 +28,7 @@ function Row({ title, sub, children, big }: { title: string; sub?: string; child
 export default function SettingsNotifications() {
   const { settings, updateSettings } = useStore()
   const n = settings.notify
-  const set = <K extends keyof Notify>(k: K, v: Notify[K]) => updateSettings({ notify: { ...n, [k]: v } })
+  const set = <K extends keyof Notify>(k: K, v: Notify[K]) => { void updateSettings({ notify: { ...n, [k]: v } }) }
 
   return (
     <Screen>

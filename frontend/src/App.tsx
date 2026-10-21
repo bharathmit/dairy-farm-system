@@ -23,15 +23,27 @@ import GroupList from './pages/groups/GroupList'
 import GroupForm from './pages/groups/GroupForm'
 import GroupDetail from './pages/groups/GroupDetail'
 
+function Loading() {
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center gap-2 px-8 text-center text-ink-3" role="status">
+      <div className="text-base font-semibold text-ink">Loading…</div>
+      <div className="text-sm">The first visit after a quiet spell can take up to a minute while the server wakes up.</div>
+    </div>
+  )
+}
+
 function RequireAuth() {
-  const { user } = useStore()
+  const { ready, user } = useStore()
   const loc = useLocation()
+  if (!ready) return <Loading />
   return user ? <Outlet /> : <Navigate to="/login" replace state={{ from: loc.pathname }} />
 }
 
 function RequireFarm() {
-  const { farm } = useStore()
-  return farm ? <Outlet /> : <Navigate to="/farms" replace />
+  const { farm, loading } = useStore()
+  if (!farm) return <Navigate to="/farms" replace />
+  // Pages read the farm's data when they open (e.g. edit forms), so wait for it.
+  return loading ? <Loading /> : <Outlet />
 }
 
 function GlobalToast() {

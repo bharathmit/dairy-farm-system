@@ -6,7 +6,7 @@ import type { Member, Role, Sex } from '../../data/types'
 
 export default function MemberForm() {
   const { id } = useParams()
-  const { members, saveMember, notify } = useStore()
+  const { members, saveMember, setMemberActive, notify } = useStore()
   const nav = useNavigate()
   const existing = id ? members.find((m) => m.id === id) : undefined
 
@@ -16,33 +16,37 @@ export default function MemberForm() {
   const [pw, setPw] = useState('')
   const [pw2, setPw2] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [busy, setBusy] = useState(false)
 
   if (id && !existing) return <Navigate to="/settings/team" replace />
 
   const editing = Boolean(existing)
   const set = <K extends keyof Member>(k: K, v: Member[K]) => setM((s) => ({ ...s, [k]: v }))
 
-  const save = (e: FormEvent) => {
+  const ownPassword = editing && existing?.canSignIn && existing.loginType !== 'PASSWORD'
+
+  const save = async (e: FormEvent) => {
     e.preventDefault()
     if (!m.name.trim()) return setError('Name is required.')
     if (m.canSignIn) {
       if (!m.email?.trim()) return setError('Email is needed so they can sign in.')
-      if (!editing || pw || pw2) {
+      if (!ownPassword && (!editing || !existing?.canSignIn || pw || pw2)) {
         if (pw.length < 8) return setError('Password must be at least 8 characters.')
         if (pw !== pw2) return setError('Passwords do not match.')
       }
     }
-    saveMember({ ...m, name: m.name.trim(), id: m.id || newId('m') })
+    setError(null)
+    setBusy(true)
+    const ok = await saveMember({ ...m, name: m.name.trim(), id: m.id || newId('m') }, pw || undefined)
+    setBusy(false)
+    if (!ok) return
     notify(editing ? 'Member updated' : 'Member added')
     nav('/settings/team')
   }
 
-  const toggleActive = () => {
-    const next: Member = m.active
-      ? { ...m, active: false, inactiveSince: new Date().toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }) }
-      : { ...m, active: true, inactiveSince: undefined }
-    saveMember(next)
-    notify(next.active ? 'Member reactivated' : 'Member deactivated')
+  const toggleActive = async () => {
+    if (!(await setMemberActive(m.id, !m.active))) return
+    notify(m.active ? 'Member deactivated' : 'Member reactivated')
     nav('/settings/team')
   }
 
@@ -69,14 +73,17 @@ export default function MemberForm() {
             <input type="checkbox" checked={m.canSignIn} onChange={(e) => set('canSignIn', e.target.checked)} className="mt-px h-5 w-5 shrink-0 accent-brand" />
             <span><b className="font-semibold">Can sign in to the app</b><br /><span className="text-[13px] text-ink-3">Set a password below and share it with them yourself. Leave off for workers whose records you enter yourself.</span></span>
           </label>
-          {m.canSignIn && (
+          {m.canSignIn && ownPassword && (
+            <div className="rounded-xl bg-track px-3.5 py-3 text-[13px] text-ink-2">{m.name} signs in with their own account and password.</div>
+          )}
+          {m.canSignIn && !ownPassword && (
             <>
               <div>
-                <label className="lab" htmlFor="pw">Password{editing ? '' : ' *'}</label>
-                <PasswordInput id="pw" value={pw} onChange={(e) => setPw(e.target.value)} placeholder={editing ? 'Leave blank to keep current password' : 'At least 8 characters'} autoComplete="new-password" />
+                <label className="lab" htmlFor="pw">Password{editing && existing?.canSignIn ? '' : ' *'}</label>
+                <PasswordInput id="pw" value={pw} onChange={(e) => setPw(e.target.value)} placeholder={editing && existing?.canSignIn ? 'Leave blank to keep current password' : 'At least 8 characters'} autoComplete="new-password" />
               </div>
               <div>
-                <label className="lab" htmlFor="pw2">Confirm password{editing ? '' : ' *'}</label>
+                <label className="lab" htmlFor="pw2">Confirm password{editing && existing?.canSignIn ? '' : ' *'}</label>
                 <input className="inp" id="pw2" type="password" value={pw2} onChange={(e) => setPw2(e.target.value)} placeholder="Re-enter password" autoComplete="new-password" />
               </div>
             </>
@@ -100,7 +107,7 @@ export default function MemberForm() {
               {m.active ? 'Deactivate' : 'Reactivate'}
             </button>
           )}
-          <button type="submit" className="btn flex-[2]">Save</button>
+          <button type="submit" className="btn flex-[2]" disabled={busy}>{busy ? 'Saving…' : 'Save'}</button>
         </ActionBar>
       </form>
     </Screen>

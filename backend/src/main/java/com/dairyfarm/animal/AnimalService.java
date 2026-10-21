@@ -67,6 +67,24 @@ public class AnimalService {
                 a.getPhotoPaths().isEmpty() ? null : urls.get(a.getPhotoPaths().get(0)))));
     }
 
+    /** Same filters and paging as {@link #list}, with every animal's full details (for the app's herd cache). */
+    @Transactional(readOnly = true)
+    public PageResponse<AnimalDetail> listDetails(Long farmId, AnimalQuery query, int page, int size, boolean showMoney) {
+        if (page < 0 || size < 1 || size > MAX_PAGE_SIZE) {
+            throw ApiException.badRequest("Use page 0 or more and size 1 to " + MAX_PAGE_SIZE + ".");
+        }
+        Page<Animal> result = animals.findAll(query.toSpecification(farmId), PageRequest.of(page, size, query.toSort()));
+        Map<Long, String> groupNames = groupNames(farmId);
+        List<Long> parentIds = result.getContent().stream()
+                .flatMap(a -> java.util.stream.Stream.of(a.getDamId(), a.getSireId()))
+                .filter(Objects::nonNull).distinct().toList();
+        Map<Long, Animal> parents = parentIds.isEmpty() ? Map.of()
+                : animals.findAllById(parentIds).stream().collect(Collectors.toMap(Animal::getId, Function.identity()));
+        Map<String, String> urls = photos.signedUrls(
+                result.getContent().stream().flatMap(a -> a.getPhotoPaths().stream()).toList());
+        return PageResponse.of(result.map(a -> toDetail(a, showMoney, groupNames.get(a.getGroupId()), parents, urls)));
+    }
+
     @Transactional(readOnly = true)
     public AnimalDetail get(Long farmId, Long id, boolean showMoney) {
         return detail(load(farmId, id), showMoney);
@@ -325,7 +343,11 @@ public class AnimalService {
         }
         Map<Long, Animal> parents = parentIds.isEmpty() ? Map.of()
                 : animals.findAllById(parentIds).stream().collect(Collectors.toMap(Animal::getId, Function.identity()));
-        Map<String, String> urls = photos.signedUrls(a.getPhotoPaths());
+        return toDetail(a, showMoney, groupName, parents, photos.signedUrls(a.getPhotoPaths()));
+    }
+
+    private static AnimalDetail toDetail(Animal a, boolean showMoney, String groupName, Map<Long, Animal> parents,
+                                         Map<String, String> urls) {
         List<Photo> photoList = a.getPhotoPaths().stream()
                 .map(p -> new Photo(p.substring(p.lastIndexOf('/') + 1), urls.get(p))).toList();
         return new AnimalDetail(a.getId(), a.getTag(), a.getName(), a.getNationalId(), a.getSpecies(), a.getBreed(),

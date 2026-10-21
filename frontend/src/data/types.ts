@@ -1,9 +1,8 @@
-// Shapes the UI works with. They mirror the planned API so the in-memory
-// store can later be swapped for real calls without touching the pages.
+// Shapes the UI works with. data/mappers.ts converts them to and from the API.
 
 export type Species = 'Cow' | 'Buffalo' | 'Goat' | 'Sheep' | 'Pig' | 'Poultry'
 export type Sex = 'Female' | 'Male'
-export type Category = 'Milking' | 'Dry' | 'Heifer' | 'Calf' | 'Bull'
+export type Category = 'Milking' | 'Dry' | 'Heifer' | 'Calf' | 'Bull' | 'Other'
 export type AnimalStatus = 'Active' | 'Sold' | 'Dead' | 'Transferred'
 export type Role = 'Owner' | 'Worker'
 
@@ -33,6 +32,8 @@ export interface Animal {
   flags: { text: string; tone: 'green' | 'red' | 'amber' | 'blue' }[]
   milkYesterday?: number
   exit?: { date: string; price?: number; reason: string; buyer?: string }
+  /** Up to 3; url is a short-lived signed link. */
+  photos?: { id: string; url?: string }[]
 }
 
 export interface Group {
@@ -61,6 +62,8 @@ export interface Member {
   active: boolean
   inactiveSince?: string
   isMe?: boolean
+  /** NONE, PASSWORD (owner set it), INVITE (email link) or SELF (their own account). */
+  loginType?: string
 }
 
 export interface Farm {

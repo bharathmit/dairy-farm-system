@@ -166,6 +166,26 @@ class AnimalControllerTest extends IntegrationTest {
     }
 
     @Test
+    void detailsListGivesFullRecordsWithParentsAndPhotos() throws Exception {
+        long dam = create(cow("VD-001", "FEMALE", "MILKING", "\"name\":\"Lakshmi\",\"notes\":\"Calm\",\"purchasePrice\":65000"));
+        create("{\"tag\":\"VD-019\",\"species\":\"COW\",\"sex\":\"FEMALE\",\"category\":\"CALF\","
+                + "\"acquisitionType\":\"BORN\",\"dateOfBirth\":\"2026-09-28\",\"damTag\":\"VD-001\"}");
+        mvc.perform(multipart(animals() + "/" + dam + "/photos")
+                .file(new MockMultipartFile("file", "cow.png", "image/png", PNG)).with(as(owner)));
+
+        mvc.perform(get(animals() + "/details").with(as(owner)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalItems").value(2))
+                .andExpect(jsonPath("$.items[0].notes").value("Calm"))
+                .andExpect(jsonPath("$.items[0].purchasePrice").value(65000))
+                .andExpect(jsonPath("$.items[0].photos[0].url").exists())
+                .andExpect(jsonPath("$.items[1].dam.id").value(dam))
+                .andExpect(jsonPath("$.items[1].dam.name").value("Lakshmi"));
+        mvc.perform(get(animals() + "/details").with(as(worker)))
+                .andExpect(jsonPath("$.items[0].purchasePrice").doesNotExist());
+    }
+
+    @Test
     void workersCanReadButNotChangeAndDontSeePrices() throws Exception {
         long id = create(cow("VD-001", "FEMALE", "MILKING", "\"purchasePrice\":65000"));
         mvc.perform(get(animals() + "/" + id).with(as(worker)))

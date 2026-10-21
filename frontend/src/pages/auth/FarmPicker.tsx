@@ -11,22 +11,23 @@ export default function FarmPicker() {
   const [name, setName] = useState('')
   const selectedId = farm?.id ?? farms[0]?.id
 
-  const add = (e: FormEvent) => {
+  const add = async (e: FormEvent) => {
     e.preventDefault()
     if (!name.trim()) return
-    addFarm(name.trim())
+    if (!(await addFarm(name.trim()))) return
     setName('')
     setAdding(false)
   }
 
   return (
     <Screen className="px-5 pb-5 pt-4">
-      <button type="button" aria-label="Back to login" onClick={() => { signOut(); nav('/login') }} className="-ml-2.5 mb-2 flex h-11 w-11 items-center justify-center"><Icon name="back" /></button>
+      <button type="button" aria-label="Back to login" onClick={() => { void signOut().then(() => nav('/login')) }} className="-ml-2.5 mb-2 flex h-11 w-11 items-center justify-center"><Icon name="back" /></button>
       <div className="mb-5"><LogoRow /></div>
       <p className="m-0 text-sm text-ink-3">Signed in as {user?.email}</p>
       <h1 className="mb-6 mt-1.5 text-[26px] font-bold">Choose a farm</h1>
 
       <div className="flex flex-col gap-3">
+        {farms.length === 0 && <p className="m-0 rounded-xl bg-white p-4 text-[15px] text-ink-2">You're not on a farm yet. Add your farm below, or ask your farm owner to add you to theirs.</p>}
         {farms.map((f) => {
           const sel = f.id === selectedId
           const owner = f.role === 'Owner'

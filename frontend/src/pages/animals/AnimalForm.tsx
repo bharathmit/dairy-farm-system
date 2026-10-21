@@ -1,4 +1,4 @@
-import { useState, type FormEvent, type ReactNode } from 'react'
+import { useRef, useState, type ChangeEvent, type FormEvent, type ReactNode } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ActionBar, Chips, Screen, Segmented, TopBar } from '../../components/ui'
 import { Icon } from '../../components/icons'
@@ -29,9 +29,22 @@ function Field({ id, label, children, hint, error }: { id: string; label: string
 export default function AnimalForm() {
   const { id } = useParams()
   const nav = useNavigate()
-  const { animals, groups, saveAnimal, notify } = useStore()
+  const { animals, groups, loading, saveAnimal, addPhoto, notify } = useStore()
   const existing = id ? animals.find((a) => a.id === id) : undefined
   const editing = Boolean(existing)
+  const photoInput = useRef<HTMLInputElement>(null)
+  const [busy, setBusy] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const photos = existing?.photos ?? []
+
+  const onPhoto = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    if (!file || !existing) return
+    setUploading(true)
+    if (await addPhoto(existing.id, file)) notify('Photo added')
+    setUploading(false)
+  }
 
   const [d, setD] = useState<Draft>(() => {
     const a: Animal = existing ?? { id: '', tag: '', species: 'Cow', sex: 'Female', category: 'Milking', source: 'Purchased', status: 'Active', flags: [], breed: 'HF' }
@@ -41,6 +54,9 @@ export default function AnimalForm() {
   const [otherBreed, setOtherBreed] = useState(!knownBreed)
   const [errors, setErrors] = useState<{ tag?: string; dob?: string }>({})
 
+  if (id && !existing && loading) {
+    return <Screen><TopBar title="Edit animal" back="/animals" /><p className="px-5 text-ink-3" role="status">Loading…</p></Screen>
+  }
   if (id && !existing) {
     return (
       <Screen>
@@ -53,8 +69,9 @@ export default function AnimalForm() {
   const set = <K extends keyof Draft>(k: K, v: Draft[K]) => setD((x) => ({ ...x, [k]: v }))
   const speciesGroups = groups.filter((g) => g.species === d.species)
 
-  const save = (e?: FormEvent) => {
+  const save = async (e?: FormEvent) => {
     e?.preventDefault()
+    if (busy) return
     const errs: typeof errors = {}
     const tag = d.tag.trim()
     if (!tag) errs.tag = 'Ear tag number is required'
@@ -77,9 +94,12 @@ export default function AnimalForm() {
       purchaseDate: purchased ? d.purchaseDate : undefined,
       groupId: d.groupId || undefined,
     }
-    saveAnimal(animal)
+    setBusy(true)
+    const saved = await saveAnimal(animal)
+    setBusy(false)
+    if (!saved) return
     notify(editing ? 'Animal updated' : 'Animal added')
-    nav(`/animals/${animal.id}`, { replace: true })
+    nav(`/animals/${saved.id}`, { replace: true })
   }
 
   const sec = 'mb-2.5 mt-[22px] text-xs font-bold uppercase tracking-[.06em] text-ink-3'
@@ -96,14 +116,25 @@ export default function AnimalForm() {
       <form onSubmit={save} noValidate className="flex flex-1 flex-col">
         <div className="px-5 pb-6">
           <div className={sec}>Photos</div>
+          <input ref={photoInput} type="file" accept="image/jpeg,image/png,image/webp" capture="environment" className="sr-only" id="ph" onChange={onPhoto} />
           <div className="flex gap-2.5">
-            <button type="button" aria-label="Add photo" onClick={() => notify('Photo upload comes with the backend')} className="flex h-[88px] w-[88px] flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-[#A9B3A6] bg-white text-xs text-ink-2">
-              <Icon name="camera" color="#1F5C3A" />Add
-            </button>
-            <div className="h-[88px] w-[88px] rounded-xl bg-track" />
-            <div className="h-[88px] w-[88px] rounded-xl bg-track" />
+            {photos.length < 3 && (
+              <button
+                type="button"
+                aria-label="Add photo"
+                disabled={uploading}
+                onClick={() => (editing ? photoInput.current?.click() : notify('Save the animal first, then add photos'))}
+                className="flex h-[88px] w-[88px] flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-[#A9B3A6] bg-white text-xs text-ink-2"
+              >
+                <Icon name="camera" color="#1F5C3A" />{uploading ? 'Uploading…' : 'Add'}
+              </button>
+            )}
+            {photos.map((p) => (p.url
+              ? <img key={p.id} src={p.url} alt="Animal photo" className="h-[88px] w-[88px] rounded-xl object-cover" />
+              : <div key={p.id} className="h-[88px] w-[88px] rounded-xl bg-track" />))}
+            {Array.from({ length: Math.max(0, 2 - photos.length) }, (_, i) => <div key={`empty-${i}`} className="h-[88px] w-[88px] rounded-xl bg-track" />)}
           </div>
-          <div className="mt-1.5 text-xs text-ink-3">Up to 3 photos</div>
+          <div className="mt-1.5 text-xs text-ink-3">Up to 3 photos (JPG, PNG or WebP, 5 MB each){editing ? '' : ' · add them after saving'}</div>
 
           <div className={sec}>Identity</div>
           <div className="flex flex-col gap-3.5">
@@ -192,7 +223,7 @@ export default function AnimalForm() {
           <div className={sec}>Notes</div>
           <textarea aria-label="Notes" value={d.notes ?? ''} onChange={(e) => set('notes', e.target.value)} className="box-border h-24 w-full resize-none rounded-[10px] border border-line px-3.5 py-3 text-base" placeholder="Temperament, markings, history…" />
         </div>
-        <ActionBar><button type="submit" className="btn">Save animal</button></ActionBar>
+        <ActionBar><button type="submit" className="btn" disabled={busy}>{busy ? 'Saving…' : 'Save animal'}</button></ActionBar>
       </form>
     </Screen>
   )

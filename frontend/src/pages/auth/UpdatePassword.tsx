@@ -14,20 +14,26 @@ function Check({ ok, children }: { ok: boolean; children: string }) {
 }
 
 export default function UpdatePassword() {
-  const { notify } = useStore()
+  const { user, ready, updatePassword, notify } = useStore()
   const nav = useNavigate()
   const [pw, setPw] = useState('')
   const [pw2, setPw2] = useState('')
   const [error, setError] = useState('')
+  const [busy, setBusy] = useState(false)
   const long = pw.length >= 8
   const digit = /\d/.test(pw)
   const match = pw.length > 0 && pw === pw2
 
-  const submit = (e: FormEvent) => {
+  const submit = async (e: FormEvent) => {
     e.preventDefault()
     if (!(long && digit && match)) return setError('Check the password rules above.')
+    if (!user) return setError('This link has expired or was already used. Ask for a new reset link.')
+    setBusy(true)
+    const ok = await updatePassword(pw)
+    setBusy(false)
+    if (!ok) return
     notify('Password updated')
-    nav('/login')
+    nav('/farms')
   }
 
   return (
@@ -35,7 +41,7 @@ export default function UpdatePassword() {
       <Link to="/login" aria-label="Back to sign in" className="-ml-2.5 mb-2 flex h-11 w-11 items-center justify-center"><Icon name="back" /></Link>
       <LogoRow />
       <h1 className="mb-1.5 mt-7 text-[26px] font-bold">Set a new password</h1>
-      <p className="m-0 mb-6 text-[15px] leading-snug text-ink-3">For bharath@… — opened from the reset link in your email.</p>
+      <p className="m-0 mb-6 text-[15px] leading-snug text-ink-3">{user ? `For ${user.email}` : ready ? 'Open this page from the link in your email.' : 'Checking your link…'}</p>
 
       <form onSubmit={submit} noValidate className="flex flex-col">
         <div className="flex flex-col gap-4">
@@ -48,7 +54,7 @@ export default function UpdatePassword() {
           </div>
         </div>
         {error && <p role="alert" className="m-0 mt-3 text-sm font-medium text-danger-text">{error}</p>}
-        <button type="submit" className="btn mt-5">Update password</button>
+        <button type="submit" className="btn mt-5" disabled={busy}>{busy ? 'Saving…' : 'Update password'}</button>
       </form>
 
       <Link to="/login" className="mt-auto flex min-h-11 items-center gap-1.5 self-center pt-6 text-[15px] font-semibold no-underline"><Icon name="back" size={18} color="currentColor" />Back to sign in</Link>

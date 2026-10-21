@@ -90,6 +90,24 @@ public class AnimalController {
         return animals.list(ctx.farmId(), query, page, size);
     }
 
+    @GetMapping("/details")
+    @Operation(summary = "Same filters as the list, with full details of each animal (used by the app)")
+    public PageResponse<AnimalDetail> listDetails(
+            @PathVariable Long farmId,
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) List<Species> species,
+            @RequestParam(required = false) List<Category> category,
+            @RequestParam(required = false) List<Status> status,
+            @RequestParam(required = false) Sex sex,
+            @RequestParam(required = false) Long groupId,
+            @RequestParam(required = false) Boolean noGroup,
+            @RequestParam(defaultValue = "tag") String sort,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "200") int size) {
+        var query = new AnimalQuery(q, species, category, status, sex, groupId, noGroup, sort);
+        return animals.listDetails(ctx.farmId(), query, page, size, ctx.isOwner());
+    }
+
     @GetMapping("/summary")
     @Operation(summary = "Active herd size by category, and counts by status")
     public HerdSummary summary(@PathVariable Long farmId) {
