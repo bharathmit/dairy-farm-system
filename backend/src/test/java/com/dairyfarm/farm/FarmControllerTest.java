@@ -28,6 +28,34 @@ class FarmControllerTest extends IntegrationTest {
     }
 
     @Test
+    void signUpSentSeveralTimesAtOnceCreatesOneFarm() throws Exception {
+        TestUser newOwner = TestUser.random("Green Owner");
+        var pool = java.util.concurrent.Executors.newFixedThreadPool(3);
+        var start = new java.util.concurrent.CountDownLatch(1);
+        var calls = new java.util.ArrayList<java.util.concurrent.Future<Long>>();
+        for (int i = 0; i < 3; i++) {
+            calls.add(pool.submit(() -> {
+                start.await();
+                return Api.createFarm(mvc, json, newOwner, "Green");
+            }));
+        }
+        start.countDown();
+        var ids = new java.util.HashSet<Long>();
+        for (var c : calls) {
+            ids.add(c.get(30, java.util.concurrent.TimeUnit.SECONDS));
+        }
+        pool.shutdown();
+
+        org.assertj.core.api.Assertions.assertThat(ids).hasSize(1);
+        org.assertj.core.api.Assertions.assertThat(jdbc.queryForObject(
+                "select count(*) from farm where lower(name) = 'green'", Long.class)).isEqualTo(1);
+
+        // A differently named farm is still a new farm.
+        org.assertj.core.api.Assertions.assertThat(Api.createFarm(mvc, json, newOwner, "Green Hills"))
+                .isNotIn(ids);
+    }
+
+    @Test
     void creatorBecomesOwnerAndSeesTheFarm() throws Exception {
         mvc.perform(get("/api/v1/me").with(as(owner)))
                 .andExpect(jsonPath("$.farms[0].name").value("Villupuram Dairy"))

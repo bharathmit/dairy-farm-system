@@ -118,21 +118,31 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   // ---------- loading ----------
 
-  const loadMe = useCallback(async () => {
+  // Supabase can report one sign-in several times (e.g. INITIAL_SESSION and SIGNED_IN after the
+  // email link), so concurrent calls share one load instead of each creating the pending farm.
+  const meLoad = useRef<Promise<ApiMe> | null>(null)
+  const fetchMe = useCallback(async () => {
     let profile = await api.get<ApiMe>('/me')
     const pending = local.get(PENDING_FARM_KEY)
     if (pending && profile.farms.length === 0) {
+      local.set(PENDING_FARM_KEY, null) // claim it before creating, so it's used once
       await api.post('/farms', { name: pending })
       profile = await api.get<ApiMe>('/me')
     }
     local.set(PENDING_FARM_KEY, null)
+    return profile
+  }, [])
+
+  const loadMe = useCallback(async () => {
+    if (!meLoad.current) meLoad.current = fetchMe().finally(() => { meLoad.current = null })
+    const profile = await meLoad.current
     setMe(profile)
     const list = profile.farms.map((f) => toFarm(f))
     setFarms(list)
     const saved = local.get(FARM_KEY)
     setFarmId((cur) => cur ?? (list.some((f) => f.id === saved) ? saved : list.length === 1 ? list[0].id : null))
     return profile
-  }, [])
+  }, [fetchMe])
 
   const loadAnimals = useCallback(async (fid: string) => {
     const all: Animal[] = []

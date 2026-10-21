@@ -34,6 +34,13 @@ public class FarmService {
     @Transactional
     public FarmResponse create(FarmRequest req) {
         AppUser me = users.current();
+        // One farm creation at a time per person, and an owner's farm with the same name is
+        // returned instead of made again (a sign-up retried or sent twice by the browser).
+        farms.lockForUser(me.getId().toString());
+        var existing = farms.findOwnedByName(me.getId(), req.name().trim()).stream().findFirst();
+        if (existing.isPresent()) {
+            return FarmResponse.of(existing.get(), Role.OWNER);
+        }
         Farm farm = new Farm(req.name().trim());
         apply(farm, req);
         farm = farms.save(farm);
