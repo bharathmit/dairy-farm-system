@@ -1,6 +1,6 @@
 import { useState, type ReactNode, type InputHTMLAttributes } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Icon } from './icons'
+import { Icon, type IconName } from './icons'
 
 /** Phone-width column. On wider screens it sits centred like a device. */
 export function Screen({ children, className = '' }: { children: ReactNode; className?: string }) {
@@ -167,22 +167,62 @@ export function Dialog({ title, children, onClose }: { title: string; children: 
   )
 }
 
+const RECORD_TILES: { to: string; icon: IconName; color: string; title: string; sub: string }[] = [
+  { to: '/milk/sheet', icon: 'list', color: '#1F5C3A', title: 'Milking sheet', sub: 'All cows, one session' },
+  { to: '/milk/cow', icon: 'drop', color: '#1F5C3A', title: 'Milk — one cow', sub: 'With fat, SNF, SCC' },
+  { to: '/milk/sale', icon: 'farm', color: '#1F5C3A', title: 'Farm total / sale', sub: 'Litres to dairy, income' },
+  { to: '/weight/new', icon: 'weight', color: '#1F4E87', title: 'Weight & BCS', sub: 'Weight, height, condition' },
+  { to: '/health/new', icon: 'health', color: '#A3271B', title: 'Health', sub: 'Treatment, vaccine, deworm' },
+  { to: '/health/batch', icon: 'team', color: '#A3271B', title: 'Batch treatment', sub: 'Whole group at once' },
+]
+
+/** The + button's sheet: every daily record plus adding an animal. */
+export function AddRecordSheet({ onClose }: { onClose: () => void }) {
+  return (
+    <Sheet label="Add a record" onClose={onClose}>
+      <div className="overflow-y-auto px-4 pb-6">
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="m-0 text-xl font-bold">Add a record</h2>
+          <Link to="/animals/scan" className="flex h-10 items-center gap-1.5 rounded-[10px] border border-line px-3 text-sm font-semibold text-ink no-underline"><Icon name="scan" size={18} color="currentColor" />Scan cow first</Link>
+        </div>
+        <div className="grid grid-cols-2 gap-2.5">
+          {RECORD_TILES.map((t) => (
+            <Link key={t.to} to={t.to} className="flex min-h-24 flex-col items-start gap-2 rounded-[14px] bg-ground p-3.5 text-ink no-underline hover:text-ink">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white"><Icon name={t.icon} color={t.color} /></span>
+              <span className="text-[15px] font-semibold">{t.title}</span><span className="-mt-1.5 text-xs text-ink-3">{t.sub}</span>
+            </Link>
+          ))}
+        </div>
+        <Link to="/animals/new" className="btn2 mt-2.5 h-12 gap-2 text-[15px]"><Icon name="plus" size={18} />Add animal</Link>
+        <div className="mb-2 mt-4 text-xs font-bold uppercase tracking-[.06em] text-ink-3">Coming in later modules</div>
+        <div className="grid grid-cols-4 gap-2 text-center text-xs font-semibold text-ink-2">
+          {['Heat', 'Breeding', 'Feed', 'Money'].map((l) => <span key={l} className="rounded-xl bg-ground px-1 py-3 opacity-55">{l}</span>)}
+        </div>
+      </div>
+    </Sheet>
+  )
+}
+
 export function BottomNav({ active }: { active: 'home' | 'herd' | 'alerts' | 'more' }) {
+  const [adding, setAdding] = useState(false)
   const item = (key: typeof active, to: string, icon: Parameters<typeof Icon>[0]['name'], label: string) => (
     <Link to={to} aria-current={active === key ? 'page' : undefined} className={`flex flex-col items-center justify-center gap-[3px] text-[11px] font-semibold no-underline ${active === key ? 'text-brand' : 'text-ink-3'}`}>
       <Icon name={icon} color="currentColor" />{label}
     </Link>
   )
   return (
-    <nav aria-label="Main" className="sticky bottom-0 z-20 grid h-[72px] grid-cols-5 border-t border-line-soft bg-white">
-      {item('home', '/home', 'home', 'Home')}
-      {item('herd', '/animals', 'tag', 'Herd')}
-      <Link to="/animals/new" aria-label="Add animal" className="flex items-center justify-center">
-        <span className="-mt-[18px] flex h-12 w-12 items-center justify-center rounded-full bg-brand shadow-[0_4px_10px_rgba(31,92,58,.3)]"><Icon name="plus" color="#fff" /></span>
-      </Link>
-      {item('alerts', '/alerts', 'bell', 'Alerts')}
-      {item('more', '/settings', 'menu', 'More')}
-    </nav>
+    <>
+      <nav aria-label="Main" className="sticky bottom-0 z-20 grid h-[72px] grid-cols-5 border-t border-line-soft bg-white">
+        {item('home', '/home', 'home', 'Home')}
+        {item('herd', '/animals', 'tag', 'Herd')}
+        <button type="button" onClick={() => setAdding(true)} aria-label="Add a record" className="flex items-center justify-center border-0 bg-transparent">
+          <span className="-mt-[18px] flex h-12 w-12 items-center justify-center rounded-full bg-brand shadow-[0_4px_10px_rgba(31,92,58,.3)]"><Icon name="plus" color="#fff" /></span>
+        </button>
+        {item('alerts', '/alerts', 'bell', 'Alerts')}
+        {item('more', '/settings', 'menu', 'More')}
+      </nav>
+      {adding && <AddRecordSheet onClose={() => setAdding(false)} />}
+    </>
   )
 }
 

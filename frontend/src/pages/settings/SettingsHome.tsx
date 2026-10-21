@@ -34,6 +34,8 @@ export default function SettingsHome() {
         <Row to="/settings/farm" icon="home" title="Farm profile" sub="Name, address, location" />
         <Row to="/settings/team" icon="team" title="Team" sub={`${owners} owner${owners === 1 ? '' : 's'} · ${workers} worker${workers === 1 ? '' : 's'}`} />
         <Row to="/settings/milk-rate" icon="drop" title="Milk rate & margins" sub={`₹${settings.milkRate.toFixed(2)} / L · alert below ${settings.marginAlertPct} % margin`} />
+        <Row to="/settings/milk-grading" icon="check" title="Milk grade rules" sub={farm?.role === 'Owner' ? 'Expected yield by lactation day, A–D grades' : 'See how grades are worked out'} />
+        <Row to="/settings/contacts" icon="team" title="Contacts" sub="Milk buyers, vets, suppliers" />
       </div>
 
       <div className="sec">App</div>

@@ -22,6 +22,20 @@ import ScanTag from './pages/animals/ScanTag'
 import GroupList from './pages/groups/GroupList'
 import GroupForm from './pages/groups/GroupForm'
 import GroupDetail from './pages/groups/GroupDetail'
+import Home from './pages/Home'
+import MilkHome from './pages/milk/MilkHome'
+import MilkSheet from './pages/milk/MilkSheet'
+import MilkSingle from './pages/milk/MilkSingle'
+import MilkSale from './pages/milk/MilkSale'
+import GradeRules from './pages/milk/GradeRules'
+import WeightLog from './pages/weight/WeightLog'
+import WeightTrend from './pages/weight/WeightTrend'
+import HealthHome from './pages/health/HealthHome'
+import HealthForm from './pages/health/HealthForm'
+import HealthBatch from './pages/health/HealthBatch'
+import WithdrawalList from './pages/health/WithdrawalList'
+import Contacts from './pages/contacts/Contacts'
+import ContactForm from './pages/contacts/ContactForm'
 
 function Loading() {
   return (
@@ -63,7 +77,7 @@ export default function App() {
           <Route element={<RequireAuth />}>
             <Route path="/farms" element={<FarmPicker />} />
             <Route element={<RequireFarm />}>
-              <Route path="/home" element={<Placeholder title="Home" tab="home" />} />
+              <Route path="/home" element={<Home />} />
               <Route path="/alerts" element={<Placeholder title="Alerts" tab="alerts" />} />
               <Route path="/animals" element={<AnimalList />} />
               <Route path="/animals/new" element={<AnimalForm />} />
@@ -71,6 +85,17 @@ export default function App() {
               <Route path="/animals/scan" element={<ScanTag />} />
               <Route path="/animals/:id" element={<AnimalProfile />} />
               <Route path="/animals/:id/edit" element={<AnimalForm />} />
+              <Route path="/animals/:id/growth" element={<WeightTrend />} />
+              <Route path="/milk" element={<MilkHome />} />
+              <Route path="/milk/sheet" element={<MilkSheet />} />
+              <Route path="/milk/cow" element={<MilkSingle />} />
+              <Route path="/milk/sale" element={<MilkSale />} />
+              <Route path="/weight/new" element={<WeightLog />} />
+              <Route path="/health" element={<HealthHome />} />
+              <Route path="/health/new" element={<HealthForm />} />
+              <Route path="/health/batch" element={<HealthBatch />} />
+              <Route path="/health/withdrawals" element={<WithdrawalList />} />
+              <Route path="/health/:id" element={<HealthForm />} />
               <Route path="/groups" element={<GroupList />} />
               <Route path="/groups/new" element={<GroupForm />} />
               <Route path="/groups/:id" element={<GroupDetail />} />
@@ -83,6 +108,10 @@ export default function App() {
               <Route path="/settings/notifications" element={<SettingsNotifications />} />
               <Route path="/settings/preferences" element={<SettingsPreferences />} />
               <Route path="/settings/milk-rate" element={<SettingsMilkRate />} />
+              <Route path="/settings/milk-grading" element={<GradeRules />} />
+              <Route path="/settings/contacts" element={<Contacts />} />
+              <Route path="/settings/contacts/new" element={<ContactForm />} />
+              <Route path="/settings/contacts/:id" element={<ContactForm />} />
             </Route>
           </Route>
           <Route path="*" element={<Navigate to="/animals" replace />} />

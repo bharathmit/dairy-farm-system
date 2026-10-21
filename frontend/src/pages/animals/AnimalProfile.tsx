@@ -4,6 +4,7 @@ import { Dialog, Footer, LogoMark, Screen, Segmented, Sheet, TopBar } from '../.
 import { Icon, type IconName } from '../../components/icons'
 import { ageText, daysInMilk, fmtDate, inr, toneClass, useStore } from '../../data/store'
 import type { Animal } from '../../data/types'
+import { HealthTab, MilkTab } from './ProfileTabs'
 
 type ExitStatus = 'Sold' | 'Dead' | 'Transferred'
 const REASONS = ['Low milk yield (cull)', 'Fertility problem (cull)', 'Age / replacement', 'Male calf sale', 'Illness', 'Other']
@@ -107,6 +108,8 @@ export default function AnimalProfile() {
   const { id } = useParams()
   const { animals, groups, loading, notify } = useStore()
   const [sheet, setSheet] = useState(false)
+  const [tab, setTab] = useState('Overview')
+  const nav = useNavigate()
   const a = animals.find((x) => x.id === id)
   const later = () => notify('Coming in a later module')
 
@@ -158,17 +161,30 @@ export default function AnimalProfile() {
 
       <div className="grid grid-cols-4 px-4 pb-4">
         {QUICK.map((q) => (
-          <button key={q.label} type="button" onClick={later} className="flex flex-col items-center gap-1.5 border-0 bg-transparent text-xs font-semibold text-ink">
+          <button key={q.label} type="button" onClick={() => {
+            if (q.label === 'Milk') nav(`/milk/cow?animal=${a.id}`)
+            else if (q.label === 'Health') nav(`/health/new?animal=${a.id}&back=/animals/${a.id}`)
+            else if (q.label === 'Weight') nav(`/weight/new?animal=${a.id}`)
+            else later()
+          }} className="flex flex-col items-center gap-1.5 border-0 bg-transparent text-xs font-semibold text-ink">
             <span className="flex h-[52px] w-[52px] items-center justify-center rounded-2xl bg-white"><Icon name={q.icon} color={q.color} /></span>{q.label}
           </button>
         ))}
       </div>
 
       <div role="tablist" aria-label="Sections" className="mb-3.5 flex gap-[18px] overflow-x-auto border-b border-line-soft px-4">
-        {TABS.map((t, i) => (
-          <button key={t} type="button" role="tab" aria-selected={i === 0} onClick={i === 0 ? undefined : later} className={`flex h-11 shrink-0 items-center whitespace-nowrap border-0 border-b-2 bg-transparent px-1 text-sm font-semibold ${i === 0 ? 'border-brand text-ink' : 'border-transparent text-ink-3'}`}>{t}</button>
+        {TABS.map((t) => (
+          <button key={t} type="button" role="tab" aria-selected={tab === t} onClick={() => {
+            if (t === 'Weight') nav(`/animals/${a.id}/growth`)
+            else if (t === 'Overview' || t === 'Health' || (t === 'Milk' && a.sex === 'Female')) setTab(t)
+            else later()
+          }} className={`flex h-11 shrink-0 items-center whitespace-nowrap border-0 border-b-2 bg-transparent px-1 text-sm font-semibold ${tab === t ? 'border-brand text-ink' : 'border-transparent text-ink-3'}`}>{t}</button>
         ))}
       </div>
+
+      {tab === 'Health' && <HealthTab animalId={a.id} />}
+      {tab === 'Milk' && <MilkTab animalId={a.id} />}
+      {tab === 'Overview' && <>
 
       {a.flags.length > 0 && (
         <div className="card bg-warn-soft">
@@ -194,7 +210,7 @@ export default function AnimalProfile() {
 
       {a.weightKg !== undefined && (
         <div className="card">
-          <div className="flex items-baseline justify-between"><div className="mb-2.5 text-[15px] font-bold">Weight</div><button type="button" onClick={later} className="h-11 border-0 bg-transparent text-sm font-semibold text-brand">Trend</button></div>
+          <div className="flex items-baseline justify-between"><div className="mb-2.5 text-[15px] font-bold">Weight</div><Link to={`/animals/${a.id}/growth`} className="flex h-11 items-center text-sm font-semibold">Trend</Link></div>
           <div className="text-[26px] font-bold">{a.weightKg} kg</div>
           <div className="text-[13px] text-ink-3">Latest record</div>
         </div>
@@ -223,6 +239,8 @@ export default function AnimalProfile() {
           ))}
         </div>
       </div>
+
+      </>}
 
       <Footer className="mt-auto" />
       {sheet && <StatusSheet animal={a} onClose={() => setSheet(false)} />}
