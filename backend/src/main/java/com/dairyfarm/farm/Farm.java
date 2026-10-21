@@ -6,6 +6,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import com.dairyfarm.common.Auditable;
+import com.dairyfarm.milk.MilkGradingRules;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,6 +29,10 @@ public class Farm extends Auditable {
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(nullable = false, columnDefinition = "jsonb")
     private FarmSettings settings = FarmSettings.DEFAULTS;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "milk_grading", columnDefinition = "jsonb")
+    private MilkGradingRules milkGrading;
 
     protected Farm() {
     }
@@ -98,5 +103,13 @@ public class Farm extends Auditable {
 
     public void setSettings(FarmSettings settings) {
         this.settings = settings;
+    }
+
+    public MilkGradingRules getMilkGrading() {
+        return milkGrading == null ? MilkGradingRules.DEFAULTS : milkGrading.resolved();
+    }
+
+    public void setMilkGrading(MilkGradingRules milkGrading) {
+        this.milkGrading = milkGrading;
     }
 }

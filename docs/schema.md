@@ -1,7 +1,9 @@
 # Database schema — v4.2
 
 **Status:** tables 1–5 (`app_user`, `farm`, `farm_member`, `animal_group`, `animal`) are approved and
-built (Flyway `V1`, `V2`). Tables 6–13 are still drafts for their modules.
+built (Flyway `V1`, `V2`). **Daily records (Flyway `V3`) built:** `contact` (new, table 14),
+`production_record` (table 10), `farm_event` (table 6, MEASUREMENT and HEALTH used so far) and
+`farm.milk_grading`. Tables 7–9 and 11–13 are still drafts for their modules.
 v4.2 changes: `app_user.preferences`; farm settings now hold milking times; `farm_member` gains email,
 date of birth, sex, left_on and login type; `animal` gains exit_party, last_calving_date and
 current_weight_kg.
@@ -42,6 +44,9 @@ name · village · district · state · country · latitude · longitude ·
 **settings** JSONB: milk rate ₹/L, morning and evening milking times, margin alert % (feed cost vs milk
 income), notifications (on/off, health, breeding, checklist, lead days 0/1/3/7, reminder time, morning
 digest + time, quiet hours start/end). Theme and language moved to `app_user.preferences`.
+**milk_grading** JSONB (NULL = defaults): basis (OWN_LACTATION / BREED), breed peaks (litres, peak day),
+start %, fall % per month, first-calver %, lactation days, grade bands A/B/C, quality checks (min fat,
+min SNF, max SCC) and the sudden-drop alert %. See `docs/api-daily-records.md` for the calculation.
 
 ## 3. `farm_member` — owners and workers
 farm_id · user_id (nullable — a worker can exist without a login) · name · email · phone ·
@@ -72,7 +77,12 @@ GESTATION, OTHER) · manager_member_id · colour · notes.
 | last_calving_date, current_weight_kg | opening values from the animal form; kept current by the breeding and measurement modules |
 | notes | |
 
-## 6. `farm_event` — everything observed on a date
+## 6. `farm_event` — everything observed on a date (built in V3)
+Built now: event types MEASUREMENT (sub_type SCALE/TAPE/ESTIMATE; details.heartGirthCm) and HEALTH
+(sub_type ILLNESS/TREATMENT/VACCINATION/DEWORMING/INJURY; details: symptoms, diagnosis, medicine, dose,
+route, milk/meat withdrawal days). The vet is `contact_id` (→ `contact`) instead of details.vet_name;
+`milk_withdrawal_until` is a timestamptz (treatment date + days, at the evening milking time). `item_id`
+and `member_id` come with the stock and labour modules.
 | Column | Notes |
 |---|---|
 | animal_id | nullable (farm-level events) |
@@ -123,7 +133,11 @@ Stock = purchases + produced + adjustments − usage. A PURCHASE or SERVICE with
 all sharing source_type FORMULA_BATCH; the mix's cost per kg is the ingredient cost ÷ batch kg.
 Feeding at 6 AM / 6 PM = USAGE rows (txn_time) per group or animal.
 
-## 10. `production_record` — milk and other produce
+## 10. `production_record` — milk and other produce (built in V3)
+As built: product MILK/MANURE/OTHER; per-cow rows are AM/PM only (unique per cow, date, session);
+farm totals/sales have animal_id NULL (unique per farm, date, session, product) with sold_qty, rate,
+income_amount, buyer_contact_id (→ `contact`), paid. `withheld` marks milk taken during a withdrawal
+(re-checked whenever milk or health records change). Species/group columns were not needed.
 record_date · session (AM, PM, DAY) · product (MILK, MANURE, MEAT, EGGS, WOOL) · species ·
 animal_id (null = farm total) · group_id · quantity · unit (L, KG) · fat_pct · snf_pct · protein_pct ·
 density · scc · income_amount · buyer · notes.
@@ -161,6 +175,11 @@ UNIQUE (farm_id, config_type, code).
 | RATION_RULE | per animal category (CALF, HEIFER, MILKING, DRY, BULL): `{"bwPct":10,"split":{"green":…,"dry":…,"conc":…},"concBaseKg":1.5,"concPerLitreKg":0.4,"maxConcKg":…,"green":[{"itemId":…,"kg":8},{"itemId":…,"kg":12},{"itemId":…,"kg":5}],"dry":[{"itemId":…,"kg":6},{"itemId":…,"kg":4}],"limits":[{"itemId":…,"maxKgPerDay":…,"stage":"EARLY"}],"targets":{"cpPct":…,"tdnPct":…},"effectiveFrom":"2026-11-01"}` |
 
 ---
+
+## 14. `contact` — buyers, vets, AI technicians, suppliers (built in V3)
+name (unique per farm, ignoring case) · roles TEXT[] (BUYER, VET, AI_TECH, SUPPLIER, OTHER) · phone ·
+village · milk_rate (buyer's usual ₹/L) · pay_every (DELIVERY, WEEK, TEN_DAYS, FORTNIGHT, MONTH) · notes ·
+active. Used by milk sales (Sold to) and health records (Vet); a used contact can only be made inactive.
 
 ## Ration planning (uses tables 6, 8, 9, 10, 13 — no extra table)
 1. **Ingredients** are `item` FEED rows with nutrient values and cost per kg (updated from purchases).

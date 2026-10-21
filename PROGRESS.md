@@ -24,7 +24,9 @@ UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile s
 - [ ] api.md: Modules 5–15 rows still drafts
 - [x] Frontend: in-memory store replaced with API calls + Supabase sign-in (checked end to end in a browser)
 - [ ] Open: Google sign-in (needs Google OAuth in Supabase); milk/flags/days-in-milk fields wait for later modules
-- [ ] Modules 5–15 — see PLAN.md
+- [x] Daily records backend (Canvas 2): Flyway V3 (`contact`, `production_record`, `farm_event`, `farm.milk_grading`); contacts; milk day/trend/grades/herd sheet/one cow/sales with withdrawal check; expected yield by lactation day and A–D grade rules; weight/height/BCS with gain per day; health records, batch, follow-ups, withdrawals. Contract: docs/api-daily-records.md. 69 backend tests pass.
+- [ ] Daily records later: health schedules (due by schedule), growth targets, "at risk" score, finance entries from sales/health cost, alerts
+- [ ] Modules 5–15 (rest) — see PLAN.md
 
 ## Branches
 - `main` — design docs and UI/UX
