@@ -1,6 +1,6 @@
 # Reference site — page inventory
 
-Source: functional reference site (Farmleo web dashboard), mapped 2026-10-21.
+Source: reference site 1 — Farmleo web dashboard, mapped 2026-10-21 (text notes only).
 Used **only** for fields, workflows and data relationships. Our UI is an original design; no
 branding, copy or assets from the reference are reused.
 
@@ -119,3 +119,34 @@ currency · buyer · notes.
   (same day / 1 / 3 / 7 days before) · preferred reminder time.
 - **Account:** first/last name, farm name, farm country.
 - **Subscription:** not needed (own app).
+
+---
+
+## 8. Full pass — popups and details (2026-10-21)
+
+| Screen / popup | What it adds |
+|---|---|
+| Animals list | Layout reference |
+| CSV format help | Import columns: `tag_number*`, `animal_name`, `dob*` (YYYY-MM-DD), `sex*` (male/female/M/F), `species*`, `status` (default active), `national_id`, `dam_tag`, `sire_tag`, `breed`, `color`, `birth_weight` (≥0), `notes`, `acquisition_type` (born/purchased/bought), `acquisition_date`. Case-insensitive values, plurals accepted. |
+| Add animal form | No conditional fields. **Edit animal** = same form, but species is read-only after creation. |
+| Row ⋮ menu | Edit · Copy tag · Delete |
+| Animal photos | Up to 3 photos per animal (paid tier on reference) |
+| Weight trend view | Current weight, change since last, total change, history list (date, weight, method) |
+| Animal detail | Tabs: Overview · Health · Breeding (Breeding tab shown for females only) |
+| Health record | No conditional fields per type |
+| Weight record | "Include BCS" checkbox reveals a BCS slider (default 3.0) |
+| Feed record | Unit list on Feed page: kg, lb, bag, ton, liter. Allocation: species / group / animal (all optional) |
+| Yield record | Unit depends on type: Milk → Liter/kg; Manure → kg/Bag/Ton. From the Yield page: species* required, group "Farm level entry" or a group, animal optional → **supports both farm-total and per-animal milk** |
+| Breeding record | Method AI → "Breeding program" = AI / Embryo transfer. **Expected due date auto-fills** (+283 days for cow). |
+| Lineage | Header KPIs: pedigree % complete, last birth, offspring count, common ancestors. Tabs: Tree, Risks (mate picker), Birth history + linked descendants |
+| Notifications bell | Recent notifications list, link to notification settings |
+| Profile menu | Edit profile · Settings · Log out |
+| "Get the app" | Mobile app promo (not needed) |
+| Farm View overview | Health actions, expected due dates, species mix, recently added |
+| "View all" lists | Search, species, status filters, multi-select, **"Mark all selected as done"** (closes reminders) |
+| Groups / Create group | **Group is per species** (species picker first), group colour, member picker filtered to that species |
+| Reports + drill-down | Every KPI card opens a drill-down list of the animals behind the number, with its own PDF/CSV export |
+| Finances + form | Category list changes with direction (income vs expense) |
+| Feed + form | — |
+| Yield form (page level) | see 10 |
+| Settings | Personalization, Notifications (switches + lead time + time), Account (name, farm name, country; email/account ID/created read-only). Subscription tab skipped (billing). |

@@ -8,7 +8,8 @@ Repo layout
 ```
 /frontend   React app (Supabase Auth login → calls backend only)
 /backend    Spring Boot app (all business logic + DB access)
-/docs       reference/pages.md, schema.md, api.md
+/docs       reference/<site>/pages.md (one folder per reference site),
+            requirements/alerts.md, schema.md, api.md
 PLAN.md     this file
 PROGRESS.md checklist — every session reads it first
 ```
@@ -21,17 +22,19 @@ Rules for every session
 5. Stop and ask the owner before anything not in this plan.
 
 Modules
-0. Design docs approved (schema, API)
-1. Scaffolding — Maven project, Vite project, Flyway baseline, Supabase JWT security, `/me`, CI build
-2. Users & settings — app_user, roles, farm_settings
-3. Animals — CRUD, list filters, status/exit, photo, CSV import/export
-4. Groups — CRUD, members
-5. Lineage — tree, siblings/offspring, mate-risk check
-6. Weight records + growth metrics
-7. Health records — per animal, batch by group, reminders
-8. Breeding — heat/service/pregnancy/calving, calf creation, due dates
-9. Feed — feed items, records, stock, summary
-10. Yield — milk AM/PM per cow, batch session entry, summary
-11. Finance — ledger, auto entries from feed/yield/health, summary
-12. Dashboard & reports — KPIs, P&L, PDF/CSV export
-13. Phase 2 — health schedules, labour, procurement
+0. Design docs approved (reference sites, alerts, schema, API)
+1. Scaffolding — Maven + Vite projects, Flyway baseline, Supabase JWT security, `/me`, CI build
+2. Farms, members, roles, settings (multi-farm)
+3. Animals — CRUD, filters, status/exit, photos, CSV import/export
+4. Groups — per species, members
+5. Lineage — tree, siblings/offspring, pedigree %, mate-risk
+6. Measurements — weight, height, BCS, trend
+7. Health — records, withdrawal periods, schedules, batch by group
+8. Reproduction — heat, breeding/AI, semen stock, pregnancy, calving, calf creation
+9. Calf rearing — colostrum, calf feeding, growth targets, weaning
+10. Feed — feed items, records, stock, summary
+11. Yield — milk AM/PM per cow + farm total, fat/SNF/SCC, batch session entry
+12. Finance — ledger, auto entries, summary
+13. Labour, equipment, procurement
+14. Alerts — rules, daily job, on-save checks, worker visibility, bell + list
+15. Dashboard & reports — KPIs, drill-downs, P&L, PDF/CSV export
