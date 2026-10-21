@@ -1,4 +1,4 @@
-# Requirement coverage — schema v4 (13 tables)
+# Requirement coverage — schema v4.1 (13 tables)
 
 Tables: `app_user` · `farm` · `farm_member` · `animal_group` · `animal` · `farm_event` ·
 `breeding_record` · `item` · `item_txn` · `production_record` · `finance_entry` · `alert` · `config`.
@@ -104,7 +104,7 @@ changed without code. `config.worker_visible` decides whether workers see them.
 | Heat detection and AI date tracking | `farm_event` HEAT, `breeding_record` |
 | Calving / delivery tracking, calf record creation | `breeding_record`, `animal` |
 | Deworming and vaccination reminders (your schedule) | `config` HEALTH_SCHEDULE → `alert` |
-| Feed planning and cost control (feed master, cost log) | `item` FEED, `item_txn`, `finance_entry` |
+| Feed planning and cost control (feed master, cost log) | `item` FEED, `item_txn`, `finance_entry`, ration planner (section F) |
 | Stock / inventory (feed, semen, medicine) | `item`, `item_txn` |
 | P&L — whole farm and per animal | `finance_entry` allocation + `production_record` (calc) |
 | Pedigree and history | `animal` parents, `farm_event`, `breeding_record` |
@@ -117,6 +117,23 @@ changed without code. `config.worker_visible` decides whether workers see them.
 | QR scan / cow ID search → action forms | `animal.tag` |
 | Owner full access, Worker daily entries | `farm_member.role` |
 
+## F. Ration calculation (from your feed design and Excel template)
+| Requirement | Table(s) | How |
+|---|---|---|
+| Feed master with nutrient values and cost | `item` FEED (`details` nutrients) | cost/kg from latest purchase |
+| Concentrate formula, 100 kg batch (maize, sorghum, groundnut/coconut/gingelly cake, ulundhu chunni, rice/wheat bran, molasses, salt, soda, mineral mix) | `config` FEED_FORMULA | lines in kg, live 100 kg total check |
+| Nutrient-target-driven ingredient control | `config` FEED_FORMULA targets + `item` nutrients | calc: nutrient totals vs targets, warnings |
+| Cottonseed cake excluded | `item.details.excluded` | blocked in formulas |
+| Gingelly cake stage-wise daily limits | `config` RATION_RULE limits | warning when exceeded |
+| Cost summary per batch and per kg (~₹21–27/kg) | `item_txn` FORMULA_BATCH rows | calc |
+| Batch preparation updates stock | `item_txn` USAGE + PRODUCE | mix becomes its own stock item |
+| BW × 10 % split green / dry / concentrate | `config` RATION_RULE + latest weight | calc per animal |
+| Concentrate = 1.5 kg + milk L × 0.4 kg | `config` RATION_RULE + `production_record` | calc |
+| Green mix 25 kg (protein fodder 8, grass 12, sorghum/maize 5) and dry 10 kg (straw 6, stalk 4) | `config` RATION_RULE green/dry lines | calc |
+| Max concentrate per category (category baseline sheet) | `config` RATION_RULE maxConcKg | calc + warning |
+| Daily farm totals and cost per day | calc over all active animals | |
+| Feeding at 6 AM / 6 PM (green before milking, concentrate + dry after) | `item_txn` USAGE with time | checklist tasks in `config` DAILY_TASK |
+| Planned vs actual feeding, days of stock left, reorder | `item_txn`, `item.reorder_level`, `alert` | calc + alert |
+
 ## Not covered by tables (handled elsewhere)
-- Detailed ration calculation stays in your Excel feed template (as decided earlier).
 - Subscriptions, mobile-app promotion, IoT/parlour and DHIA integrations from the reference sites — out of scope.

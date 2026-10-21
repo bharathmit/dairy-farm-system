@@ -32,7 +32,7 @@ Modules
 7. Health — records, withdrawal periods, schedules, batch by group
 8. Reproduction — heat, breeding/AI, semen stock, pregnancy, calving, calf creation
 9. Calf rearing — colostrum, calf feeding, growth targets, weaning
-10. Feed — feed items, records, stock, summary
+10. Feed — feed items with nutrients, records, stock, summary, concentrate formula + batch preparation, ration planner
 11. Yield — milk AM/PM per cow + farm total, fat/SNF/SCC, batch session entry
 12. Finance — ledger, auto entries, summary
 13. Labour, equipment, procurement

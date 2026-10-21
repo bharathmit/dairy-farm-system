@@ -1,4 +1,4 @@
-# Database schema — v4 (consolidated) — for review
+# Database schema — v4.1 (consolidated + ration planning) — for review
 
 v3 had 30 tables. v4 covers the same requirements with **13 tables**.
 How each requirement maps to these tables: `docs/requirements/coverage.md`.
@@ -100,14 +100,17 @@ Kept separate because one row is updated over ~10 months and many alerts read it
 | supplier, supplier_contact | |
 | batch_no, expiry_date | semen and medicine expiry |
 | service_every_days, next_service_date | equipment maintenance |
-| details JSONB | SEMEN: bull name/code, breed · MEDICINE: default milk/meat withdrawal days · EQUIPMENT: purchase date/cost |
+| details JSONB | FEED: **nutrients per kg** (dm_pct, cp_pct, tdn_pct, ca_pct, p_pct), max_inclusion_pct, excluded (e.g. cottonseed cake), is_mix (true for a prepared concentrate mix) · SEMEN: bull name/code, breed · MEDICINE: default milk/meat withdrawal days · EQUIPMENT: purchase date/cost |
 | active | |
 
 ## 9. `item_txn` — stock movements
-item_id · txn_type (PURCHASE, USAGE, ADJUSTMENT, SERVICE) · txn_date · txn_time · quantity · cost ·
+item_id · txn_type (PURCHASE, USAGE, ADJUSTMENT, SERVICE, **PRODUCE**) · txn_date · txn_time · quantity · cost ·
 supplier · allocation: species / group_id / animal_id (all optional = whole farm) ·
 source_type / source_id (e.g. the breeding record that used a straw) · notes.
-Stock = purchases + adjustments − usage. A PURCHASE or SERVICE with a cost creates a finance entry.
+Stock = purchases + produced + adjustments − usage. A PURCHASE or SERVICE with a cost creates a finance entry.
+**Concentrate batch preparation** = one USAGE row per ingredient + one PRODUCE row for the mix item,
+all sharing source_type FORMULA_BATCH; the mix's cost per kg is the ingredient cost ÷ batch kg.
+Feeding at 6 AM / 6 PM = USAGE rows (txn_time) per group or animal.
 
 ## 10. `production_record` — milk and other produce
 record_date · session (AM, PM, DAY) · product (MILK, MANURE, MEAT, EGGS, WOOL) · species ·
@@ -143,14 +146,32 @@ UNIQUE (farm_id, config_type, code).
 | GROWTH_TARGET | `{"ageDays":180,"weightKg":150,"heightCm":105}` |
 | GESTATION | `{"days":283}` per species |
 | DAILY_TASK | built-in and custom checklist tasks |
+| FEED_FORMULA | concentrate recipe: `{"batchKg":100,"mixItemId":…,"lines":[{"itemId":…,"kg":20}, …],"targets":{"cpPct":…,"tdnPct":…}}` |
+| RATION_RULE | per animal category (CALF, HEIFER, MILKING, DRY, BULL): `{"bwPct":10,"split":{"green":…,"dry":…,"conc":…},"concBaseKg":1.5,"concPerLitreKg":0.4,"maxConcKg":…,"green":[{"itemId":…,"kg":8},{"itemId":…,"kg":12},{"itemId":…,"kg":5}],"dry":[{"itemId":…,"kg":6},{"itemId":…,"kg":4}],"limits":[{"itemId":…,"maxKgPerDay":…,"stage":"EARLY"}],"targets":{"cpPct":…,"tdnPct":…},"effectiveFrom":"2026-11-01"}` |
 
 ---
+
+## Ration planning (uses tables 6, 8, 9, 10, 13 — no extra table)
+1. **Ingredients** are `item` FEED rows with nutrient values and cost per kg (updated from purchases).
+2. **Concentrate formula** (e.g. your 100 kg Villupuram batch) is a `config` FEED_FORMULA. The planner
+   shows ingredient kg, cost per kg of mix, and nutrient totals vs targets; excluded or over-limit
+   ingredients are flagged.
+3. **Prepare batch** checks ingredient stock and posts `item_txn` USAGE + PRODUCE rows.
+4. **Ration rules** per category are `config` RATION_RULE: body weight × 10 % split into green / dry /
+   concentrate, concentrate = 1.5 kg + 0.4 kg per litre of milk, the green and dry mixes, max
+   concentrate, stage-wise limits (e.g. gingelly cake).
+5. **Daily ration** per animal is calculated from latest weight (`farm_event` MEASUREMENT), yesterday's
+   milk (`production_record`) and category → kg of each feed, cost per day, nutrient check.
+   Group and farm totals (e.g. ~329 kg green, ~86 kg dry, ~110 kg concentrate) are sums.
+6. **Plan vs actual:** planned kg compared with `item_txn` USAGE; days of stock left uses the planned
+   daily need; low stock creates a procurement alert.
+Rule changes keep history through `effectiveFrom`, so old days are still explained by the rule in force.
 
 ## Calculated, not stored
 Age · days in milk · lactation stage · days open · calving interval · pregnancy %, conception rate,
 AI rate · lineage tree, siblings, offspring, pedigree %, mate risk · average daily gain · stock on hand
 and days of stock left · milk grade · income over feed cost · per-animal and farm P&L · ROI ranking ·
-cull-advisor scores · health risk score · THI · dashboards, report drill-downs, compare cows, search.
+cull-advisor scores · health risk score · THI · **daily ration, ration cost, nutrient balance, feed need vs stock** · dashboards, report drill-downs, compare cows, search.
 
 ## Trade-offs to accept
 - JSONB `details` is checked in Java, not by database constraints.
