@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Theme and language</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.sec{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#56655B;margin:18px 20px 8px}
+.lab{font-size:13px;font-weight:600;color:#3B4A41;display:block;margin-bottom:6px}
+.inp{width:100%;box-sizing:border-box;height:48px;border:1px solid #C9D0C6;border-radius:10px;padding:0 14px;font:inherit;font-size:16px;background:#fff;color:#1C2620}
+.seg{display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));background:#E4E6DF;border-radius:12px;padding:4px;margin:0 16px}
+.sb{height:40px;border:0;border-radius:9px;background:transparent;font:inherit;font-weight:600;font-size:14px;color:#3B4A41}
+.on{background:#fff;color:#1C2620}
+</style>
+</helmet>
+<div style="width:390px;height:844px;background:#F4F3EE;display:flex;flex-direction:column">
+  <div style="display:flex;align-items:center;gap:4px;padding:8px 12px">
+    <a href="SettingsHome.dc.html" aria-label="Back" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+    <span aria-hidden="true" style="width:28px;height:28px;border-radius:8px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;flex:none;margin-right:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"></path></svg></span>
+    <h1 style="margin:0;font-size:20px;font-weight:700">Theme &amp; language</h1>
+  </div>
+
+  <div class="sec">Theme</div>
+  <div class="seg"><button class="sb on">Light</button><button class="sb">Dark</button><button class="sb">System</button></div>
+
+  <div class="sec">Language</div>
+  <div class="seg" style="grid-template-columns:repeat(2, minmax(0, 1fr))"><button class="sb on">English</button><button class="sb" lang="ta">தமிழ்</button></div>
+
+  <div style="margin-top:auto;padding:16px 20px 10px;border-top:1px solid #E1E4DC"><button style="height:50px;width:100%;border-radius:12px;border:0;background:#1F5C3A;color:#fff;font:inherit;font-weight:600;font-size:16px">Save</button></div>
+  <div style="text-align:center;font-size:12px;color:#56655B;padding:0 16px 14px">© 2026 Dairy Farm. All rights reserved.</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

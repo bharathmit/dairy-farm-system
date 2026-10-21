@@ -1,7 +1,7 @@
 # Progress
 
 Status: **UI-first. Owner reviewing UI design for Module 1 (login, logout, settings, animals, groups).**
-UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (21 mobile screens). Tables and backend come after the UI is final.
+UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile screens); snapshot in docs/ui-design/module-1/. Tables and backend come after the UI is final.
 
 - [x] Reference site 1 (Farmleo) mapped → docs/reference/farmleo/pages.md, incl. all popups
 - [x] Alert requirements captured → docs/requirements/alerts.md
@@ -22,6 +22,8 @@ UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (21 mobile s
 - Species: all six. Currency INR only; units kg and litres only.
 - Milk: both per-animal and farm-total entries.
 - Deployment: OpenShift later, not now.
+- Auth: email + password and Google sign-in (no phone OTP).
+- Margin alert: total margin below X % (default 30 %), weekly; milking times stored in farm settings.
 - Reference sites are functional references only (text notes, no screenshots); UI is our own design.
 
 ## Notes / blockers

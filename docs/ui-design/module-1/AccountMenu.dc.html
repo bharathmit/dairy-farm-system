@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Account menu</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.row{display:flex;align-items:center;gap:14px;min-height:56px;padding:0 20px;text-decoration:none;color:#1C2620;font-size:16px;font-weight:500}
+</style>
+</helmet>
+<div style="width:390px;height:844px;background:#F4F3EE;position:relative;overflow:hidden">
+  <div style="padding:16px 20px;display:flex;justify-content:space-between;align-items:center">
+    <div style="display:flex;align-items:center;gap:10px"><span aria-hidden="true" style="width:28px;height:28px;border-radius:8px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;flex:none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"></path></svg></span><div style="font-size:22px;font-weight:700">Animals</div></div>
+    <div style="width:40px;height:40px;border-radius:20px;background:#1F5C3A;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center">B</div>
+  </div>
+  <div style="position:absolute;inset:0;background:rgba(20,30,24,.45)"></div>
+  <div style="position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:22px 22px 0 0;padding:10px 0 28px">
+    <div style="width:40px;height:4px;border-radius:2px;background:#C9D0C6;margin:0 auto 14px"></div>
+    <div style="display:flex;align-items:center;gap:14px;padding:4px 20px 16px;border-bottom:1px solid #ECEEE8">
+      <div style="width:48px;height:48px;border-radius:24px;background:#1F5C3A;color:#fff;font-weight:700;font-size:18px;display:flex;align-items:center;justify-content:center">B</div>
+      <div><div style="font-weight:700;font-size:17px">Bharath</div><div style="font-size:13px;color:#56655B">bharath@… · Owner</div></div>
+    </div>
+    <a class="row" href="FarmPicker.dc.html">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3B4A41" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-6 9 6v10H3z"/><path d="M9 20v-6h6v6"/></svg>
+      <div style="flex:1"><div>Villupuram Dairy</div><div style="font-size:13px;color:#56655B;font-weight:400">Current farm</div></div>
+      <span style="font-size:14px;font-weight:600;color:#1F5C3A">Switch</span>
+    </a>
+    <a class="row" href="SettingsHome.dc.html">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3B4A41" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></svg>
+      <div style="flex:1">Settings</div>
+    </a>
+    <a class="row" href="#">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3B4A41" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/></svg>
+      <div style="flex:1">Help</div>
+    </a>
+    <a class="row" href="LogoutConfirm.dc.html" style="color:#A3271B">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#A3271B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+      <div style="flex:1">Log out</div>
+    </a>
+    <div style="text-align:center;font-size:12px;color:#56655B;padding:10px 16px 0">© 2026 Dairy Farm. All rights reserved.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

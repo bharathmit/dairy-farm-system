@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Team</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.sec{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#56655B;margin:18px 20px 8px}
+.grp{background:#fff;border-radius:14px;margin:0 16px;overflow:hidden}
+.row{display:flex;align-items:center;gap:12px;min-height:68px;padding:0 16px;border-top:1px solid #EEF0EA;text-decoration:none;color:#1C2620}
+.row:first-child{border-top:0}
+.av{width:40px;height:40px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-weight:700;flex:none}
+.tag{font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px}
+.sb{height:40px;border:0;border-radius:9px;background:transparent;font:inherit;font-weight:600;font-size:14px;color:#3B4A41}
+.on{background:#fff;color:#1C2620}
+</style>
+</helmet>
+<div style="width:390px;height:844px;background:#F4F3EE;position:relative;overflow:hidden">
+  <div style="display:flex;align-items:center;gap:4px;padding:8px 12px">
+    <a href="SettingsHome.dc.html" aria-label="Back" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+    <span aria-hidden="true" style="width:28px;height:28px;border-radius:8px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;flex:none;margin-right:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"></path></svg></span>
+    <h1 style="margin:0;font-size:20px;font-weight:700;flex:1">Team</h1>
+  </div>
+  <div role="group" aria-label="Filter members" style="display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));background:#E4E6DF;border-radius:12px;padding:4px;margin:4px 16px 0">
+    <button class="sb on" aria-pressed="true">All (5)</button><button class="sb" aria-pressed="false">Active (4)</button><button class="sb" aria-pressed="false">Inactive (1)</button>
+  </div>
+
+  <div class="sec">Owners · full access</div>
+  <div class="grp">
+    <div class="row"><div class="av" style="background:#1F5C3A;color:#fff">B</div><div style="flex:1"><div style="font-weight:600">Bharath <span style="font-weight:400;color:#56655B">(you)</span></div><div style="font-size:13px;color:#56655B">bharath@… · signs in</div></div><span class="tag" style="background:#1F5C3A;color:#fff">Owner</span></div>
+    <div class="row"><div class="av" style="background:#E7F0E9;color:#1F5C3A">[O]</div><div style="flex:1"><div style="font-weight:600">[Co-owner name]</div><div style="font-size:13px;color:#56655B">[co-owner email] · signs in</div></div><span class="tag" style="background:#1F5C3A;color:#fff">Owner</span></div>
+  </div>
+
+  <div class="sec">Workers · daily records</div>
+  <div class="grp">
+    <a class="row" href="SettingsInvite.dc.html"><div class="av" style="background:#F3E9D9;color:#7A4B0E">M</div><div style="flex:1"><div style="font-weight:600">Murugan</div><div style="font-size:13px;color:#56655B">+91 9xxxx · signs in · ₹500/day</div></div><span class="tag" style="background:#E4E6DF;color:#3B4A41">Worker</span></a>
+    <a class="row" href="SettingsInvite.dc.html"><div class="av" style="background:#F3E9D9;color:#7A4B0E">S</div><div style="flex:1"><div style="font-weight:600">Selvi</div><div style="font-size:13px;color:#56655B">No login · ₹12,000/month</div></div><span class="tag" style="background:#E4E6DF;color:#3B4A41">Worker</span></a>
+    <a class="row" href="SettingsInvite.dc.html"><div class="av" style="background:#ECECEC;color:#56655B">R</div><div style="flex:1"><div style="font-weight:600;color:#56655B">Ravi</div><div style="font-size:13px;color:#56655B">Inactive since Sep 2026</div></div><span class="tag" style="background:#E4E6DF;color:#56655B">Inactive</span></a>
+  </div>
+  <p style="margin:14px 20px 0;font-size:13px;color:#56655B;line-height:1.5">Workers can add milk, feed, health and weight records and see health and feeding reminders. They can't delete records, see finances or change settings.</p>
+
+  <div style="position:absolute;left:0;right:0;bottom:14px;text-align:center;font-size:12px;color:#56655B">© 2026 Dairy Farm. All rights reserved.</div>
+  <div style="position:absolute;left:20px;right:20px;bottom:44px">
+    <a href="SettingsInvite.dc.html" style="height:50px;border-radius:12px;background:#1F5C3A;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;text-decoration:none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add member</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

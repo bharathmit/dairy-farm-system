@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Logout confirm</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+</style>
+</helmet>
+<div style="width:390px;height:844px;background:#F4F3EE;position:relative;overflow:hidden">
+  <div style="padding:16px 20px;display:flex;align-items:center;gap:10px"><span aria-hidden="true" style="width:28px;height:28px;border-radius:8px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;flex:none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"></path></svg></span><span style="font-size:22px;font-weight:700">Animals</span></div>
+  <div style="position:absolute;left:0;right:0;bottom:14px;text-align:center;font-size:12px;color:#56655B">© 2026 Dairy Farm. All rights reserved.</div>
+  <div style="position:absolute;inset:0;background:rgba(20,30,24,.45)"></div>
+  <div role="dialog" aria-labelledby="lt" style="position:absolute;left:24px;right:24px;top:280px;background:#fff;border-radius:18px;padding:24px">
+    <h2 id="lt" style="margin:0 0 8px;font-size:20px;font-weight:700">Log out?</h2>
+    <p style="margin:0 0 20px;font-size:15px;line-height:1.5;color:#3B4A41">You'll need to sign in again to use the app on this phone.</p>
+    <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:12px">
+      <a href="AccountMenu.dc.html" style="height:48px;border-radius:12px;border:1px solid #C9D0C6;display:flex;align-items:center;justify-content:center;font-weight:600;color:#1C2620;text-decoration:none">Cancel</a>
+      <a href="Main.dc.html" style="height:48px;border-radius:12px;background:#A3271B;display:flex;align-items:center;justify-content:center;font-weight:600;color:#fff;text-decoration:none">Log out</a>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

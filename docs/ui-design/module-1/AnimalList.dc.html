@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Animals list</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.seg{display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));background:#E4E6DF;border-radius:12px;padding:4px;margin:0 16px}
+.sb{height:38px;border-radius:9px;font-weight:600;font-size:14px;color:#3B4A41;display:flex;align-items:center;justify-content:center;text-decoration:none}
+.chip{height:36px;padding:0 12px;border-radius:18px;border:1px solid #C9D0C6;background:#fff;font:inherit;font-size:14px;font-weight:500;color:#1C2620;white-space:nowrap;flex:none}
+.on{background:#1F5C3A;border-color:#1F5C3A;color:#fff}
+.card{display:flex;gap:12px;background:#fff;border-radius:14px;padding:12px;text-decoration:none;color:#1C2620}
+.pic{width:56px;height:56px;border-radius:12px;background:#E7F0E9;display:flex;align-items:center;justify-content:center;flex:none;font-weight:700;color:#1F5C3A;font-size:13px}
+.b{font-size:12px;font-weight:600;padding:2px 8px;border-radius:6px;white-space:nowrap}
+.nav{position:absolute;left:0;right:0;bottom:0;height:72px;background:#fff;border-top:1px solid #E1E4DC;display:grid;grid-template-columns:repeat(5, minmax(0, 1fr))}
+.ni{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:600;color:#56655B;text-decoration:none}
+</style>
+</helmet>
+<div style="width:390px;height:844px;background:#F4F3EE;position:relative;overflow:hidden">
+  <div style="display:flex;align-items:center;padding:14px 16px 10px;gap:8px">
+    <span aria-hidden="true" style="width:28px;height:28px;border-radius:8px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;flex:none;margin-right:2px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"></path></svg></span>
+    <h1 style="margin:0;font-size:24px;font-weight:700;flex:1">Herd</h1>
+    <a href="AnimalImport.dc.html" aria-label="Import or export" style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg></a>
+    <a href="AccountMenu.dc.html" aria-label="Account" style="width:40px;height:40px;border-radius:20px;background:#1F5C3A;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;text-decoration:none">B</a>
+  </div>
+  <div class="seg"><a class="sb" href="AnimalList.dc.html" style="background:#fff;color:#1C2620">Animals · 20</a><a class="sb" href="GroupList.dc.html">Groups · 4</a></div>
+
+  <div style="display:flex;gap:8px;padding:12px 16px 0">
+    <label style="flex:1;height:46px;background:#fff;border:1px solid #C9D0C6;border-radius:12px;display:flex;align-items:center;gap:8px;padding:0 12px">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#56655B" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+      <input aria-label="Search animals" placeholder="Tag, name, breed…" style="border:0;outline:0;font:inherit;font-size:15px;flex:1;min-width:0;background:transparent">
+    </label>
+    <a href="ScanTag.dc.html" aria-label="Scan ear tag" style="width:46px;height:46px;border-radius:12px;background:#fff;border:1px solid #C9D0C6;display:flex;align-items:center;justify-content:center;box-sizing:border-box"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M7 12h10"/></svg></a>
+    <a href="AnimalFilters.dc.html" aria-label="Filters, 1 active" style="width:46px;height:46px;border-radius:12px;background:#fff;border:1px solid #C9D0C6;display:flex;align-items:center;justify-content:center;box-sizing:border-box;position:relative"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg><span style="position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:4px;background:#C2410C"></span></a>
+  </div>
+
+  <div style="display:flex;gap:8px;padding:12px 16px;overflow:hidden">
+    <button class="chip on">All 20</button><button class="chip">Milking 9</button><button class="chip">Dry 3</button><button class="chip">Heifers 2</button><button class="chip">Calves 4</button>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:10px;padding:0 16px">
+    <a class="card" href="AnimalProfile.dc.html">
+      <div class="pic">HF</div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:8px"><span style="font-weight:700;font-size:16px">VD-001</span><span style="color:#3B4A41">Lakshmi</span></div>
+        <div style="font-size:13px;color:#56655B;margin-top:2px">Cow · HF · 5 y 2 m · Milking · DIM 84</div>
+        <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap"><span class="b" style="background:#E7F0E9;color:#1F5C3A">Pregnant</span><span class="b" style="background:#FBE4E1;color:#8E2216">Milk withdrawal · 2 d</span></div>
+      </div>
+      <div style="text-align:right;font-size:13px;color:#56655B"><div style="font-weight:700;font-size:16px;color:#1C2620">18.5 L</div>yesterday</div>
+    </a>
+    <a class="card" href="AnimalProfile.dc.html">
+      <div class="pic">J</div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:8px"><span style="font-weight:700;font-size:16px">VD-008</span><span style="color:#3B4A41">Kaveri</span></div>
+        <div style="font-size:13px;color:#56655B;margin-top:2px">Cow · Jersey · 4 y 7 m · Dry</div>
+        <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap"><span class="b" style="background:#FBF1E2;color:#7A4B0E">Calving in 12 d</span></div>
+      </div>
+    </a>
+    <a class="card" href="AnimalProfile.dc.html">
+      <div class="pic">HF</div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:8px"><span style="font-weight:700;font-size:16px">VD-015</span><span style="color:#3B4A41">Ganga</span></div>
+        <div style="font-size:13px;color:#56655B;margin-top:2px">Heifer · HF × Jersey · 14 m</div>
+        <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap"><span class="b" style="background:#E6EEF8;color:#1F4E87">First AI due</span></div>
+      </div>
+    </a>
+    <a class="card" href="AnimalProfile.dc.html">
+      <div class="pic">J</div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:8px"><span style="font-weight:700;font-size:16px">VD-019</span><span style="color:#3B4A41">—</span></div>
+        <div style="font-size:13px;color:#56655B;margin-top:2px">Calf · Jersey · ♀ · 23 d</div>
+        <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap"><span class="b" style="background:#FBF1E2;color:#7A4B0E">Deworm day 30</span></div>
+      </div>
+    </a>
+  </div>
+
+  <a href="AnimalForm.dc.html" aria-label="Add animal" style="position:absolute;right:16px;bottom:112px;height:52px;padding:0 20px;border-radius:26px;background:#1F5C3A;color:#fff;display:flex;align-items:center;gap:8px;font-weight:600;text-decoration:none;box-shadow:0 6px 14px rgba(31,92,58,.3)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add animal</a>
+
+  <div style="position:absolute;left:0;right:0;bottom:72px;text-align:center;font-size:12px;color:#56655B;padding:8px 16px;background:#F4F3EE">© 2026 Dairy Farm. All rights reserved.</div>
+  <nav class="nav" aria-label="Main">
+    <a class="ni" href="#"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-6 9 6v10H3z"/></svg>Home</a>
+    <a class="ni" href="AnimalList.dc.html" style="color:#1F5C3A"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>Herd</a>
+    <a class="ni" href="#" aria-label="Add record"><span style="width:48px;height:48px;border-radius:24px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;margin-top:-18px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span></a>
+    <a class="ni" href="#"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/></svg>Alerts</a>
+    <a class="ni" href="SettingsHome.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>More</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

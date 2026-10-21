@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Animal filters</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.h{font-size:14px;font-weight:700;margin:16px 0 8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{height:36px;padding:0 12px;border-radius:18px;border:1px solid #C9D0C6;background:#fff;font:inherit;font-size:14px;font-weight:500;color:#1C2620}
+.on{background:#1F5C3A;border-color:#1F5C3A;color:#fff}
+</style>
+</helmet>
+<div style="width:390px;height:844px;background:#F4F3EE;position:relative;overflow:hidden">
+  <div style="position:absolute;inset:0;background:rgba(20,30,24,.45)"></div>
+  <div style="position:absolute;left:0;right:0;bottom:0;top:64px;background:#fff;border-radius:22px 22px 0 0;display:flex;flex-direction:column">
+    <div style="display:flex;align-items:center;padding:14px 16px 4px">
+      <span aria-hidden="true" style="width:28px;height:28px;border-radius:8px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;flex:none;margin-right:10px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"></path></svg></span>
+      <h2 style="margin:0;font-size:20px;font-weight:700;flex:1">Filters</h2>
+      <button style="height:40px;padding:0 10px;border:0;background:transparent;font:inherit;font-weight:600;color:#1F5C3A;font-size:15px">Clear all</button>
+    </div>
+    <div style="padding:0 16px;overflow:hidden;flex:1">
+      <div class="h">Species</div>
+      <div class="chips"><button class="chip on">Cow</button><button class="chip">Buffalo</button><button class="chip">Goat</button><button class="chip">Sheep</button><button class="chip">Pig</button><button class="chip">Poultry</button></div>
+      <div class="h">Category</div>
+      <div class="chips"><button class="chip">Calf</button><button class="chip">Heifer</button><button class="chip">Milking</button><button class="chip">Dry</button><button class="chip">Bull</button></div>
+      <div class="h">Status</div>
+      <div class="chips"><button class="chip on">Active</button><button class="chip">Sold</button><button class="chip">Dead</button><button class="chip">Transferred</button></div>
+      <div class="h">Needs attention</div>
+      <div class="chips"><button class="chip">Pregnant</button><button class="chip">In milk withdrawal</button><button class="chip">High SCC</button><button class="chip">Alerts due</button></div>
+      <div class="h">Lactation stage</div>
+      <div class="chips"><button class="chip">Early 0–100 d</button><button class="chip">Mid 100–200 d</button><button class="chip">Late 200+ d</button></div>
+      <div class="h">Group &amp; sort</div>
+      <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:10px">
+        <label style="font-size:13px;font-weight:600;color:#3B4A41">Group<select style="display:block;width:100%;margin-top:6px;height:46px;border:1px solid #C9D0C6;border-radius:10px;padding:0 10px;font:inherit;font-size:15px;background:#fff"><option>All groups</option><option>Milking shed A</option><option>Dry cows</option><option>Calves</option><option>No group</option></select></label>
+        <label style="font-size:13px;font-weight:600;color:#3B4A41">Sort by<select style="display:block;width:100%;margin-top:6px;height:46px;border:1px solid #C9D0C6;border-radius:10px;padding:0 10px;font:inherit;font-size:15px;background:#fff"><option>Tag A–Z</option><option>Newest added</option><option>Oldest first</option><option>Milk yield</option></select></label>
+      </div>
+    </div>
+    <div style="padding:14px 16px 10px;border-top:1px solid #E1E4DC"><a href="AnimalList.dc.html" style="height:50px;border-radius:12px;background:#1F5C3A;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;text-decoration:none">Show 9 animals</a></div>
+    <div style="text-align:center;font-size:12px;color:#56655B;padding:0 16px 14px">© 2026 Dairy Farm. All rights reserved.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

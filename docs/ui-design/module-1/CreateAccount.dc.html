@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Create account</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.lab{font-size:13px;font-weight:600;color:#3B4A41;display:block;margin-bottom:6px}
+.inp{width:100%;box-sizing:border-box;height:48px;border:1px solid #C9D0C6;border-radius:10px;padding:0 14px;font:inherit;font-size:16px;background:#fff;color:#1C2620}
+.btn{height:50px;border-radius:12px;border:0;font:inherit;font-weight:600;font-size:16px;background:#1F5C3A;color:#fff;width:100%}
+.btn2{height:50px;border-radius:12px;border:1px solid #C9D0C6;font:inherit;font-weight:600;font-size:16px;background:#fff;color:#1C2620;width:100%}
+.eye{position:absolute;right:2px;top:2px;width:44px;height:44px;border:0;background:transparent;display:flex;align-items:center;justify-content:center;border-radius:8px}
+</style>
+</helmet>
+<div style="width:390px;height:1040px;background:#F4F3EE;display:flex;flex-direction:column;box-sizing:border-box;padding:56px 24px 20px">
+  <div style="display:flex;align-items:center;gap:12px">
+    <div style="width:44px;height:44px;border-radius:12px;background:#1F5C3A;display:flex;align-items:center;justify-content:center">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"></path></svg>
+    </div>
+    <div style="font-size:20px;font-weight:700;flex:1">Dairy Farm</div>
+    <a href="Main.dc.html" style="font-size:14px;font-weight:600;min-height:44px;display:flex;align-items:center;padding:0 4px">Sign in</a>
+  </div>
+  <h1 style="margin:40px 0 6px;font-size:28px;font-weight:700">Create your account</h1>
+  <p style="margin:0 0 24px;color:#56655B;font-size:15px">For farm owners. You can add workers after setup.</p>
+
+  <div style="display:flex;flex-direction:column;gap:16px">
+    <div><label class="lab" for="fn">Full name *</label><input class="inp" id="fn" placeholder="Your name"></div>
+    <div><label class="lab" for="fm">Farm name *</label><input class="inp" id="fm" placeholder="e.g. Villupuram Dairy"></div>
+    <div><label class="lab" for="em">Email *</label><input class="inp" id="em" type="email" placeholder="you@example.com"></div>
+    <div><label class="lab" for="ph">Phone</label><input class="inp" id="ph" type="tel" placeholder="+91"></div>
+    <div><label class="lab" for="pw">Password *</label>
+      <div style="position:relative">
+        <input class="inp" id="pw" type="password" placeholder="At least 8 characters" style="padding-right:52px">
+        <button type="button" class="eye" aria-label="Show password"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#56655B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
+      </div>
+    </div>
+    <div><label class="lab" for="pw2">Confirm password *</label><input class="inp" id="pw2" type="password" placeholder="Re-enter password"></div>
+    <label style="display:flex;align-items:center;gap:10px;font-size:14px;color:#3B4A41;min-height:44px"><input type="checkbox" style="width:20px;height:20px;accent-color:#1F5C3A;flex:none"> <span>I agree to the <a href="#">Terms</a> and <a href="#">Privacy policy</a></span></label>
+  </div>
+
+  <a href="FarmPicker.dc.html" class="btn" style="display:flex;align-items:center;justify-content:center;text-decoration:none;margin-top:8px">Create account</a>
+  <div style="display:flex;align-items:center;gap:12px;margin:20px 0;color:#56655B;font-size:13px"><div style="flex:1;height:1px;background:#D3D8CF"></div>or<div style="flex:1;height:1px;background:#D3D8CF"></div></div>
+  <button class="btn2">Sign up with Google</button>
+
+  <div style="margin-top:auto;text-align:center;font-size:14px;color:#56655B">Already have an account? <a href="Main.dc.html" style="font-weight:600">Sign in</a></div>
+  <div style="text-align:center;font-size:12px;color:#56655B;padding:10px 16px 0">© 2026 Dairy Farm. All rights reserved.</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1040}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

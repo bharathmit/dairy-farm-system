@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Settings</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.sec{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#56655B;margin:20px 20px 8px}
+.grp{background:#fff;border-radius:14px;margin:0 16px;overflow:hidden}
+.row{display:flex;align-items:center;gap:14px;min-height:60px;padding:0 16px;text-decoration:none;color:#1C2620;border-top:1px solid #EEF0EA}
+.row:first-child{border-top:0}
+.ic{width:36px;height:36px;border-radius:10px;background:#E7F0E9;display:flex;align-items:center;justify-content:center;flex:none}
+.t{font-size:16px;font-weight:500}.s{font-size:13px;color:#56655B}
+.nav{position:absolute;left:0;right:0;bottom:0;height:72px;background:#fff;border-top:1px solid #E1E4DC;display:grid;grid-template-columns:repeat(5, minmax(0, 1fr))}
+.ni{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:600;color:#56655B;text-decoration:none}
+</style>
+</helmet>
+<div style="width:390px;height:844px;background:#F4F3EE;position:relative;overflow:hidden">
+  <div style="padding:16px 20px 4px"><div style="display:flex;align-items:center;gap:10px"><span aria-hidden="true" style="width:28px;height:28px;border-radius:8px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;flex:none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"></path></svg></span><h1 style="margin:0;font-size:26px;font-weight:700">Settings</h1></div><div style="font-size:14px;color:#56655B;margin-top:2px">Villupuram Dairy</div></div>
+
+  <div class="sec">Farm</div>
+  <div class="grp">
+    <a class="row" href="SettingsFarm.dc.html"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F5C3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-6 9 6v10H3z"/></svg></div><div style="flex:1"><div class="t">Farm profile</div><div class="s">Name, address, location</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8A968D" stroke-width="2" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+    <a class="row" href="SettingsTeam.dc.html"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F5C3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M21.5 20a6.5 6.5 0 0 0-4-6"/></svg></div><div style="flex:1"><div class="t">Team</div><div class="s">2 owners · 3 workers</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8A968D" stroke-width="2" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+    <a class="row" href="SettingsMilkRate.dc.html"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F5C3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"/></svg></div><div style="flex:1"><div class="t">Milk rate &amp; margins</div><div class="s">₹38.00 / L · alert below 30 % margin</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8A968D" stroke-width="2" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+  </div>
+
+  <div class="sec">App</div>
+  <div class="grp">
+    <a class="row" href="SettingsNotifications.dc.html"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F5C3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg></div><div style="flex:1"><div class="t">Notifications</div><div class="s">Reminders 1 day before · 7:00 AM digest</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8A968D" stroke-width="2" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+    <a class="row" href="SettingsPreferences.dc.html"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F5C3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2"/></svg></div><div style="flex:1"><div class="t">Theme &amp; language</div><div class="s">Light · English</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8A968D" stroke-width="2" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+    <a class="row" href="#"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F5C3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h7"/></svg></div><div style="flex:1"><div class="t">Alert rules &amp; schedules</div><div class="s">Set up in a later module</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8A968D" stroke-width="2" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+  </div>
+
+  <div class="grp" style="margin-top:20px">
+    <a class="row" href="LogoutConfirm.dc.html" style="color:#A3271B;justify-content:center;font-weight:600">Log out</a>
+  </div>
+  <div style="text-align:center;font-size:12px;color:#56655B;margin-top:12px">Version 1.0.0<br>© 2026 Dairy Farm. All rights reserved.</div>
+
+  <nav class="nav" aria-label="Main">
+    <a class="ni" href="#"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-6 9 6v10H3z"/></svg>Home</a>
+    <a class="ni" href="AnimalList.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>Animals</a>
+    <a class="ni" href="#" aria-label="Add record"><span style="width:48px;height:48px;border-radius:24px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;margin-top:-18px;box-shadow:0 4px 10px rgba(31,92,58,.3)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span></a>
+    <a class="ni" href="#"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/></svg>Alerts</a>
+    <a class="ni" href="SettingsHome.dc.html" style="color:#1F5C3A"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>More</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

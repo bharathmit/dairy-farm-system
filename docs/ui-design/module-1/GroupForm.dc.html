@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Create or edit group</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.sec{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#56655B;margin:22px 0 10px}
+.lab{font-size:13px;font-weight:600;color:#3B4A41;display:block;margin-bottom:6px}
+.inp{width:100%;box-sizing:border-box;height:48px;border:1px solid #C9D0C6;border-radius:10px;padding:0 14px;font:inherit;font-size:16px;background:#fff;color:#1C2620}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{height:36px;padding:0 12px;border-radius:18px;border:1px solid #C9D0C6;background:#fff;font:inherit;font-size:14px;font-weight:500;color:#1C2620}
+.on{background:#1F5C3A;border-color:#1F5C3A;color:#fff}
+.sw{width:36px;height:36px;border-radius:18px;border:3px solid #fff;box-shadow:0 0 0 1px #C9D0C6}
+.m{display:flex;align-items:center;gap:12px;min-height:56px;border-top:1px solid #EEF0EA;padding:0 12px}
+.m:first-child{border-top:0}
+.cb{width:22px;height:22px;accent-color:#1F5C3A;margin:0}
+</style>
+</helmet>
+<div style="width:390px;height:1300px;background:#F4F3EE;display:flex;flex-direction:column">
+  <div style="display:flex;align-items:center;gap:4px;padding:8px 12px;border-bottom:1px solid #E1E4DC">
+    <a href="GroupList.dc.html" aria-label="Close" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+    <span aria-hidden="true" style="width:28px;height:28px;border-radius:8px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;flex:none;margin-right:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"></path></svg></span>
+    <h1 style="margin:0;font-size:20px;font-weight:700">New group</h1>
+  </div>
+  <div style="padding:0 20px 20px">
+    <div class="sec">Species *</div>
+    <div class="chips"><button class="chip on">Cow</button><button class="chip">Buffalo</button><button class="chip">Goat</button><button class="chip">Sheep</button><button class="chip">Pig</button><button class="chip">Poultry</button></div>
+    <div style="font-size:12px;color:#56655B;margin-top:6px">A group holds one species only.</div>
+
+    <div class="sec">Details</div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div><label class="lab" for="gn">Group name *</label><input class="inp" id="gn" value="Milking shed A"></div>
+      <div><label class="lab" for="gl">Location</label><input class="inp" id="gl" placeholder="Shed, paddock, pen…" value="Shed A"></div>
+      <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:12px">
+        <div><label class="lab" for="go">Purpose</label><select class="inp" id="go"><option>Maintenance</option><option>Growth / fattening</option><option>Recovery</option><option>Gestation</option><option>Other</option></select></div>
+        <div><label class="lab" for="gm">Manager</label><select class="inp" id="gm"><option>Murugan</option><option>Selvi</option><option>None</option></select></div>
+      </div>
+      <div><span class="lab">Colour</span><div style="display:flex;gap:12px">
+        <button class="sw" aria-label="Green, selected" style="background:#1F5C3A;box-shadow:0 0 0 2px #1C2620"></button><button class="sw" aria-label="Orange" style="background:#C2410C"></button><button class="sw" aria-label="Blue" style="background:#1F4E87"></button><button class="sw" aria-label="Brown" style="background:#7A4B0E"></button><button class="sw" aria-label="Purple" style="background:#5B3A8C"></button>
+      </div></div>
+      <div><label class="lab" for="gt">Notes</label><textarea id="gt" style="width:100%;box-sizing:border-box;height:72px;border:1px solid #C9D0C6;border-radius:10px;padding:12px 14px;font:inherit;font-size:16px;resize:none"></textarea></div>
+    </div>
+
+    <div class="sec">Members · 9 selected</div>
+    <label style="height:46px;background:#fff;border:1px solid #C9D0C6;border-radius:12px;display:flex;align-items:center;gap:8px;padding:0 12px;margin-bottom:10px">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#56655B" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+      <input aria-label="Search cows" placeholder="Search cows" style="border:0;outline:0;font:inherit;font-size:15px;flex:1;background:transparent">
+    </label>
+    <div class="chips" style="margin-bottom:10px"><button class="chip on">Milking</button><button class="chip">Dry</button><button class="chip">Not in a group</button></div>
+    <div style="background:#fff;border-radius:14px;overflow:hidden">
+      <label class="m"><input class="cb" type="checkbox" checked><span style="flex:1"><b>VD-001</b> Lakshmi<br><span style="font-size:13px;color:#56655B">HF · Milking</span></span></label>
+      <label class="m"><input class="cb" type="checkbox" checked><span style="flex:1"><b>VD-002</b> Ponni<br><span style="font-size:13px;color:#56655B">HF · Milking</span></span></label>
+      <label class="m"><input class="cb" type="checkbox"><span style="flex:1"><b>VD-009</b> Thenmozhi<br><span style="font-size:13px;color:#56655B">Jersey · Milking · in "Dry cows" — will move</span></span></label>
+      <label class="m"><input class="cb" type="checkbox" checked><span style="flex:1"><b>VD-011</b> Malar<br><span style="font-size:13px;color:#56655B">Jersey · Milking</span></span></label>
+    </div>
+  </div>
+  <div style="margin-top:auto;padding:16px 20px 10px;border-top:1px solid #E1E4DC"><a href="GroupDetail.dc.html" style="height:50px;border-radius:12px;background:#1F5C3A;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;text-decoration:none">Save group</a></div>
+  <div style="text-align:center;font-size:12px;color:#56655B;padding:0 16px 14px">© 2026 Dairy Farm. All rights reserved.</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1300}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

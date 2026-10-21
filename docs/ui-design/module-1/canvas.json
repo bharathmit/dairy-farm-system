@@ -1,0 +1,244 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "AccountMenu.dc.html": {
+      "h": 844,
+      "title": "Account menu",
+      "w": 390,
+      "x": 2350,
+      "y": 0
+    },
+    "AnimalFilters.dc.html": {
+      "h": 844,
+      "title": "Animal filters",
+      "w": 390,
+      "x": 470,
+      "y": 3248
+    },
+    "AnimalForm.dc.html": {
+      "h": 1480,
+      "title": "Add / edit animal",
+      "w": 390,
+      "x": 940,
+      "y": 3248
+    },
+    "AnimalImport.dc.html": {
+      "h": 844,
+      "title": "Import CSV",
+      "w": 390,
+      "x": 2350,
+      "y": 3248
+    },
+    "AnimalList.dc.html": {
+      "h": 844,
+      "title": "Animals list",
+      "w": 390,
+      "x": 0,
+      "y": 3248
+    },
+    "AnimalProfile.dc.html": {
+      "h": 1240,
+      "title": "Animal profile",
+      "w": 390,
+      "x": 1410,
+      "y": 3248
+    },
+    "AnimalStatus.dc.html": {
+      "h": 844,
+      "title": "Change status (sold / dead)",
+      "w": 390,
+      "x": 1880,
+      "y": 3248
+    },
+    "CreateAccount.dc.html": {
+      "h": 1040,
+      "title": "Create account",
+      "w": 390,
+      "x": 470,
+      "y": 0
+    },
+    "FarmPicker.dc.html": {
+      "h": 844,
+      "title": "Choose farm",
+      "w": 390,
+      "x": 1880,
+      "y": 0
+    },
+    "ForgotPassword.dc.html": {
+      "h": 844,
+      "title": "Forgot password",
+      "w": 390,
+      "x": 940,
+      "y": 0
+    },
+    "GroupDetail.dc.html": {
+      "h": 980,
+      "title": "Group detail",
+      "w": 390,
+      "x": 940,
+      "y": 5148
+    },
+    "GroupForm.dc.html": {
+      "h": 1300,
+      "title": "Create / edit group",
+      "w": 390,
+      "x": 470,
+      "y": 5148
+    },
+    "GroupList.dc.html": {
+      "h": 844,
+      "title": "Groups list",
+      "w": 390,
+      "x": 0,
+      "y": 5148
+    },
+    "LogoutConfirm.dc.html": {
+      "h": 844,
+      "title": "Logout confirm",
+      "w": 390,
+      "x": 2820,
+      "y": 0
+    },
+    "Main.dc.html": {
+      "h": 844,
+      "title": "Login",
+      "w": 390,
+      "x": 0,
+      "y": 0
+    },
+    "ScanTag.dc.html": {
+      "h": 844,
+      "title": "Scan ear tag",
+      "w": 390,
+      "x": 2820,
+      "y": 3248
+    },
+    "SettingsFarm.dc.html": {
+      "h": 844,
+      "title": "Farm profile",
+      "w": 390,
+      "x": 470,
+      "y": 1504
+    },
+    "SettingsHome.dc.html": {
+      "h": 844,
+      "title": "Settings",
+      "w": 390,
+      "x": 0,
+      "y": 1504
+    },
+    "SettingsInvite.dc.html": {
+      "h": 1240,
+      "title": "Add member",
+      "w": 390,
+      "x": 1410,
+      "y": 1504
+    },
+    "SettingsMilkRate.dc.html": {
+      "h": 1100,
+      "title": "Milk rate & margins",
+      "w": 390,
+      "x": 2820,
+      "y": 1504
+    },
+    "SettingsNotifications.dc.html": {
+      "h": 844,
+      "title": "Notifications",
+      "w": 390,
+      "x": 1880,
+      "y": 1504
+    },
+    "SettingsPreferences.dc.html": {
+      "h": 844,
+      "title": "Theme & language",
+      "w": 390,
+      "x": 2350,
+      "y": 1504
+    },
+    "SettingsTeam.dc.html": {
+      "h": 844,
+      "title": "Team",
+      "w": 390,
+      "x": 940,
+      "y": 1504
+    },
+    "UpdatePassword.dc.html": {
+      "h": 844,
+      "title": "Update password",
+      "w": 390,
+      "x": 1410,
+      "y": 0
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-10-21T04:10:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "view": "canvas"
+  },
+  "notes": {
+    "t1": {
+      "kind": "title1",
+      "maxW": 3210,
+      "text": "1–2 · Login & logout",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "t2": {
+      "kind": "title1",
+      "maxW": 3210,
+      "text": "3 · Settings",
+      "w": 240,
+      "x": 0,
+      "y": 1204
+    },
+    "t3": {
+      "kind": "title1",
+      "maxW": 3210,
+      "text": "4 · Animals",
+      "w": 240,
+      "x": 0,
+      "y": 2948
+    },
+    "t4": {
+      "kind": "title1",
+      "maxW": 1330,
+      "text": "5 · Groups",
+      "w": 240,
+      "x": 0,
+      "y": 4848
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "CreateAccount.dc.html",
+    "ForgotPassword.dc.html",
+    "UpdatePassword.dc.html",
+    "FarmPicker.dc.html",
+    "AccountMenu.dc.html",
+    "LogoutConfirm.dc.html",
+    "SettingsHome.dc.html",
+    "SettingsFarm.dc.html",
+    "SettingsTeam.dc.html",
+    "SettingsInvite.dc.html",
+    "SettingsNotifications.dc.html",
+    "SettingsPreferences.dc.html",
+    "SettingsMilkRate.dc.html",
+    "AnimalList.dc.html",
+    "AnimalFilters.dc.html",
+    "AnimalForm.dc.html",
+    "AnimalProfile.dc.html",
+    "AnimalStatus.dc.html",
+    "AnimalImport.dc.html",
+    "ScanTag.dc.html",
+    "GroupList.dc.html",
+    "GroupForm.dc.html",
+    "GroupDetail.dc.html"
+  ],
+  "pages": [],
+  "title": "Dairy Farm App — UI Module 1"
+}

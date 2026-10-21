@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Group detail</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.ib{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:12px}
+.st{background:#fff;border-radius:12px;padding:12px}
+.k{font-size:12px;color:#56655B;font-weight:600}.v{font-size:20px;font-weight:700;margin-top:2px}
+.act{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;height:76px;background:#fff;border-radius:12px;font-size:13px;font-weight:600;color:#1C2620;text-decoration:none}
+.m{display:flex;align-items:center;gap:12px;min-height:60px;border-top:1px solid #EEF0EA;padding:0 14px;text-decoration:none;color:#1C2620}
+.m:first-child{border-top:0}
+</style>
+</helmet>
+<div style="width:390px;height:980px;background:#F4F3EE">
+  <div style="display:flex;align-items:center;padding:8px 8px 0">
+    <a class="ib" href="GroupList.dc.html" aria-label="Back"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+    <span aria-hidden="true" style="width:28px;height:28px;border-radius:8px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;flex:none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"></path></svg></span>
+    <div style="flex:1"></div>
+    <a class="ib" href="GroupForm.dc.html" aria-label="Edit group"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg></a>
+  </div>
+  <div style="padding:0 16px">
+    <div style="display:flex;align-items:center;gap:10px"><span style="width:14px;height:14px;border-radius:7px;background:#1F5C3A"></span><h1 style="margin:0;font-size:24px;font-weight:700">Milking shed A</h1></div>
+    <div style="font-size:14px;color:#56655B;margin-top:4px">Cow · Shed A · Maintenance · Manager: Murugan</div>
+
+    <div style="display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:10px;margin-top:16px">
+      <div class="st"><div class="k">Animals</div><div class="v">9</div></div>
+      <div class="st"><div class="k">Milk / day</div><div class="v">148 L</div></div>
+      <div class="st"><div class="k">Alerts</div><div class="v" style="color:#A3271B">3</div></div>
+    </div>
+
+    <div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#56655B;margin:20px 0 10px">Record for the whole group</div>
+    <div style="display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:10px">
+      <a class="act" href="#"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#A3271B" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Batch health</a>
+      <a class="act" href="#"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F5C3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"/></svg>Milking sheet</a>
+      <a class="act" href="#"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7A4B0E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21V11M12 11C12 7 9 4 5 4c0 4 3 7 7 7zM12 11c0-4 3-7 7-7 0 4-3 7-7 7z"/></svg>Feed group</a>
+    </div>
+    <div style="font-size:12px;color:#56655B;margin-top:6px">These open in their own modules later.</div>
+
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin:20px 0 10px"><div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#56655B">Members</div><a href="GroupForm.dc.html" style="font-size:14px;font-weight:600">Add / remove</a></div>
+    <div style="background:#fff;border-radius:14px;overflow:hidden">
+      <a class="m" href="AnimalProfile.dc.html"><span style="flex:1"><b>VD-001</b> Lakshmi<br><span style="font-size:13px;color:#56655B">HF · DIM 84 · 18.5 L</span></span><span style="font-size:12px;font-weight:600;padding:2px 8px;border-radius:6px;background:#FBE4E1;color:#8E2216">Withdrawal</span></a>
+      <a class="m" href="AnimalProfile.dc.html"><span style="flex:1"><b>VD-002</b> Ponni<br><span style="font-size:13px;color:#56655B">HF · DIM 140 · 15.0 L</span></span></a>
+      <a class="m" href="AnimalProfile.dc.html"><span style="flex:1"><b>VD-011</b> Malar<br><span style="font-size:13px;color:#56655B">Jersey · DIM 31 · 12.5 L</span></span><span style="font-size:12px;font-weight:600;padding:2px 8px;border-radius:6px;background:#FBF1E2;color:#7A4B0E">Heat due</span></a>
+      <a class="m" href="AnimalList.dc.html" style="justify-content:center;color:#1F5C3A;font-weight:600">See all 9</a>
+    </div>
+    <button style="margin-top:20px;width:100%;height:46px;border:0;background:transparent;font:inherit;font-weight:600;font-size:15px;color:#A3271B">Delete group (animals stay in herd)</button>
+  </div>
+  <div style="text-align:center;font-size:12px;color:#56655B;padding:8px 16px 14px">© 2026 Dairy Farm. All rights reserved.</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":980}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

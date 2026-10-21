@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Groups list</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.seg{display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));background:#E4E6DF;border-radius:12px;padding:4px;margin:0 16px}
+.sb{height:38px;border-radius:9px;font-weight:600;font-size:14px;color:#3B4A41;display:flex;align-items:center;justify-content:center;text-decoration:none}
+.g{display:flex;gap:12px;align-items:center;background:#fff;border-radius:14px;padding:14px;text-decoration:none;color:#1C2620}
+.dot{width:12px;height:44px;border-radius:6px;flex:none}
+.b{font-size:12px;font-weight:600;padding:2px 8px;border-radius:6px;background:#E4E6DF;color:#3B4A41}
+.nav{position:absolute;left:0;right:0;bottom:0;height:72px;background:#fff;border-top:1px solid #E1E4DC;display:grid;grid-template-columns:repeat(5, minmax(0, 1fr))}
+.ni{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:600;color:#56655B;text-decoration:none}
+</style>
+</helmet>
+<div style="width:390px;height:844px;background:#F4F3EE;position:relative;overflow:hidden">
+  <div style="display:flex;align-items:center;padding:14px 16px 10px;gap:8px">
+    <span aria-hidden="true" style="width:28px;height:28px;border-radius:8px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;flex:none;margin-right:2px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"></path></svg></span>
+    <h1 style="margin:0;font-size:24px;font-weight:700;flex:1">Herd</h1>
+    <a href="AccountMenu.dc.html" aria-label="Account" style="width:40px;height:40px;border-radius:20px;background:#1F5C3A;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;text-decoration:none">B</a>
+  </div>
+  <div class="seg"><a class="sb" href="AnimalList.dc.html">Animals · 20</a><a class="sb" href="GroupList.dc.html" style="background:#fff;color:#1C2620">Groups · 4</a></div>
+
+  <div style="display:flex;flex-direction:column;gap:10px;padding:16px">
+    <a class="g" href="GroupDetail.dc.html"><span class="dot" style="background:#1F5C3A"></span><div style="flex:1;min-width:0"><div style="font-weight:700;font-size:16px">Milking shed A</div><div style="font-size:13px;color:#56655B;margin-top:2px">Cow · Shed A · Maintenance</div><div style="display:flex;gap:6px;margin-top:6px"><span class="b">9 animals</span><span class="b">Manager: Murugan</span></div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8A968D" stroke-width="2" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+    <a class="g" href="GroupDetail.dc.html"><span class="dot" style="background:#C2410C"></span><div style="flex:1;min-width:0"><div style="font-weight:700;font-size:16px">Dry cows</div><div style="font-size:13px;color:#56655B;margin-top:2px">Cow · Paddock 2 · Gestation</div><div style="display:flex;gap:6px;margin-top:6px"><span class="b">3 animals</span></div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8A968D" stroke-width="2" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+    <a class="g" href="GroupDetail.dc.html"><span class="dot" style="background:#1F4E87"></span><div style="flex:1;min-width:0"><div style="font-weight:700;font-size:16px">Heifers</div><div style="font-size:13px;color:#56655B;margin-top:2px">Cow · Paddock 1 · Growth</div><div style="display:flex;gap:6px;margin-top:6px"><span class="b">2 animals</span></div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8A968D" stroke-width="2" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+    <a class="g" href="GroupDetail.dc.html"><span class="dot" style="background:#7A4B0E"></span><div style="flex:1;min-width:0"><div style="font-weight:700;font-size:16px">Calves</div><div style="font-size:13px;color:#56655B;margin-top:2px">Cow · Calf pen · Growth</div><div style="display:flex;gap:6px;margin-top:6px"><span class="b">4 animals</span></div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8A968D" stroke-width="2" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+    <div style="font-size:13px;color:#56655B;text-align:center;margin-top:4px">2 animals are not in any group</div>
+  </div>
+
+  <a href="GroupForm.dc.html" style="position:absolute;right:16px;bottom:112px;height:52px;padding:0 20px;border-radius:26px;background:#1F5C3A;color:#fff;display:flex;align-items:center;gap:8px;font-weight:600;text-decoration:none;box-shadow:0 6px 14px rgba(31,92,58,.3)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>New group</a>
+
+  <div style="position:absolute;left:0;right:0;bottom:72px;text-align:center;font-size:12px;color:#56655B;padding:8px 16px;background:#F4F3EE">© 2026 Dairy Farm. All rights reserved.</div>
+  <nav class="nav" aria-label="Main">
+    <a class="ni" href="#"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-6 9 6v10H3z"/></svg>Home</a>
+    <a class="ni" href="AnimalList.dc.html" style="color:#1F5C3A"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>Herd</a>
+    <a class="ni" href="#" aria-label="Add record"><span style="width:48px;height:48px;border-radius:24px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;margin-top:-18px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span></a>
+    <a class="ni" href="#"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/></svg>Alerts</a>
+    <a class="ni" href="SettingsHome.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>More</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
