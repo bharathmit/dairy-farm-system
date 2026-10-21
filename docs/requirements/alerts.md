@@ -2,7 +2,7 @@
 
 The system generates alerts automatically (daily job + on record save).
 **Owner sees all alerts. Worker sees health and feeding reminders only.**
-All day counts and thresholds are stored in `alert_rule` so they can be changed without code.
+All day counts and thresholds are stored as `config` rows (ALERT_RULE) so they can be changed without code.
 
 Columns: trigger as given by the owner · data the alert needs · visibility (O = Owner, W = Worker too).
 
