@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: dairy-farm
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/dairy}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 6MB
+  mvc:
+    problemdetails:
+      enabled: true
+  jackson:
+    default-property-inclusion: non_null
+
+app:
+  supabase:
+    # Project URL, e.g. https://abcd1234.supabase.co
+    url: ${SUPABASE_URL:}
+    # Only for projects still on the legacy shared JWT secret (HS256). Leave empty to use the project's JWKS.
+    jwt-secret: ${SUPABASE_JWT_SECRET:}
+    # Server-side only. Needed to create worker logins, send invites and store animal photos.
+    service-role-key: ${SUPABASE_SERVICE_ROLE_KEY:}
+    photo-bucket: ${SUPABASE_PHOTO_BUCKET:animal-photos}
+    # Where the invite email sends people after they set a password (the frontend URL).
+    invite-redirect-url: ${INVITE_REDIRECT_URL:}
+  cors:
+    allowed-origins: ${CORS_ORIGINS:http://localhost:5173}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health

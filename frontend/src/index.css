@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body { @apply bg-[#E9E8E2] font-sans text-ink; -webkit-tap-highlight-color: transparent; }
+  a { @apply text-brand; }
+  a:hover { @apply text-brand-dark; }
+  button { @apply cursor-pointer; }
+  :focus-visible { outline: 2px solid #1F5C3A; outline-offset: 2px; }
+}
+
+@layer components {
+  .lab { @apply mb-1.5 block text-[13px] font-semibold text-ink-2; }
+  .inp { @apply box-border h-12 w-full rounded-[10px] border border-line bg-white px-3.5 text-base text-ink; }
+  .inp:focus { @apply border-brand outline-none ring-2 ring-brand/20; }
+  .hint { @apply mt-1.5 text-[13px] leading-snug text-ink-3; }
+  .btn { @apply flex h-[50px] w-full items-center justify-center rounded-xl border-0 bg-brand text-base font-semibold text-white no-underline; }
+  .btn:hover { @apply bg-brand-dark text-white; }
+  .btn2 { @apply flex h-[50px] w-full items-center justify-center rounded-xl border border-line bg-white text-base font-semibold text-ink no-underline; }
+  .sec { @apply mx-5 mb-2 mt-5 text-xs font-bold uppercase tracking-[.06em] text-ink-3; }
+  .grp { @apply mx-4 overflow-hidden rounded-[14px] bg-white; }
+  .chip { @apply h-9 shrink-0 whitespace-nowrap rounded-full border border-line bg-white px-3 text-sm font-medium text-ink; }
+  .chip-on { @apply border-brand bg-brand text-white; }
+  .badge { @apply whitespace-nowrap rounded-md px-2 py-0.5 text-xs font-semibold; }
+  .card { @apply mx-4 mb-3 rounded-[14px] bg-white px-4 py-3.5; }
+}

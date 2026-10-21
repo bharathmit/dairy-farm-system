@@ -1,7 +1,12 @@
 # Progress
 
-Status: **UI-first. All 6 UI canvases drafted (73 screens) — owner reviewing.** Index: docs/ui-design/README.md
+Status: **Backend Modules 1–4 done** (Spring Boot 4.1, `backend/`). **UI: all 6 canvases drafted (73 screens) — owner reviewing.** Index: docs/ui-design/README.md. Next: connect the React app to the API.
 UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile screens); snapshot in docs/ui-design/module-1/. Tables and backend come after the UI is final.
+
+- [x] Module 1 UI design reviewed (owner comments applied: email-only login + Google, create account, update password, logo + footer on all pages, milk rate page, member DOB/sex/password, team filter)
+- [x] Module 1 UI app → `frontend/` (React 18 + Vite + TS + Tailwind), all 24 screens, in-memory store
+- [ ] Deploy UI to Cloudflare Pages (steps in docs/deploy.md — owner connects the repo)
+- [x] Module 1 table design (tables 1–5, schema v4.2) and Spring Boot backend for Modules 1–4
 
 - [x] Reference site 1 (Farmleo) mapped → docs/reference/farmleo/pages.md, incl. all popups
 - [x] Alert requirements captured → docs/requirements/alerts.md
@@ -10,9 +15,20 @@ UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile s
 - [x] Consolidated schema v4 (13 tables) → docs/schema.md; coverage → docs/requirements/coverage.md
 - [x] Draft API v3 → docs/api.md
 - [x] Owner: keep all requirements (procurement, barn THI, etc.)
-- [ ] api.md to be aligned with v4 table names after schema approval
-- [ ] Module 0 — owner approves schema + API (open questions in schema.md and alerts.md)
-- [ ] Modules 1–15 — see PLAN.md (no code until Module 0 is approved)
+- [x] Module 0 (part) — owner approved tables 1–5 (schema v4.2) for Modules 1–4
+- [ ] Module 0 (rest) — tables 6–13 and open questions in alerts.md
+- [x] Module 1 — scaffolding: `/backend` Maven project, Flyway V1, Supabase JWT, `GET /me`, problem+json errors, Swagger, CI
+- [x] Module 2 — farms, settings, my profile and preferences, team members with owner-set password or email invite
+- [x] Module 3 — animals: add/edit, filters, status and exit, tag lookup, parents by id or tag, photos (Supabase Storage), CSV template/import/export
+- [x] Module 4 — groups: add/edit/delete, set animals, manager, animal counts
+- [ ] api.md: Modules 5–15 rows still drafts
+- [ ] Frontend: replace the in-memory store with API calls + Supabase sign-in
+- [ ] Modules 5–15 — see PLAN.md
+
+## Branches
+- `main` — design docs and UI/UX
+- `module/1-ui` — React UI application
+- `module/2-backend` — Spring Boot application (Modules 1–4)
 
 ## Decisions
 - DB: Supabase Postgres; access only through Spring Boot; no RLS; roles in Spring Security.
@@ -23,8 +39,16 @@ UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile s
 - Milk: both per-animal and farm-total entries.
 - Deployment: OpenShift later, not now.
 - Auth: email + password and Google sign-in (no phone OTP).
+- Worker logins: both owner-set password and email invite (owner's choice per member).
+- Backend: Spring Boot 4.1 (Spring Framework 7, Jackson 3, Hibernate 7), owner request.
+- JWT: checked against the project's JWKS; legacy HS256 secret supported via SUPABASE_JWT_SECRET.
 - Margin alert: total margin below X % (default 30 %), weekly; milking times stored in farm settings.
 - Reference sites are functional references only (text notes, no screenshots); UI is our own design.
+- All records are saved online immediately; no offline mode or later sync.
+- Team members: owners set member passwords manually; no invites.
+- Frontend hosting: Cloudflare Pages free plan. Backend hosting (later, to decide): Render free (sleeps after 15 min, 512 MB) or Google Cloud Run free tier (card needed); OpenShift remains the long-term target.
 
 ## Notes / blockers
-- Owner asked: no code until the design is reviewed.
+- Module 1 UI is a clickable React app on sample data (`module/1-ui`); it is not wired to the API yet.
+- Before first deploy: create the private `animal-photos` bucket and keep email confirmation on (see backend/README.md).
+- Tests use Testcontainers in CI; locally they can use an existing Postgres via `TEST_DATABASE_URL`.

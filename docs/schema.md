@@ -1,4 +1,10 @@
-# Database schema — v4.1 (consolidated + ration planning) — for review
+# Database schema — v4.2
+
+**Status:** tables 1–5 (`app_user`, `farm`, `farm_member`, `animal_group`, `animal`) are approved and
+built (Flyway `V1`, `V2`). Tables 6–13 are still drafts for their modules.
+v4.2 changes: `app_user.preferences`; farm settings now hold milking times; `farm_member` gains email,
+date of birth, sex, left_on and login type; `animal` gains exit_party, last_calving_date and
+current_weight_kg.
 
 v3 had 30 tables. v4 covers the same requirements with **13 tables**.
 How each requirement maps to these tables: `docs/requirements/coverage.md`.
@@ -29,17 +35,21 @@ reports or filters query are real columns with indexes. Java validates `details`
 ---
 
 ## 1. `app_user`
-id uuid (= JWT `sub`) · full_name · email · phone.
+id uuid (= JWT `sub`) · full_name · email · phone · **preferences** JSONB (theme LIGHT/DARK/SYSTEM, language EN/TA — per person, not per farm).
 
 ## 2. `farm`
 name · village · district · state · country · latitude · longitude ·
-**settings** JSONB: theme, language, reminders on/off, reminder lead days (0/1/3/7), reminder time,
-morning digest time, quiet hours, milk rate ₹/L, margin alert % (feed cost vs milk income).
+**settings** JSONB: milk rate ₹/L, morning and evening milking times, margin alert % (feed cost vs milk
+income), notifications (on/off, health, breeding, checklist, lead days 0/1/3/7, reminder time, morning
+digest + time, quiet hours start/end). Theme and language moved to `app_user.preferences`.
 
 ## 3. `farm_member` — owners and workers
-farm_id · user_id (nullable — a worker can exist without a login) · name · phone ·
-role (OWNER, WORKER) · wage_type (NONE, DAILY, MONTHLY) · wage_rate · joined_on · active.
-UNIQUE (farm_id, user_id). A farm can have more than one OWNER.
+farm_id · user_id (nullable — a worker can exist without a login) · name · email · phone ·
+date_of_birth · sex · role (OWNER, WORKER) · wage_type (NONE, DAILY, MONTHLY) · wage_rate · joined_on ·
+left_on · active · login_type (NONE, PASSWORD = owner set the password, INVITE = emailed invite, SELF) ·
+invited_at. UNIQUE (farm_id, user_id) and (farm_id, lower(email)). A farm can have more than one OWNER
+and always keeps at least one active OWNER. A member added by email is linked to the account with that
+email on first sign-in (only when login_type is PASSWORD or INVITE).
 
 ## 4. `animal_group`
 name · species (one species per group) · location · target_outcome (GROWTH, MAINTENANCE, RECOVERY,
@@ -57,8 +67,9 @@ GESTATION, OTHER) · manager_member_id · colour · notes.
 | group_id | one group at a time |
 | dam_id, sire_id / dam_tag, sire_tag | linked parent or tag-only parent (e.g. AI bull) |
 | acquisition_type, acquisition_date, purchase_price | BORN, PURCHASED |
-| exit_date, exit_reason, exit_price | sale, death, cull reason |
+| exit_date, exit_reason, exit_price, exit_party | sale, death, cull reason; buyer or "transferred to" |
 | photo_paths text[] | up to 3 Supabase Storage paths |
+| last_calving_date, current_weight_kg | opening values from the animal form; kept current by the breeding and measurement modules |
 | notes | |
 
 ## 6. `farm_event` — everything observed on a date
