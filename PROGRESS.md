@@ -4,9 +4,10 @@ Status: **Waiting for owner review of docs/schema.md and docs/api.md (Module 0).
 
 - [x] Reference site 1 (Farmleo) mapped → docs/reference/farmleo/pages.md, incl. all popups
 - [x] Alert requirements captured → docs/requirements/alerts.md
-- [x] Draft schema v2 (27 tables) → docs/schema.md
-- [x] Draft API v2 → docs/api.md
-- [ ] Reference site 2 — waiting for owner to open it
+- [x] Reference site 2 (DairyMate) mapped → docs/reference/dairymate/pages.md
+- [x] Draft schema v3 (30 tables) → docs/schema.md
+- [x] Draft API v3 → docs/api.md
+- [ ] Owner answers review questions (schema.md, alerts.md)
 - [ ] Module 0 — owner approves schema + API (open questions in schema.md and alerts.md)
 - [ ] Modules 1–15 — see PLAN.md (no code until Module 0 is approved)
 

@@ -42,7 +42,7 @@ animals; they cannot delete, see finances or change settings.
 | Feed | `GET/POST /feed-records` · `PUT/DELETE /feed-records/{id}` | O/W (delete O) |
 | | `GET /feed-records/summary` (used, cost, avg/day, days of stock left) | O |
 | Yield | `GET/POST /yield-records` · `PUT/DELETE /yield-records/{id}` | O/W (delete O) |
-| | `POST /yield-records/batch` (one milking session, all cows) | O/W |
+| | `POST /yield-records/batch` (herd milking sheet: AM + PM for all milking cows) · `GET /yield-records/sheet?date=` (pre-filled from last records) | O/W |
 | | `GET /yield-records/summary` | O |
 | Finance | `GET/POST /finance-entries` · `PUT/DELETE /finance-entries/{id}` | O |
 | | `GET /finance-entries/summary` (income, expense, net, top category) | O |
@@ -50,7 +50,12 @@ animals; they cannot delete, see finances or change settings.
 | Equipment | `GET/POST/PUT /equipment` · `POST /equipment/{id}/services` | O |
 | Procurement | `GET/POST/PUT/DELETE /procurement-notes` | O |
 | Alerts | `GET /alerts?status=OPEN&category=` (workers get worker-visible only) · `PATCH /alerts/{id}` (done/dismiss) · `POST /alerts/bulk-done` | O/W |
+| | `POST /alerts` (manual reminder: title, notes, type, date/time, animal) | O/W |
+| Daily checklist | `GET /daily-tasks?date=` · `PATCH /daily-tasks/{id}/log?date=` (tick/untick) · `POST/PUT /daily-tasks` (custom) | O/W |
+| Barn conditions | `POST /barn-conditions` · `GET /barn-conditions/latest` (THI + advice) | O/W |
 | Alert rules | `GET /alert-rules` · `PUT /alert-rules/{id}` (thresholds, days, worker visibility) | O |
+| Herd analytics | `GET /analytics/cull-advisor` (scores + class) · `GET /analytics/roi-ranking` · `GET /analytics/compare?a=&b=` · `GET /analytics/iofc` | O |
+| Search | `GET /search?q=` (animals, records, transactions) | O/W |
 | Dashboard | `GET /dashboard` (upcoming health actions, due dates, species mix, recent animals, today's milk) | O/W |
 | Reports | `GET /reports/summary` (overview, health, breeding, growth KPIs) | O |
 | | `GET /reports/pnl?scope=farm|animal&animalId=` | O |
