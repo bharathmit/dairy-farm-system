@@ -44,4 +44,35 @@ public class UserService {
         return users.findById(CurrentUser.id())
                 .orElseThrow(() -> ApiException.notFound("Account not found."));
     }
+
+    @Transactional
+    public AppUser updateProfile(ProfileRequest req) {
+        AppUser u = current();
+        u.setFullName(req.fullName().trim());
+        u.setPhone(blankToNull(req.phone()));
+        return users.save(u);
+    }
+
+    @Transactional
+    public AppUser updatePreferences(UserPreferences prefs) {
+        AppUser u = current();
+        var base = u.getPreferences();
+        u.setPreferences(new UserPreferences(
+                prefs.theme() != null ? prefs.theme() : base.theme(),
+                prefs.language() != null ? prefs.language() : base.language()));
+        return users.save(u);
+    }
+
+    /**
+     * Makes sure a row exists for an account created on someone's behalf (owner-set password),
+     * so the membership can point at it before that person first signs in.
+     */
+    @Transactional
+    public void ensureUser(UUID id, String email, String fullName) {
+        users.insertIfAbsent(id, email, fullName);
+    }
+
+    private static String blankToNull(String s) {
+        return s == null || s.isBlank() ? null : s.trim();
+    }
 }
