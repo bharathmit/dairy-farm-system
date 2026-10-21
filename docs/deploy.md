@@ -1,28 +1,27 @@
-# Deploying the UI (Cloudflare Pages, free)
+# Deploying the UI (Cloudflare Workers static site, free)
 
-The frontend is a static React build, so it runs on Cloudflare Pages' free plan
-(unlimited bandwidth, commercial use allowed). Pages rebuilds on every push.
+The frontend is a static React build. Cloudflare serves it from a Worker with static assets
+(`frontend/wrangler.jsonc`); static requests are free and unlimited. It rebuilds on every push.
 
 ## One-time setup
 
-1. Sign in at <https://dash.cloudflare.com> (free account).
-2. **Workers & Pages → Create → Pages → Connect to Git**, authorise GitHub and pick
+1. Sign in at <https://dash.cloudflare.com> → **Workers & Pages** → **Create application**.
+2. Choose **Import a repository** (Continue with GitHub), authorise GitHub and pick
    `bharathmit/dairy-farm-system`.
-3. Build settings:
+3. Settings:
 
    | Setting | Value |
    |---|---|
-   | Production branch | `main` |
-   | Framework preset | `React (Vite)` |
-   | Root directory | `frontend` |
+   | Project / Worker name | `dairy-farm` (must match `name` in `frontend/wrangler.jsonc`) |
+   | Branch | `main` |
+   | Root directory (advanced) | `frontend` |
    | Build command | `npm run build` |
-   | Build output directory | `dist` |
-   | Environment variable | `NODE_VERSION` = `22` |
+   | Deploy command | `npx wrangler deploy` |
+   | Build variable | `NODE_VERSION` = `22` |
 
-4. **Save and Deploy.** The site goes live at `https://<project>.pages.dev`.
-   Pull requests get their own preview URL automatically.
+4. **Create and deploy.** The site goes live at `https://dairy-farm.<your-subdomain>.workers.dev`.
 
-There is no `404.html`, so Pages serves `index.html` for every path and React Router
+Unknown paths return `index.html` (`not_found_handling: single-page-application`), so React Router
 handles deep links such as `/animals/a1`.
 
 ## Run locally
