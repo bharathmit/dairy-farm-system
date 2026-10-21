@@ -4,6 +4,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -24,7 +28,21 @@ import tools.jackson.databind.json.JsonMapper;
 })
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@Import(IntegrationTest.Fakes.class)
 public abstract class IntegrationTest {
+
+    @TestConfiguration
+    static class Fakes {
+        @Bean
+        @Primary
+        InMemoryPhotoStorage inMemoryPhotoStorage() {
+            return new InMemoryPhotoStorage();
+        }
+    }
+
+    @Autowired
+    protected InMemoryPhotoStorage photoStorage;
+
 
     private static final String EXTERNAL_URL = System.getenv("TEST_DATABASE_URL");
     private static final PostgreSQLContainer POSTGRES;
@@ -68,5 +86,6 @@ public abstract class IntegrationTest {
     @BeforeEach
     void cleanDatabase() {
         jdbc.execute("TRUNCATE app_user, farm RESTART IDENTITY CASCADE");
+        photoStorage.files.clear();
     }
 }

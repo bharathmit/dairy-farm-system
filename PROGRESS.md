@@ -20,7 +20,8 @@ UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile s
 - [ ] Module 0 (rest) — tables 6–13 and open questions in alerts.md
 - [x] Module 1 — scaffolding: `/backend` Maven project, Flyway V1, Supabase JWT, `GET /me`, problem+json errors, Swagger, CI (`module/1-scaffolding`)
 - [x] Module 2 — farms, settings, my profile and preferences, team members with owner-set password or email invite (`module/2-farms`)
-- [ ] Modules 3–15 — see PLAN.md
+- [x] Module 3 — animals: add/edit, filters, status and exit, tag lookup, parents by id or tag, photos (Supabase Storage), CSV template/import/export (`module/3-animals`)
+- [ ] Modules 4–15 — see PLAN.md
 
 ## Decisions
 - DB: Supabase Postgres; access only through Spring Boot; no RLS; roles in Spring Security.
