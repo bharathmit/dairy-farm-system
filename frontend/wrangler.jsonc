@@ -1,0 +1,12 @@
+// Cloudflare Workers static site for the React app (Workers & Pages → Create → Import a repository).
+// The Worker name in the Cloudflare dashboard must match "name" below.
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "dairy-farm",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    // Unknown paths (e.g. /animals/12) return index.html so React Router can handle them.
+    "not_found_handling": "single-page-application"
+  }
+}
