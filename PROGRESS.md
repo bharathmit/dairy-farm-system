@@ -16,8 +16,10 @@ UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile s
 - [x] Draft API v3 → docs/api.md
 - [x] Owner: keep all requirements (procurement, barn THI, etc.)
 - [ ] api.md to be aligned with v4 table names after schema approval
-- [ ] Module 0 — owner approves schema + API (open questions in schema.md and alerts.md)
-- [ ] Modules 1–15 — see PLAN.md (no code until Module 0 is approved)
+- [x] Module 0 (part) — owner approved tables 1–5 (schema v4.2) for Modules 1–4
+- [ ] Module 0 (rest) — tables 6–13 and open questions in alerts.md
+- [x] Module 1 — scaffolding: `/backend` Maven project, Flyway V1, Supabase JWT, `GET /me`, problem+json errors, Swagger, CI (`module/1-scaffolding`)
+- [ ] Modules 2–15 — see PLAN.md
 
 ## Decisions
 - DB: Supabase Postgres; access only through Spring Boot; no RLS; roles in Spring Security.
@@ -28,6 +30,8 @@ UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile s
 - Milk: both per-animal and farm-total entries.
 - Deployment: OpenShift later, not now.
 - Auth: email + password and Google sign-in (no phone OTP).
+- Worker logins: both owner-set password and email invite (owner's choice per member).
+- JWT: checked against the project's JWKS; legacy HS256 secret supported via SUPABASE_JWT_SECRET.
 - Margin alert: total margin below X % (default 30 %), weekly; milking times stored in farm settings.
 - Reference sites are functional references only (text notes, no screenshots); UI is our own design.
 - All records are saved online immediately; no offline mode or later sync.
@@ -35,4 +39,5 @@ UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile s
 - Frontend hosting: Cloudflare Pages free plan. Backend hosting (later, to decide): Render free (sleeps after 15 min, 512 MB) or Google Cloud Run free tier (card needed); OpenShift remains the long-term target.
 
 ## Notes / blockers
-- Owner asked: no code until the design is reviewed.
+- Module 1 UI is a clickable React app on sample data (`module/1-ui`); it is not wired to the API yet.
+- Tests use Testcontainers in CI; locally they can use an existing Postgres via `TEST_DATABASE_URL`.
