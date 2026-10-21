@@ -34,7 +34,7 @@ services:
       # The Cloudflare Pages address, e.g. https://dairy-farm.pages.dev (comma-separate several).
       - key: CORS_ORIGINS
         sync: false
-      # e.g. https://dairy-farm.pages.dev/update-password
+      # e.g. https://dairy-farm.pages.dev/reset-password
       - key: INVITE_REDIRECT_URL
         sync: false
       # The free instance has 512 MB and a small CPU share: keep the heap modest and start fast.

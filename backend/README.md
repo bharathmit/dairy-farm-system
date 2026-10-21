@@ -23,7 +23,7 @@ Flyway creates the tables on start-up (`src/main/resources/db/migration`).
 | `SUPABASE_JWT_SECRET` | no | Only for projects still on the legacy shared JWT secret (HS256). |
 | `SUPABASE_SERVICE_ROLE_KEY` | for logins and photos | Server-side secret. Needed to create worker logins, send invites and store photos. Never put it in the frontend. |
 | `SUPABASE_PHOTO_BUCKET` | no | Storage bucket for animal photos (default `animal-photos`). |
-| `INVITE_REDIRECT_URL` | no | Frontend page the invite email opens, e.g. `https://<site>/update-password`. |
+| `INVITE_REDIRECT_URL` | no | Frontend page the invite email opens, e.g. `https://<site>/reset-password`. |
 | `CORS_ORIGINS` | no | Comma-separated frontend origins (default `http://localhost:5173`). |
 
 ## Supabase project setup (one time)
