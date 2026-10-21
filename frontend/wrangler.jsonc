@@ -2,7 +2,7 @@
 // The Worker name in the Cloudflare dashboard must match "name" below.
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "dairy-farm",
+  "name": "dairy-farm-system",
   "compatibility_date": "2026-10-01",
   "assets": {
     "directory": "./dist",
