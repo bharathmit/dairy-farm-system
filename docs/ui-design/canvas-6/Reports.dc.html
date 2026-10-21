@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Reports</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.chip{height:36px;padding:0 12px;border-radius:18px;border:1px solid #C9D0C6;background:#fff;font:inherit;font-size:14px;font-weight:500;color:#1C2620;white-space:nowrap;flex:none}
+.on{background:#1F5C3A;border-color:#1F5C3A;color:#fff}
+.st{background:#fff;border-radius:12px;padding:12px;text-decoration:none;color:#1C2620;display:block}
+.k{font-size:12px;color:#56655B;font-weight:600}.v{font-size:20px;font-weight:700;margin-top:2px}.s{font-size:12px;font-weight:600;margin-top:2px}
+.sec{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#56655B;margin:18px 0 8px}
+.rp{background:#fff;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px}
+.ic{width:40px;height:40px;border-radius:12px;background:#E7F0E9;display:flex;align-items:center;justify-content:center;flex:none}
+.t{font-size:15px;font-weight:600}.m{font-size:13px;color:#56655B}
+.fb{height:44px;padding:0 10px;border-radius:10px;border:1px solid #C9D0C6;background:#fff;font:inherit;font-size:13px;font-weight:700;color:#1C2620;display:flex;align-items:center;text-decoration:none}
+</style>
+</helmet>
+<div style="width:390px;height:1100px;background:#F4F3EE">
+  <div style="display:flex;align-items:center;gap:4px;padding:8px 12px">
+    <a href="Main.dc.html" aria-label="Back" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+    <span aria-hidden="true" style="width:28px;height:28px;border-radius:8px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;margin-right:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"/></svg></span>
+    <h1 style="margin:0;font-size:22px;font-weight:700">Reports</h1>
+  </div>
+  <div style="padding:0 16px">
+    <div style="display:flex;gap:8px;overflow:hidden"><button class="chip">7 days</button><button class="chip">30 days</button><button class="chip on">This month</button><button class="chip">Quarter</button><button class="chip">Custom</button></div>
+
+    <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:10px;margin-top:12px">
+      <a class="st" href="#"><div class="k">Milk · October</div><div class="v">3,360 L</div><div class="s" style="color:#1F5C3A">+3 % vs Sep</div></a>
+      <a class="st" href="#"><div class="k">Net profit</div><div class="v">₹41,200</div><div class="s" style="color:#56655B">income ₹1,21,000</div></a>
+      <a class="st" href="#"><div class="k">Feed cost / L</div><div class="v">₹14.8</div><div class="s" style="color:#7A4B0E">target [₹ x]</div></a>
+      <a class="st" href="CullAdvisor.dc.html"><div class="k">Cull / monitor</div><div class="v">1 / 3</div><div class="s" style="color:#56655B">Cull advisor</div></a>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:10px;margin-top:10px">
+      <a href="CullAdvisor.dc.html" style="height:48px;border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;text-decoration:none">Cull advisor</a>
+      <a href="CompareCows.dc.html" style="height:48px;border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;text-decoration:none">Compare cows</a>
+    </div>
+
+    <div class="sec">Reports · 1–21 Oct 2026</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div class="rp"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F5C3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"/></svg></span><span style="flex:1;min-width:0"><span class="t">Milk production</span><br><span class="m">Per cow, AM/PM, fat/SNF</span></span><a class="fb" href="#" aria-label="Milk production PDF">PDF</a><a class="fb" href="#" aria-label="Milk production CSV">CSV</a></div>
+      <div class="rp"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F5C3A" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><span style="flex:1;min-width:0"><span class="t">Cow performance</span><br><span class="m">L/day, DIM, lifetime P&amp;L</span></span><a class="fb" href="#" aria-label="Cow performance PDF">PDF</a><a class="fb" href="#" aria-label="Cow performance CSV">CSV</a></div>
+      <div class="rp"><span class="ic" style="background:#F1EEF8"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4B3A7A" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg></span><span style="flex:1;min-width:0"><span class="t">Breeding</span><br><span class="m">Heats, AI, conception, calvings</span></span><a class="fb" href="#" aria-label="Breeding PDF">PDF</a><a class="fb" href="#" aria-label="Breeding CSV">CSV</a></div>
+      <div class="rp"><span class="ic" style="background:#FBF1E2"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7A4B0E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h16M6 20V9l6-5 6 5v11"/></svg></span><span style="flex:1;min-width:0"><span class="t">Feed consumption</span><br><span class="m">kg used, stock, cost per L</span></span><a class="fb" href="#" aria-label="Feed PDF">PDF</a><a class="fb" href="#" aria-label="Feed CSV">CSV</a></div>
+      <div class="rp"><span class="ic" style="background:#FBE4E1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A3271B" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span><span style="flex:1;min-width:0"><span class="t">Health records</span><br><span class="m">Treatments, vaccines, cost</span></span><a class="fb" href="#" aria-label="Health PDF">PDF</a><a class="fb" href="#" aria-label="Health CSV">CSV</a></div>
+      <div class="rp"><span class="ic" style="background:#E6EEF8"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F4E87" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 4h10M7 9h10M9 4c4 0 4 5 0 5h-2l7 11"/></svg></span><span style="flex:1;min-width:0"><span class="t">Profit &amp; loss</span><br><span class="m">Income, expenses, margin %</span></span><a class="fb" href="#" aria-label="Profit and loss PDF">PDF</a><a class="fb" href="#" aria-label="Profit and loss CSV">CSV</a></div>
+    </div>
+    <div style="font-size:13px;color:#56655B;margin-top:10px">Reports use the period selected above. Owner only.</div>
+    <div style="text-align:center;font-size:12px;color:#56655B;padding:14px 0">© 2026 Dairy Farm. All rights reserved.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1100}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Compare cows</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.lab{font-size:13px;font-weight:600;color:#3B4A41;display:block;margin-bottom:6px}
+.inp{width:100%;box-sizing:border-box;height:48px;border:1px solid #C9D0C6;border-radius:10px;padding:0 14px;font:inherit;font-size:16px;background:#fff;color:#1C2620}
+.two{display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:12px}
+.card{background:#fff;border-radius:14px;overflow:hidden}
+.r{display:grid;grid-template-columns:1.1fr 1fr 1fr;align-items:center;min-height:52px;padding:0 14px;border-top:1px solid #EEF0EA;font-size:14px;gap:8px}
+.r span:first-child{color:#56655B;font-weight:600;font-size:13px}
+.b{font-size:12px;font-weight:600;padding:2px 8px;border-radius:6px;white-space:nowrap;justify-self:start}
+</style>
+</helmet>
+<div style="width:390px;height:1100px;background:#F4F3EE">
+  <div style="display:flex;align-items:center;gap:4px;padding:8px 12px">
+    <a href="Reports.dc.html" aria-label="Back" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+    <h1 style="margin:0;font-size:20px;font-weight:700">Compare cows</h1>
+  </div>
+  <div style="padding:0 16px;display:flex;flex-direction:column;gap:12px">
+    <div class="two">
+      <div><label class="lab" for="ca"><span style="display:inline-block;width:10px;height:10px;border-radius:5px;background:#1F5C3A;margin-right:6px"></span>Cow A</label><select class="inp" id="ca"><option>VD-001 · Lakshmi</option></select></div>
+      <div><label class="lab" for="cb"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#C2410C;margin-right:6px"></span>Cow B</label><select class="inp" id="cb"><option>VD-011 · Malar</option></select></div>
+    </div>
+
+    <div style="background:#fff;border-radius:14px;padding:14px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline"><b style="font-size:15px">Litres per day · 7 days</b></div>
+      <svg width="326" height="120" viewBox="0 0 326 120" role="img" aria-label="Lakshmi steady around 18 litres a day; Malar falling from 12.5 to 9.5 litres" style="margin-top:8px;display:block">
+        <line x1="0" y1="110" x2="326" y2="110" stroke="#E4E6DF"/>
+        <line x1="0" y1="60" x2="326" y2="60" stroke="#EEF0EA"/>
+        <text x="0" y="56" font-size="11" fill="#56655B" font-family="Figtree, sans-serif">10 L</text>
+        <polyline points="10,22 60,20 110,24 160,18 210,22 260,20 310,24" fill="none" stroke="#1F5C3A" stroke-width="2.5"/>
+        <circle cx="310" cy="24" r="4" fill="#1F5C3A"/>
+        <polyline points="10,48 60,50 110,52 160,56 210,58 260,66 310,72" fill="none" stroke="#C2410C" stroke-width="2.5" stroke-dasharray="6 4"/>
+        <rect x="306" y="68" width="8" height="8" fill="#C2410C"/>
+      </svg>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:#56655B"><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span></div>
+      <div style="display:flex;gap:16px;font-size:13px;margin-top:8px"><span><span style="display:inline-block;width:16px;height:3px;background:#1F5C3A;vertical-align:middle;margin-right:6px"></span>Lakshmi</span><span><span style="display:inline-block;width:16px;height:0;border-top:3px dashed #C2410C;vertical-align:middle;margin-right:6px"></span>Malar</span></div>
+    </div>
+
+    <div class="card">
+      <div class="r" style="border-top:0;min-height:44px;background:#F7F7F3"><span></span><b>VD-001 Lakshmi</b><b>VD-011 Malar</b></div>
+      <div class="r"><span>Avg L/day</span><b style="font-size:16px">18.4</b><b style="font-size:16px">11.2</b></div>
+      <div class="r"><span>7-day trend</span><b style="color:#1F5C3A">steady</b><b style="color:#A3271B">−24 %</b></div>
+      <div class="r"><span>Days in milk</span><span>84</span><span>196</span></div>
+      <div class="r"><span>Lactation stage</span><span>Early (0–100)</span><span>Mid (100–200)</span></div>
+      <div class="r"><span>Status</span><span class="b" style="background:#E7F0E9;color:#1F5C3A">Milking</span><span class="b" style="background:#E7F0E9;color:#1F5C3A">Milking</span></div>
+      <div class="r"><span>Breed</span><span>HF</span><span>Jersey</span></div>
+      <div class="r"><span>Fat % (30 d)</span><span>3.6</span><span>4.4</span></div>
+      <div class="r"><span>Health records</span><span>2 · ₹1,450</span><span>3 · ₹2,100</span></div>
+      <div class="r"><span>Active issue</span><span class="b" style="background:#FBE4E1;color:#8E2216">Withdrawal 2 d</span><span class="b" style="background:#FBF1E2;color:#7A4B0E">High SCC</span></div>
+      <div class="r"><span>Breeding</span><span class="b" style="background:#E7F0E9;color:#1F5C3A">Pregnant</span><span class="b" style="background:#E6EEF8;color:#1F4E87">Open · 2 AI</span></div>
+      <div class="r"><span>Lifetime P&amp;L</span><b>+₹2,62,000</b><b>+₹1,10,000</b></div>
+    </div>
+    <div class="two">
+      <a href="#" style="height:48px;border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;text-decoration:none">Open Lakshmi</a>
+      <a href="#" style="height:48px;border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;text-decoration:none">Open Malar</a>
+    </div>
+    <div style="text-align:center;font-size:12px;color:#56655B;padding:4px 0 14px">© 2026 Dairy Farm. All rights reserved.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1100}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

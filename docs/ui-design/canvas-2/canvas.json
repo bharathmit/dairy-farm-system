@@ -1,0 +1,21 @@
+{"v":3,"createdOnFiles":{"v":1,"at":"2026-10-21T11:15:00Z"},"title":"Dairy Farm App — UI Canvas 2: Daily records","launch":{"view":"canvas"},"pages":[],
+"boards":{
+"Main.dc.html":{"x":0,"y":0,"w":390,"h":844,"title":"Add record (+ button)"},
+"MilkHome.dc.html":{"x":470,"y":0,"w":390,"h":1000,"title":"Milk — today & records"},
+"MilkSheet.dc.html":{"x":940,"y":0,"w":390,"h":1100,"title":"Herd milking sheet"},
+"MilkSingle.dc.html":{"x":1410,"y":0,"w":390,"h":1000,"title":"Single cow milk log"},
+"MilkFarmTotal.dc.html":{"x":1880,"y":0,"w":390,"h":900,"title":"Farm total / dairy sale"},
+"WeightLog.dc.html":{"x":0,"y":1520,"w":390,"h":900,"title":"Log weight, height & BCS"},
+"WeightTrend.dc.html":{"x":470,"y":1520,"w":390,"h":1000,"title":"Growth trend"},
+"HealthHome.dc.html":{"x":0,"y":2940,"w":390,"h":1000,"title":"Health — overview"},
+"HealthForm.dc.html":{"x":470,"y":2940,"w":390,"h":1400,"title":"Add health record"},
+"HealthBatch.dc.html":{"x":940,"y":2940,"w":390,"h":1000,"title":"Batch treatment"},
+"WithdrawalList.dc.html":{"x":1410,"y":2940,"w":390,"h":844,"title":"Milk withdrawal — do not sell"}
+},
+"order":["Main.dc.html","MilkHome.dc.html","MilkSheet.dc.html","MilkSingle.dc.html","MilkFarmTotal.dc.html","WeightLog.dc.html","WeightTrend.dc.html","HealthHome.dc.html","HealthForm.dc.html","HealthBatch.dc.html","WithdrawalList.dc.html"],
+"notes":{
+"t1":{"x":0,"y":-300,"text":"Milk","kind":"title1","maxW":2270},
+"t2":{"x":0,"y":1220,"text":"Weight, height & BCS","kind":"title1","maxW":860},
+"t3":{"x":0,"y":2640,"text":"Health","kind":"title1","maxW":1800}
+},
+"designSystems":[]}

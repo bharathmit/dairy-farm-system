@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Log feeding</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.lab{font-size:13px;font-weight:600;color:#3B4A41;display:block;margin-bottom:6px}
+.inp{width:100%;box-sizing:border-box;height:48px;border:1px solid #C9D0C6;border-radius:10px;padding:0 14px;font:inherit;font-size:16px;background:#fff;color:#1C2620}
+.two{display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:12px}
+.seg{display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));background:#E4E6DF;border-radius:12px;padding:4px}
+.seg3{display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));background:#E4E6DF;border-radius:12px;padding:4px}
+.sb{height:40px;border-radius:9px;font:inherit;font-weight:600;font-size:14px;color:#3B4A41;border:0;background:transparent}
+.sel{background:#fff;color:#1C2620}
+.r{display:grid;grid-template-columns:1.7fr 0.8fr 1fr;align-items:center;gap:8px;min-height:56px;padding:0 12px;border-top:1px solid #EEF0EA;font-size:14px}
+.q{width:100%;box-sizing:border-box;height:44px;border:1px solid #C9D0C6;border-radius:10px;text-align:center;font:inherit;font-size:16px;font-weight:700;color:#1C2620;background:#fff}
+.sh{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#56655B;padding:12px 12px 4px;background:#F7F7F3}
+</style>
+</helmet>
+<div style="width:390px;height:1100px;background:#F4F3EE;display:flex;flex-direction:column">
+  <div style="display:flex;align-items:center;gap:4px;padding:8px 12px">
+    <a href="Main.dc.html" aria-label="Close" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+    <span aria-hidden="true" style="width:28px;height:28px;border-radius:8px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;margin-right:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"/></svg></span>
+    <h1 style="margin:0;font-size:20px;font-weight:700">Log feeding</h1>
+  </div>
+  <div style="padding:4px 16px;display:flex;flex-direction:column;gap:14px">
+    <div class="two">
+      <div><label class="lab" for="dt">Date</label><input class="inp" id="dt" type="date" value="2026-10-21"></div>
+      <div><label class="lab" for="tm">Time</label><input class="inp" id="tm" type="time" value="18:00"></div>
+    </div>
+    <div><span class="lab">Session</span><div class="seg"><button class="sb">6 AM</button><button class="sb sel">6 PM</button></div></div>
+    <div>
+      <span class="lab">Give to</span>
+      <div class="seg3"><button class="sb sel">Whole farm</button><button class="sb">Group</button><button class="sb">Animal</button></div>
+      <div style="font-size:12px;color:#56655B;margin-top:6px">20 animals · planned from today's ration plan</div>
+    </div>
+
+    <div style="background:#fff;border-radius:14px;overflow:hidden">
+      <div class="r" style="border-top:0;font-size:12px;font-weight:700;color:#56655B;min-height:40px"><span>Item</span><span style="text-align:right">Planned</span><span style="text-align:center">Actual kg</span></div>
+      <div class="sh">Before milking · green</div>
+      <div class="r"><span>Velimasal / Karamani</span><span style="text-align:right;color:#56655B">52.5</span><input class="q" aria-label="Velimasal actual kg" value="52.5"></div>
+      <div class="r"><span>CO5 / Super Napier</span><span style="text-align:right;color:#56655B">79.0</span><input class="q" aria-label="Napier actual kg" value="79.0"></div>
+      <div class="r"><span>Sorghum / maize green</span><span style="text-align:right;color:#56655B">33.0</span><input class="q" aria-label="Sorghum green actual kg" value="25.0" style="border-color:#C2410C"></div>
+      <div class="sh">After milking · concentrate + dry</div>
+      <div class="r"><span>Concentrate mix</span><span style="text-align:right;color:#56655B">55.0</span><input class="q" aria-label="Concentrate actual kg" value="55.0"></div>
+      <div class="r"><span>Paddy straw</span><span style="text-align:right;color:#56655B">26.0</span><input class="q" aria-label="Paddy straw actual kg" value="26.0"></div>
+      <div class="r"><span>Sorghum / maize stalk</span><span style="text-align:right;color:#56655B">17.0</span><input class="q" aria-label="Stalk actual kg" value="17.0"></div>
+      <div class="r"><span>Mineral mixture</span><span style="text-align:right;color:#56655B">in mix</span><input class="q" aria-label="Mineral actual kg" placeholder="0"></div>
+    </div>
+    <a href="FeedUsage.dc.html" style="height:44px;border-radius:10px;border:1px dashed #C9D0C6;display:flex;align-items:center;justify-content:center;gap:6px;font-weight:600;font-size:14px;text-decoration:none">+ Add item</a>
+
+    <div style="display:flex;gap:10px;background:#FBF1E2;border-radius:12px;padding:12px 14px;color:#4A3210;font-size:14px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7A4B0E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M12 3l10 18H2zM12 10v5M12 18h.01"/></svg>
+      <span><b style="color:#7A4B0E">Sorghum green 8 kg under plan.</b> Stock left 25 kg — add a reason or reorder.</span>
+    </div>
+    <div><label class="lab" for="nt">Notes</label><input class="inp" id="nt" placeholder="e.g. less green, rain delayed cutting"></div>
+  </div>
+  <div style="margin-top:auto;padding:14px 16px 24px;border-top:1px solid #E1E4DC;background:#fff">
+    <div style="display:flex;justify-content:space-between;font-size:15px;margin-bottom:10px"><span>Planned 262.5 kg</span><b>Actual 254.5 kg</b></div>
+    <a href="Main.dc.html" style="height:50px;border-radius:12px;background:#1F5C3A;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;text-decoration:none">Save 6 PM feeding</a>
+    <div style="text-align:center;font-size:12px;color:#56655B;padding-top:12px">© 2026 Dairy Farm. All rights reserved.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1100}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

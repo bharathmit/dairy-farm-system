@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Equipment</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.st{background:#fff;border-radius:12px;padding:12px}
+.k{font-size:12px;color:#56655B;font-weight:600}.v{font-size:20px;font-weight:700;margin-top:2px}
+.g{font-size:12px;font-weight:700;padding:2px 7px;border-radius:6px;white-space:nowrap}
+.card{background:#fff;border-radius:14px;padding:14px;display:block;text-decoration:none;color:#1C2620}
+.ic{width:44px;height:44px;border-radius:12px;background:#E7F0E9;display:flex;align-items:center;justify-content:center;flex:none}
+.m{display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:8px;margin-top:10px}
+.m div{background:#F4F3EE;border-radius:10px;padding:8px 10px;font-size:14px}
+.m span{display:block;font-size:12px;color:#56655B;font-weight:600}
+</style>
+</helmet>
+<div style="width:390px;height:1000px;background:#F4F3EE">
+  <div style="display:flex;align-items:center;gap:4px;padding:8px 12px">
+    <a href="Main.dc.html" aria-label="Back" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+    <span aria-hidden="true" style="width:28px;height:28px;border-radius:8px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;margin-right:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"/></svg></span>
+    <h1 style="margin:0;font-size:22px;font-weight:700;flex:1">Equipment</h1>
+    <a href="#" style="height:40px;padding:0 14px;border-radius:10px;background:#1F5C3A;color:#fff;display:flex;align-items:center;font-weight:600;font-size:14px;text-decoration:none">+ Add</a>
+  </div>
+  <div style="padding:4px 16px 0;display:flex;flex-direction:column;gap:12px">
+    <div style="display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:10px">
+      <div class="st"><div class="k">Items</div><div class="v">4</div></div>
+      <div class="st" style="background:#FBE4E1"><div class="k" style="color:#8E2216">Overdue</div><div class="v" style="color:#8E2216">1</div></div>
+      <div class="st" style="background:#FBF1E2"><div class="k" style="color:#7A4B0E">Due 7 d</div><div class="v" style="color:#7A4B0E">1</div></div>
+    </div>
+
+    <a class="card" href="EquipmentService.dc.html" style="outline:2px solid #A3271B;outline-offset:-2px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="ic" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F5C3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="9" width="12" height="12" rx="2"/><path d="M9 9V5h6v4M12 13v4"/></svg></span>
+        <span style="flex:1"><b style="font-size:16px">Milking machine</b><span style="display:block;font-size:13px;color:#56655B">Service every 90 days · [Brand, model]</span></span>
+        <span class="g" style="background:#FBE4E1;color:#8E2216">Overdue 6 d</span>
+      </div>
+      <div class="m"><div><span>Last service</span>17 Jul 2026</div><div><span>Next service</span><b style="color:#8E2216">15 Oct 2026</b></div></div>
+    </a>
+
+    <a class="card" href="EquipmentService.dc.html">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="ic" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F5C3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M19 5l-3 3M8 16l-3 3"/></svg></span>
+        <span style="flex:1"><b style="font-size:16px">Chaff cutter</b><span style="display:block;font-size:13px;color:#56655B">Blade sharpen every 60 days</span></span>
+        <span class="g" style="background:#FBF1E2;color:#7A4B0E">Due in 4 d</span>
+      </div>
+      <div class="m"><div><span>Last service</span>27 Aug 2026</div><div><span>Next service</span><b style="color:#7A4B0E">26 Oct 2026</b></div></div>
+    </a>
+
+    <a class="card" href="EquipmentService.dc.html">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="ic" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F5C3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v3l2 3v12H6V9l2-3z"/><path d="M6 13h12"/></svg></span>
+        <span style="flex:1"><b style="font-size:16px">Bulk milk can (40 L) × 4</b><span style="display:block;font-size:13px;color:#56655B">Gasket check every 30 days</span></span>
+        <span class="g" style="background:#E7F0E9;color:#1F5C3A">OK · 18 d</span>
+      </div>
+      <div class="m"><div><span>Last service</span>8 Oct 2026</div><div><span>Next service</span>7 Nov 2026</div></div>
+    </a>
+
+    <a class="card" href="EquipmentService.dc.html">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="ic" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F5C3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"/><path d="M3 21h18"/></svg></span>
+        <span style="flex:1"><b style="font-size:16px">Water pump (1 HP)</b><span style="display:block;font-size:13px;color:#56655B">Service every 180 days</span></span>
+        <span class="g" style="background:#E7F0E9;color:#1F5C3A">OK · 92 d</span>
+      </div>
+      <div class="m"><div><span>Last service</span>23 Jul 2026</div><div><span>Next service</span>19 Jan 2027</div></div>
+    </a>
+
+    <div style="text-align:center;font-size:12px;color:#56655B;padding:6px 0 14px">© 2026 Dairy Farm. All rights reserved.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1000}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

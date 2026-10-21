@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Procurement notes</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.chip{height:36px;padding:0 12px;border-radius:18px;border:1px solid #C9D0C6;background:#fff;font:inherit;font-size:14px;font-weight:500;color:#1C2620;white-space:nowrap}
+.on{background:#1F5C3A;border-color:#1F5C3A;color:#fff}
+.g{font-size:12px;font-weight:700;padding:2px 7px;border-radius:6px;white-space:nowrap}
+.card{background:#fff;border-radius:14px;padding:14px}
+.m{display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:8px;margin-top:10px}
+.m div{background:#F4F3EE;border-radius:10px;padding:8px 10px;font-size:14px}
+.m span{display:block;font-size:12px;color:#56655B;font-weight:600}
+.sg{display:flex;align-items:center;gap:10px;min-height:56px;padding:8px 0;border-top:1px solid #F0E3CC}
+.sb{height:40px;padding:0 12px;border-radius:10px;border:1px solid #7A4B0E;background:#fff;font:inherit;font-size:14px;font-weight:600;color:#7A4B0E;white-space:nowrap}
+.act{height:44px;flex:1;border-radius:10px;border:1px solid #C9D0C6;background:#fff;font:inherit;font-size:14px;font-weight:600;color:#1C2620}
+</style>
+</helmet>
+<div style="width:390px;height:1200px;background:#F4F3EE">
+  <div style="display:flex;align-items:center;gap:4px;padding:8px 12px">
+    <a href="Equipment.dc.html" aria-label="Back" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+    <span aria-hidden="true" style="width:28px;height:28px;border-radius:8px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;margin-right:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"/></svg></span>
+    <h1 style="margin:0;font-size:22px;font-weight:700;flex:1">Procurement</h1>
+    <a href="#" style="height:40px;padding:0 14px;border-radius:10px;background:#1F5C3A;color:#fff;display:flex;align-items:center;font-weight:600;font-size:14px;text-decoration:none">+ Add note</a>
+  </div>
+  <div style="padding:4px 16px 0;display:flex;flex-direction:column;gap:12px">
+    <div style="background:#FBF1E2;border-radius:14px;padding:12px 14px">
+      <div style="display:flex;align-items:center;gap:8px;color:#7A4B0E"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7A4B0E" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg><b style="font-size:15px">Suggested from low stock</b></div>
+      <div class="sg" style="border-top:0"><span style="flex:1;font-size:14px;color:#4A3210"><b>Concentrate mix</b> · 42 kg left<span style="display:block;font-size:12px">below reorder 100 kg · ~5 days</span></span><button class="sb">+ Add</button></div>
+      <div class="sg"><span style="flex:1;font-size:14px;color:#4A3210"><b>Dry fodder (paddy straw)</b> · 180 kg<span style="display:block;font-size:12px">below reorder 300 kg</span></span><button class="sb">+ Add</button></div>
+      <div class="sg"><span style="flex:1;font-size:14px;color:#4A3210"><b>HF semen straws</b> · 1 left<span style="display:block;font-size:12px">below reorder 3 · VD-002 heat due</span></span><button class="sb">+ Add</button></div>
+    </div>
+
+    <div style="display:flex;gap:8px"><button class="chip on">All 4</button><button class="chip">Planned 2</button><button class="chip">Ordered 1</button><button class="chip">Received 1</button></div>
+
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:8px"><b style="font-size:16px;flex:1">Mineral mixture</b><span class="g" style="background:#EEF0EA;color:#3B4A41">Planned</span></div>
+      <div style="font-size:13px;color:#56655B;margin-top:2px">Supplier: [Supplier name]</div>
+      <div class="m"><div><span>Qty</span>25 kg</div><div><span>Expected</span>₹2,250</div><div><span>Needed by</span><b style="color:#7A4B0E">25 Oct</b></div></div>
+      <div style="display:flex;gap:8px;margin-top:10px"><button class="act">Edit</button><button class="act" style="background:#1F5C3A;border-color:#1F5C3A;color:#fff">Mark ordered</button></div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:8px"><b style="font-size:16px;flex:1">Milking liners (set of 4)</b><span class="g" style="background:#EEF0EA;color:#3B4A41">Planned</span></div>
+      <div style="font-size:13px;color:#56655B;margin-top:2px">For milking machine service</div>
+      <div class="m"><div><span>Qty</span>1 set</div><div><span>Expected</span>₹1,200</div><div><span>Needed by</span>2 Nov</div></div>
+      <div style="display:flex;gap:8px;margin-top:10px"><button class="act">Edit</button><button class="act" style="background:#1F5C3A;border-color:#1F5C3A;color:#fff">Mark ordered</button></div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:8px"><b style="font-size:16px;flex:1">Cattle feed concentrate</b><span class="g" style="background:#E6EEF8;color:#1F4E87">Ordered</span></div>
+      <div style="font-size:13px;color:#56655B;margin-top:2px">Supplier: [Feed supplier name] · ordered 19 Oct</div>
+      <div class="m"><div><span>Qty</span>200 kg</div><div><span>Expected</span>₹5,800</div><div><span>Needed by</span>23 Oct</div></div>
+      <div style="display:flex;gap:8px;margin-top:10px"><button class="act">Edit</button><button class="act" style="background:#1F5C3A;border-color:#1F5C3A;color:#fff">Mark received</button></div>
+      <div style="font-size:12px;color:#56655B;margin-top:8px">Received → adds stock and a Feed expense</div>
+    </div>
+
+    <div class="card" style="opacity:.85">
+      <div style="display:flex;align-items:center;gap:8px"><b style="font-size:16px;flex:1">Dewormer (Albendazole)</b><span class="g" style="background:#E7F0E9;color:#1F5C3A">Received</span></div>
+      <div style="font-size:13px;color:#56655B;margin-top:2px">Received 14 Oct · paid ₹640</div>
+    </div>
+
+    <div style="text-align:center;font-size:12px;color:#56655B;padding:6px 0 14px">© 2026 Dairy Farm. All rights reserved.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1200}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

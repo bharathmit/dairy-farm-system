@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Alerts</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.chip{height:36px;padding:0 12px;border-radius:18px;border:1px solid #C9D0C6;background:#fff;font:inherit;font-size:14px;font-weight:500;color:#1C2620;white-space:nowrap;flex:none}
+.on{background:#1F5C3A;border-color:#1F5C3A;color:#fff}
+.sec{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#56655B;margin:16px 0 8px}
+.al{background:#fff;border-radius:14px;padding:12px 14px}
+.top{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.b{font-size:12px;font-weight:600;padding:2px 8px;border-radius:6px;white-space:nowrap}
+.tt{font-size:16px;font-weight:700;margin-top:6px}
+.m{font-size:13px;color:#56655B;margin-top:2px}
+.acts{display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:8px;margin-top:10px}
+.btn{height:44px;border-radius:10px;border:1px solid #C9D0C6;background:#fff;font:inherit;font-size:14px;font-weight:600;color:#1C2620;display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none}
+.pri{background:#1F5C3A;border-color:#1F5C3A;color:#fff}
+.nav{position:absolute;left:0;right:0;bottom:0;height:72px;background:#fff;border-top:1px solid #E1E4DC;display:grid;grid-template-columns:repeat(5, minmax(0, 1fr))}
+.ni{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:600;color:#56655B;text-decoration:none}
+</style>
+</helmet>
+<div style="width:390px;height:1200px;background:#F4F3EE;position:relative;overflow:hidden">
+  <div style="display:flex;align-items:center;padding:14px 16px 6px;gap:8px">
+    <h1 style="margin:0;font-size:24px;font-weight:700;flex:1">Alerts</h1>
+    <a href="AlertRules.dc.html" aria-label="Alert rules" style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></a>
+    <a href="Reminder.dc.html" style="height:40px;padding:0 14px;border-radius:10px;background:#1F5C3A;color:#fff;display:flex;align-items:center;font-weight:600;font-size:14px;text-decoration:none">+ Reminder</a>
+  </div>
+
+  <div style="display:flex;gap:8px;padding:8px 16px 0;overflow:hidden">
+    <button class="chip on">All 9</button><button class="chip">Reproduction 3</button><button class="chip">Calves 2</button><button class="chip">Health 2</button><button class="chip">Milk 1</button><button class="chip">Finance &amp; ops 1</button>
+  </div>
+  <div style="display:flex;gap:8px;padding:8px 16px 0">
+    <button class="chip" style="height:32px;font-size:13px"><span style="display:inline-block;width:8px;height:8px;border-radius:4px;background:#A3271B;margin-right:6px"></span>High 3</button>
+    <button class="chip" style="height:32px;font-size:13px"><span style="display:inline-block;width:8px;height:8px;border-radius:4px;background:#C2410C;margin-right:6px"></span>Medium 4</button>
+    <button class="chip" style="height:32px;font-size:13px"><span style="display:inline-block;width:8px;height:8px;border-radius:4px;background:#1F4E87;margin-right:6px"></span>Info 2</button>
+  </div>
+
+  <div style="padding:0 16px">
+    <div class="sec"><span style="color:#8E2216">Overdue · 2</span></div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="al" style="box-shadow:inset 0 0 0 1.5px #E8B4AC">
+        <div class="top"><span class="b" style="background:#FBE4E1;color:#8E2216">High</span><span class="b" style="background:#F1EEF8;color:#4B3A7A">Reproduction</span><span style="margin-left:auto;font-size:13px;font-weight:600;color:#8E2216">3 d overdue</span></div>
+        <div class="tt">Pregnancy check due</div>
+        <div class="m"><b style="color:#1C2620">VD-002 Ponni</b> · AI on 3 Sep · 48 days ago</div>
+        <div class="acts"><a class="btn pri" href="#">Done</a><a class="btn" href="#">Snooze</a><a class="btn" href="AlertDetail.dc.html">Open</a></div>
+      </div>
+      <div class="al" style="box-shadow:inset 0 0 0 1.5px #E8B4AC">
+        <div class="top"><span class="b" style="background:#FBE4E1;color:#8E2216">High</span><span class="b" style="background:#FBF1E2;color:#7A4B0E">Calves</span><span style="margin-left:auto;font-size:13px;font-weight:600;color:#8E2216">5 d overdue</span></div>
+        <div class="tt">Weight entry overdue</div>
+        <div class="m"><b style="color:#1C2620">VD-019</b> calf · 23 d · last weighed 9 Oct</div>
+        <div class="acts"><a class="btn pri" href="#">Log weight</a><a class="btn" href="#">Snooze</a><a class="btn" href="AlertDetail.dc.html">Open</a></div>
+      </div>
+    </div>
+
+    <div class="sec">Today · 4</div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="al">
+        <div class="top"><span class="b" style="background:#FBE4E1;color:#8E2216">High</span><span class="b" style="background:#FBE4E1;color:#8E2216">Health</span><span style="margin-left:auto;font-size:13px;color:#56655B">ends Fri 23 Oct</span></div>
+        <div class="tt">Withdrawal active — do NOT sell milk</div>
+        <div class="m"><b style="color:#1C2620">VD-001 Lakshmi</b> · Oxytetracycline · 2 d left</div>
+        <div class="acts"><a class="btn pri" href="#">Seen</a><a class="btn" href="#">Snooze</a><a class="btn" href="AlertDetail.dc.html">Open</a></div>
+      </div>
+      <div class="al">
+        <div class="top"><span class="b" style="background:#FBF1E2;color:#7A4B0E">Medium</span><span class="b" style="background:#FBE4E1;color:#8E2216">Health</span><span style="margin-left:auto;font-size:13px;color:#56655B">due today</span></div>
+        <div class="tt">Deworming due — calf day 30</div>
+        <div class="m"><b style="color:#1C2620">VD-019</b> calf · Jersey · born 28 Sep</div>
+        <div class="acts"><a class="btn pri" href="#">Done</a><a class="btn" href="#">Snooze</a><a class="btn" href="AlertDetail.dc.html">Open</a></div>
+      </div>
+      <div class="al">
+        <div class="top"><span class="b" style="background:#FBF1E2;color:#7A4B0E">Medium</span><span class="b" style="background:#E6EEF8;color:#1F4E87">Milk</span><span style="margin-left:auto;font-size:13px;color:#56655B">6:20 AM</span></div>
+        <div class="tt">Sudden yield drop −24 %</div>
+        <div class="m"><b style="color:#1C2620">VD-011 Malar</b> · 4.6 L this AM vs 6.1 L avg</div>
+        <div class="acts"><a class="btn pri" href="#">Done</a><a class="btn" href="#">Snooze</a><a class="btn" href="AlertDetail.dc.html">Open</a></div>
+      </div>
+      <div class="al">
+        <div class="top"><span class="b" style="background:#E6EEF8;color:#1F4E87">Info</span><span class="b" style="background:#F1EEF8;color:#4B3A7A">Reproduction</span><span style="margin-left:auto;font-size:13px;color:#56655B">expected today</span></div>
+        <div class="tt">Heat expected</div>
+        <div class="m"><b style="color:#1C2620">VD-003 Kamala</b> · last heat 30 Sep (21 d)</div>
+        <div class="acts"><a class="btn pri" href="#">Log heat</a><a class="btn" href="#">Snooze</a><a class="btn" href="AlertDetail.dc.html">Open</a></div>
+      </div>
+    </div>
+
+    <div class="sec">This week · 3</div>
+    <div style="background:#fff;border-radius:14px;padding:2px 14px">
+      <a href="AlertDetail.dc.html" style="display:flex;align-items:center;gap:10px;min-height:56px;text-decoration:none;color:#1C2620"><span style="width:8px;height:8px;border-radius:4px;background:#C2410C;flex:none"></span><span style="flex:1"><b>Calving due soon</b> · VD-008 Kaveri<br><span style="font-size:13px;color:#56655B">Reproduction · expected 2 Nov</span></span><span style="font-size:13px;color:#56655B">Sun</span></a>
+      <a href="AlertDetail.dc.html" style="display:flex;align-items:center;gap:10px;min-height:56px;border-top:1px solid #EEF0EA;text-decoration:none;color:#1C2620"><span style="width:8px;height:8px;border-radius:4px;background:#1F4E87;flex:none"></span><span style="flex:1"><b>Heifer first AI due</b> · VD-015 Ganga<br><span style="font-size:13px;color:#56655B">Calves · 14 m · 262 kg</span></span><span style="font-size:13px;color:#56655B">Fri</span></a>
+      <a href="AlertDetail.dc.html" style="display:flex;align-items:center;gap:10px;min-height:56px;border-top:1px solid #EEF0EA;text-decoration:none;color:#1C2620"><span style="width:8px;height:8px;border-radius:4px;background:#C2410C;flex:none"></span><span style="flex:1"><b>Semen stock low</b> · 3 straws HF [bull]<br><span style="font-size:13px;color:#56655B">Finance &amp; ops · below 5</span></span><span style="font-size:13px;color:#56655B">Sat</span></a>
+    </div>
+    <div style="text-align:center;font-size:12px;color:#56655B;padding:16px 0">© 2026 Dairy Farm. All rights reserved.</div>
+  </div>
+
+  <nav class="nav" aria-label="Main">
+    <a class="ni" href="Main.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-6 9 6v10H3z"/></svg>Home</a>
+    <a class="ni" href="#"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>Herd</a>
+    <a class="ni" href="#" aria-label="Add record"><span style="width:48px;height:48px;border-radius:24px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;margin-top:-18px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span></a>
+    <a class="ni" href="AlertsList.dc.html" style="color:#1F5C3A"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/></svg>Alerts</a>
+    <a class="ni" href="Reports.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>More</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1200}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

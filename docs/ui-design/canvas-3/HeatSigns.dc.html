@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Log heat signs</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.lab{font-size:13px;font-weight:600;color:#3B4A41;display:block;margin-bottom:6px}
+.inp{width:100%;box-sizing:border-box;height:48px;border:1px solid #C9D0C6;border-radius:10px;padding:0 14px;font:inherit;font-size:16px;background:#fff;color:#1C2620}
+.card{background:#fff;border-radius:14px;padding:14px}
+.two{display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:12px}
+.sg{display:flex;align-items:center;gap:10px;min-height:48px;padding:0 12px;border:1px solid #C9D0C6;border-radius:10px;font-size:15px;cursor:pointer;box-sizing:border-box}
+.sg input{width:20px;height:20px;accent-color:#1F5C3A;margin:0}
+.sel{background:#E7F0E9;border-color:#1F5C3A}
+.seg{display:grid;grid-template-columns:repeat(4, minmax(0, 1fr));background:#E4E6DF;border-radius:12px;padding:4px;gap:4px}
+.sb{height:40px;border-radius:9px;font:inherit;font-weight:600;font-size:14px;color:#3B4A41;border:0;background:transparent}
+</style>
+</helmet>
+<div style="width:390px;height:1000px;background:#F4F3EE;display:flex;flex-direction:column">
+  <div style="display:flex;align-items:center;gap:4px;padding:8px 12px">
+    <a href="HeatWatch.dc.html" aria-label="Close" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+    <h1 style="margin:0;font-size:20px;font-weight:700">Log heat signs</h1>
+  </div>
+  <div style="padding:4px 16px;display:flex;flex-direction:column;gap:14px">
+    <div><label class="lab" for="cw">Cow *</label><select class="inp" id="cw"><option>VD-002 · Ponni — last heat 30 Sep</option></select></div>
+    <div class="two">
+      <div><label class="lab" for="dt">Date</label><input class="inp" id="dt" type="date" value="2026-10-21"></div>
+      <div><label class="lab" for="tm">Time seen</label><input class="inp" id="tm" type="time" value="06:15"></div>
+    </div>
+
+    <fieldset class="card" style="border:0;margin:0">
+      <legend style="font-weight:700;font-size:15px;padding:0;float:left;width:100%;margin-bottom:10px">Signs seen <span style="font-weight:500;font-size:13px;color:#56655B">· pick all that apply</span></legend>
+      <div class="two" style="clear:both">
+        <label class="sg sel"><input type="checkbox" checked>Mounting / standing</label>
+        <label class="sg sel"><input type="checkbox" checked>Restless</label>
+        <label class="sg sel"><input type="checkbox" checked>Clear mucus</label>
+        <label class="sg"><input type="checkbox">Vulvar swelling</label>
+        <label class="sg"><input type="checkbox">Chin resting</label>
+        <label class="sg"><input type="checkbox">Bellowing</label>
+        <label class="sg"><input type="checkbox">Low appetite</label>
+      </div>
+    </fieldset>
+
+    <div>
+      <div class="lab">Intensity</div>
+      <div class="seg" role="group" aria-label="Intensity"><button class="sb">Mild</button><button class="sb">Moderate</button><button class="sb" style="background:#fff;color:#1C2620">Strong</button><button class="sb">Silent</button></div>
+      <div style="font-size:12px;color:#56655B;margin-top:6px">Silent = found by vet or heat patch, no visible signs.</div>
+    </div>
+
+    <div><label class="lab" for="nt">Notes</label><textarea class="inp" id="nt" style="height:84px;padding:12px 14px;resize:none" placeholder="Optional — e.g. standing heat seen by Murugan"></textarea></div>
+
+    <div style="display:flex;gap:10px;align-items:flex-start;background:#E6EEF8;border-radius:12px;padding:12px 14px;color:#1F4E87;font-size:14px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F4E87" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="flex:none"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+      <span>Best time to inseminate: <b>6:15 PM today</b> (12 h after first seen). Next heat expected <b>11 Nov</b> if not bred.</span>
+    </div>
+  </div>
+  <div style="margin-top:auto;padding:14px 16px 16px;border-top:1px solid #E1E4DC;background:#fff;display:flex;flex-direction:column;gap:10px">
+    <a href="BreedingRecord.dc.html" style="height:50px;border-radius:12px;background:#1F5C3A;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;text-decoration:none">Save &amp; remind to inseminate in 12 h</a>
+    <a href="HeatWatch.dc.html" style="height:44px;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;text-decoration:none">Save only</a>
+    <div style="text-align:center;font-size:12px;color:#56655B">© 2026 Dairy Farm. All rights reserved.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1000}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

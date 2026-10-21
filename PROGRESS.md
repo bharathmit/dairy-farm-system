@@ -1,6 +1,6 @@
 # Progress
 
-Status: **UI-first. Owner reviewing UI design for Module 1 (login, logout, settings, animals, groups).**
+Status: **UI-first. All 6 UI canvases drafted (73 screens) — owner reviewing.** Index: docs/ui-design/README.md
 UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile screens); snapshot in docs/ui-design/module-1/. Tables and backend come after the UI is final.
 
 - [x] Reference site 1 (Farmleo) mapped → docs/reference/farmleo/pages.md, incl. all popups

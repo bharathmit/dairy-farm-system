@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Cull advisor</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.st{background:#fff;border-radius:12px;padding:10px;text-align:center}
+.k{font-size:12px;color:#56655B;font-weight:600}.v{font-size:22px;font-weight:700}
+.sec{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin:18px 0 8px}
+.cw{background:#fff;border-radius:14px;padding:12px 14px}
+.b{font-size:12px;font-weight:700;padding:2px 8px;border-radius:6px;white-space:nowrap}
+.sc{display:grid;grid-template-columns:96px minmax(0, 1fr) 32px;align-items:center;gap:8px;font-size:13px;margin-top:6px}
+.bar{height:8px;border-radius:4px;background:#EEF0EA}
+.bar span{display:block;height:8px;border-radius:4px}
+.acts{display:flex;gap:8px;margin-top:10px}
+.btn{flex:1;height:44px;border-radius:10px;border:1px solid #C9D0C6;background:#fff;font:inherit;font-size:14px;font-weight:600;color:#1C2620;display:flex;align-items:center;justify-content:center;text-decoration:none}
+</style>
+</helmet>
+<div style="width:390px;height:1200px;background:#F4F3EE">
+  <div style="display:flex;align-items:center;gap:4px;padding:8px 12px">
+    <a href="Reports.dc.html" aria-label="Back" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+    <h1 style="margin:0;font-size:20px;font-weight:700">Cull advisor</h1>
+  </div>
+  <div style="padding:0 16px">
+    <div style="display:grid;grid-template-columns:repeat(4, minmax(0, 1fr));gap:8px">
+      <div class="st"><div class="v" style="color:#1F5C3A">5</div><div class="k">Keep</div></div>
+      <div class="st"><div class="v" style="color:#1F4E87">3</div><div class="k">Monitor</div></div>
+      <div class="st"><div class="v" style="color:#7A4B0E">1</div><div class="k">Dry-off</div></div>
+      <div class="st"><div class="v" style="color:#8E2216">1</div><div class="k">Cull</div></div>
+    </div>
+    <div style="font-size:13px;color:#56655B;margin-top:8px">Scores 0–100 from the last 90 days. Advice only — you decide.</div>
+
+    <div class="sec" style="color:#8E2216">Cull · 1</div>
+    <div class="cw" style="box-shadow:inset 0 0 0 1.5px #E8B4AC">
+      <div style="display:flex;align-items:center;gap:8px"><b style="font-size:16px">VD-003</b><span>Kamala</span><span class="b" style="background:#FBE4E1;color:#8E2216;margin-left:auto">Cull · 34</span></div>
+      <div style="font-size:13px;color:#56655B;margin-top:2px">HF · 9 y · lactation 6 · DIM 260</div>
+      <div class="sc"><span>Production</span><span class="bar"><span style="width:38%;background:#C2410C"></span></span><b>38</b></div>
+      <div class="sc"><span>Reproduction</span><span class="bar"><span style="width:22%;background:#A3271B"></span></span><b>22</b></div>
+      <div class="sc"><span>Health</span><span class="bar"><span style="width:45%;background:#C2410C"></span></span><b>45</b></div>
+      <div style="font-size:14px;margin-top:8px">Open 190 days after 3 failed AIs, yield falling to 9 L/day, 2 mastitis cases this year. Past replacement age (8 y).</div>
+      <div style="display:flex;justify-content:space-between;font-size:14px;margin-top:8px;padding-top:8px;border-top:1px solid #EEF0EA"><span style="color:#56655B">Lifetime P&amp;L</span><b style="color:#1F5C3A">+₹1,84,000</b></div>
+      <div style="display:flex;justify-content:space-between;font-size:14px;margin-top:2px"><span style="color:#56655B">Last 90 days</span><b style="color:#8E2216">−₹3,200</b></div>
+      <div class="acts"><a class="btn" href="#">Mark as sold</a><a class="btn" href="#">Keep anyway</a><a class="btn" href="#">Open cow</a></div>
+    </div>
+
+    <div class="sec" style="color:#7A4B0E">Dry-off · 1</div>
+    <div class="cw">
+      <div style="display:flex;align-items:center;gap:8px"><b style="font-size:16px">VD-001</b><span>Lakshmi</span><span class="b" style="background:#FBF1E2;color:#7A4B0E;margin-left:auto">Dry-off · 71</span></div>
+      <div class="sc"><span>Production</span><span class="bar"><span style="width:88%;background:#1F5C3A"></span></span><b>88</b></div>
+      <div class="sc"><span>Reproduction</span><span class="bar"><span style="width:80%;background:#1F5C3A"></span></span><b>80</b></div>
+      <div class="sc"><span>Health</span><span class="bar"><span style="width:52%;background:#C2410C"></span></span><b>52</b></div>
+      <div style="font-size:14px;margin-top:8px">Pregnant; due in [n] days — dry off per rule. In milk withdrawal until 23 Oct.</div>
+      <div style="display:flex;justify-content:space-between;font-size:14px;margin-top:8px;padding-top:8px;border-top:1px solid #EEF0EA"><span style="color:#56655B">Lifetime P&amp;L</span><b style="color:#1F5C3A">+₹2,62,000</b></div>
+      <div class="acts"><a class="btn" href="#">Mark as dry</a><a class="btn" href="#">Open cow</a></div>
+    </div>
+
+    <div class="sec" style="color:#1F4E87">Monitor · 3</div>
+    <div class="cw" style="padding:2px 14px">
+      <a href="#" style="display:flex;align-items:center;gap:10px;min-height:52px;text-decoration:none;color:#1C2620"><span style="flex:1"><b>VD-011</b> Malar <span style="font-size:13px;color:#56655B">· high SCC, yield −24 %</span></span><span class="b" style="background:#E6EEF8;color:#1F4E87">58</span></a>
+      <a href="#" style="display:flex;align-items:center;gap:10px;min-height:52px;border-top:1px solid #EEF0EA;text-decoration:none;color:#1C2620"><span style="flex:1"><b>VD-002</b> Ponni <span style="font-size:13px;color:#56655B">· preg. check overdue</span></span><span class="b" style="background:#E6EEF8;color:#1F4E87">63</span></a>
+      <a href="#" style="display:flex;align-items:center;gap:10px;min-height:52px;border-top:1px solid #EEF0EA;text-decoration:none;color:#1C2620"><span style="flex:1"><b>[VD-0xx]</b> <span style="font-size:13px;color:#56655B">· BCS 2.3</span></span><span class="b" style="background:#E6EEF8;color:#1F4E87">61</span></a>
+    </div>
+
+    <div class="sec" style="color:#1F5C3A">Keep · 5</div>
+    <a href="#" style="display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:14px;padding:0 14px;min-height:52px;text-decoration:none;color:#1C2620"><span>5 cows performing well · avg score 84</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#56655B" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+    <div style="text-align:center;font-size:12px;color:#56655B;padding:14px 0">© 2026 Dairy Farm. All rights reserved.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1200}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

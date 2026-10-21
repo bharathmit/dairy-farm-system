@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workers</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.st{background:#fff;border-radius:12px;padding:12px}
+.k{font-size:12px;color:#56655B;font-weight:600}.v{font-size:20px;font-weight:700;margin-top:2px}
+.g{font-size:12px;font-weight:700;padding:2px 7px;border-radius:6px;white-space:nowrap}
+.card{background:#fff;border-radius:14px;padding:14px}
+.av{width:44px;height:44px;border-radius:22px;background:#E7F0E9;color:#1F5C3A;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:17px;flex:none}
+.m{display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:8px;margin-top:12px}
+.m div{background:#F4F3EE;border-radius:10px;padding:8px 10px}
+.m span{display:block;font-size:12px;color:#56655B;font-weight:600}
+.btn{height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;text-decoration:none;flex:1}
+</style>
+</helmet>
+<div style="width:390px;height:1000px;background:#F4F3EE">
+  <div style="display:flex;align-items:center;gap:4px;padding:8px 12px">
+    <a href="Main.dc.html" aria-label="Back" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+    <span aria-hidden="true" style="width:28px;height:28px;border-radius:8px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;margin-right:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"/></svg></span>
+    <h1 style="margin:0;font-size:22px;font-weight:700;flex:1">Workers</h1>
+    <a href="#" style="height:40px;padding:0 14px;border-radius:10px;background:#1F5C3A;color:#fff;display:flex;align-items:center;font-weight:600;font-size:14px;text-decoration:none">+ Add</a>
+  </div>
+  <div style="padding:4px 16px 0;display:flex;flex-direction:column;gap:12px">
+    <div style="font-size:14px;color:#56655B">This week · Mon 19 – Sun 25 Oct</div>
+    <div style="display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:10px">
+      <div class="st"><div class="k">Workers</div><div class="v">2</div></div>
+      <div class="st"><div class="k">Due now</div><div class="v" style="color:#7A4B0E">₹4,500</div></div>
+      <div class="st"><div class="k">Paid Oct</div><div class="v">₹24,000</div></div>
+    </div>
+    <a href="Attendance.dc.html" style="height:48px;border-radius:12px;background:#fff;border:1px solid #C9D0C6;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;text-decoration:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F5C3A" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Mark this week's attendance</a>
+
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="av" aria-hidden="true">M</span>
+        <span style="flex:1"><b style="font-size:16px">Murugan</b><span style="display:block;font-size:13px;color:#56655B">Daily wage · ₹500 / day · no login</span></span>
+        <span class="g" style="background:#FBF1E2;color:#7A4B0E">Pending ₹3,000</span>
+      </div>
+      <div class="m"><div><span>Present</span><b>2½ of 3</b></div><div><span>Hours</span><b>20 h</b></div><div><span>Due</span><b style="color:#7A4B0E">₹4,250</b></div></div>
+      <div style="font-size:13px;color:#7A4B0E;margin-top:8px">Last week 12–18 Oct unpaid · ₹3,000</div>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <a class="btn" href="Attendance.dc.html" style="border:1px solid #C9D0C6;background:#fff">Attendance</a>
+        <a class="btn" href="PayWages.dc.html" style="background:#1F5C3A;color:#fff">Mark paid</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="av" aria-hidden="true">S</span>
+        <span style="flex:1"><b style="font-size:16px">Selvi</b><span style="display:block;font-size:13px;color:#56655B">Monthly · ₹12,000 / month · has login</span></span>
+        <span class="g" style="background:#E7F0E9;color:#1F5C3A">Paid Sep</span>
+      </div>
+      <div class="m"><div><span>Present</span><b>3 of 3</b></div><div><span>Hours</span><b>24 h</b></div><div><span>Oct so far</span><b>₹8,130</b></div></div>
+      <div style="font-size:13px;color:#56655B;margin-top:8px">October salary due 31 Oct · ₹12,000</div>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <a class="btn" href="Attendance.dc.html" style="border:1px solid #C9D0C6;background:#fff">Attendance</a>
+        <a class="btn" href="PayWages.dc.html" style="border:1px solid #1F5C3A;color:#1F5C3A;background:#fff">Pay early</a>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#56655B"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#56655B" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Wages are owner only. Workers see their own tasks, not pay.</div>
+    <div style="text-align:center;font-size:12px;color:#56655B;padding:6px 0 14px">© 2026 Dairy Farm. All rights reserved.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1000}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

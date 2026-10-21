@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Growth trend</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.seg{display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));background:#E4E6DF;border-radius:12px;padding:4px}
+.sb{height:40px;border:0;border-radius:9px;background:transparent;font:inherit;font-weight:600;font-size:14px;color:#3B4A41}
+.on{background:#fff;color:#1C2620}
+.st{background:#fff;border-radius:12px;padding:12px}
+.k{font-size:12px;color:#56655B;font-weight:600}.v{font-size:19px;font-weight:700;margin-top:2px}
+.r{display:grid;grid-template-columns:1.2fr 0.9fr 0.8fr 0.6fr 0.9fr;align-items:center;min-height:50px;padding:0 12px;border-top:1px solid #EEF0EA;font-size:14px}
+</style>
+</helmet>
+<div style="width:390px;height:1000px;background:#F4F3EE">
+  <div style="display:flex;align-items:center;gap:4px;padding:8px 12px">
+    <a href="#" aria-label="Back" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+    <div style="flex:1"><div style="font-size:20px;font-weight:700">Growth · VD-015 Ganga</div><div style="font-size:13px;color:#56655B">Heifer · HF × Jersey · 14 m</div></div>
+  </div>
+  <div style="padding:4px 16px">
+    <div class="seg"><button class="sb on">Weight</button><button class="sb">Height</button><button class="sb">BCS</button></div>
+    <div style="display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:10px;margin-top:12px">
+      <div class="st"><div class="k">Now</div><div class="v">246 kg</div></div>
+      <div class="st"><div class="k">Gain 90 d</div><div class="v">0.82 kg/d</div></div>
+      <div class="st"><div class="k">vs target</div><div class="v" style="color:#1F5C3A">+4 %</div></div>
+    </div>
+    <div style="background:#fff;border-radius:14px;padding:14px;margin-top:12px">
+      <div style="display:flex;justify-content:space-between;font-size:13px;color:#56655B"><span>kg</span><span><span style="display:inline-block;width:14px;height:8px;background:#E7F0E9;border:1px solid #9FC6AC;vertical-align:middle"></span> target range</span></div>
+      <svg width="326" height="150" viewBox="0 0 326 150" role="img" aria-label="Weight rising from 150 kg at 8 months to 246 kg at 14 months, inside the target range" style="display:block;margin-top:6px">
+        <polygon points="0,120 326,40 326,70 0,140" fill="#E7F0E9"/>
+        <line x1="0" y1="146" x2="326" y2="146" stroke="#E4E6DF"/>
+        <polyline points="10,128 70,112 130,96 190,80 250,64 310,52" fill="none" stroke="#1F5C3A" stroke-width="2.5"/>
+        <circle cx="310" cy="52" r="4" fill="#1F5C3A"/>
+        <line x1="0" y1="34" x2="326" y2="34" stroke="#1F4E87" stroke-dasharray="4 4"/>
+        <text x="4" y="28" font-size="11" fill="#1F4E87" font-family="Figtree, sans-serif">First AI 250 kg</text>
+      </svg>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:#56655B"><span>8 m</span><span>10 m</span><span>12 m</span><span>14 m</span></div>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin:16px 0 8px"><b style="font-size:15px">History</b><a href="WeightLog.dc.html" style="font-size:14px;font-weight:600">+ Add</a></div>
+    <div style="background:#fff;border-radius:14px;overflow:hidden">
+      <div class="r" style="border-top:0;font-size:12px;font-weight:700;color:#56655B;min-height:40px"><span>Date</span><span>Weight</span><span>Height</span><span>BCS</span><span>Method</span></div>
+      <div class="r"><span>21 Oct</span><b>246 kg</b><span>118</span><span>3.0</span><span>Tape</span></div>
+      <div class="r"><span>14 Oct</span><b>238 kg</b><span>117</span><span>3.0</span><span>Tape</span></div>
+      <div class="r"><span>14 Sep</span><b>214 kg</b><span>114</span><span>2.75</span><span>Scale</span></div>
+      <div class="r"><span>14 Aug</span><b>190 kg</b><span>110</span><span>—</span><span>Scale</span></div>
+    </div>
+    <div style="font-size:12px;color:#56655B;margin-top:10px;line-height:1.5">Calves and heifers need a weekly weight and height entry; an alert appears when one is missing.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1000}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

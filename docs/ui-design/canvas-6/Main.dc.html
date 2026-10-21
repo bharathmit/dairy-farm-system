@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Home — owner</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.st{background:#fff;border-radius:12px;padding:12px;text-decoration:none;color:#1C2620;display:block}
+.k{font-size:12px;color:#56655B;font-weight:600}.v{font-size:22px;font-weight:700;margin-top:2px}.s{font-size:12px;font-weight:600;margin-top:2px}
+.card{background:#fff;border-radius:14px;padding:14px}
+.h2{display:flex;align-items:center;justify-content:space-between;margin:18px 0 8px}
+.h2 b{font-size:16px}.h2 a{font-size:14px;font-weight:600;text-decoration:none}
+.row{display:flex;align-items:center;gap:12px;min-height:48px;border-top:1px solid #EEF0EA;text-decoration:none;color:#1C2620}
+.dot{width:10px;height:10px;border-radius:5px;flex:none}
+.b{font-size:12px;font-weight:600;padding:2px 8px;border-radius:6px;white-space:nowrap}
+.nav{position:absolute;left:0;right:0;bottom:0;height:72px;background:#fff;border-top:1px solid #E1E4DC;display:grid;grid-template-columns:repeat(5, minmax(0, 1fr))}
+.ni{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:600;color:#56655B;text-decoration:none}
+</style>
+</helmet>
+<div style="width:390px;height:1400px;background:#F4F3EE;position:relative;overflow:hidden">
+  <div style="display:flex;align-items:center;gap:10px;padding:14px 16px 6px">
+    <span aria-hidden="true" style="width:28px;height:28px;border-radius:8px;background:#1F5C3A;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"/></svg></span>
+    <div style="flex:1;min-width:0">
+      <h1 style="margin:0;font-size:22px;font-weight:700">Good morning, Bharath</h1>
+      <div style="font-size:13px;color:#56655B">Villupuram Dairy · Wed 21 Oct</div>
+    </div>
+    <a href="AlertsList.dc.html" aria-label="Alerts, 7 open" style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;position:relative"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M10 21h4"/></svg><span style="position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:4px;background:#C2410C"></span></a>
+  </div>
+
+  <div style="padding:8px 16px 0">
+    <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:10px">
+      <a class="st" href="Reports.dc.html"><div class="k">Today's milk</div><div class="v">78.5 L</div><div class="s" style="color:#A3271B">−4 % vs yesterday (AM only)</div></a>
+      <a class="st" href="Reports.dc.html"><div class="k">Milking cows</div><div class="v">9</div><div class="s" style="color:#56655B">3 dry · 20 in herd</div></a>
+      <a class="st" href="AlertsList.dc.html"><div class="k">Alerts open</div><div class="v" style="color:#7A4B0E">7</div><div class="s" style="color:#8E2216">2 overdue</div></a>
+      <a class="st" href="Reports.dc.html"><div class="k">October margin</div><div class="v">34 %</div><div class="s" style="color:#1F5C3A">above 30 % target</div></a>
+    </div>
+
+    <div class="h2"><b>Today's tasks</b><a href="Checklist.dc.html">Checklist</a></div>
+    <div class="card" style="padding:4px 14px">
+      <a class="row" href="#" style="border-top:0"><span class="dot" style="background:#1F5C3A"></span><span style="flex:1;font-size:15px"><b>Morning milking</b> · 9 of 9 logged</span><span style="font-size:13px;color:#56655B">6:20 AM</span></a>
+      <a class="row" href="#"><span class="dot" style="background:#C2410C"></span><span style="flex:1;font-size:15px"><b>Evening milking</b> · not logged</span><span style="font-weight:700;color:#7A4B0E;font-size:14px">Start</span></a>
+      <a class="row" href="#"><span class="dot" style="background:#1F5C3A"></span><span style="flex:1;font-size:15px"><b>Feeding AM</b> · done by Murugan</span><span style="font-size:13px;color:#56655B">7:05 AM</span></a>
+      <a class="row" href="#"><span class="dot" style="background:#C9D0C6"></span><span style="flex:1;font-size:15px"><b>Feeding PM</b> · due 4:30 PM</span></a>
+      <a class="row" href="AlertDetail.dc.html"><span class="dot" style="background:#A3271B"></span><span style="flex:1;font-size:15px"><b>Pregnancy check</b> · VD-002 Ponni</span><span class="b" style="background:#FBE4E1;color:#8E2216">Overdue 3 d</span></a>
+      <a class="row" href="AlertsList.dc.html"><span class="dot" style="background:#C2410C"></span><span style="flex:1;font-size:15px"><b>Deworm day 30</b> · VD-019</span><span class="b" style="background:#FBF1E2;color:#7A4B0E">Today</span></a>
+    </div>
+
+    <a href="Checklist.dc.html" class="card" style="display:flex;align-items:center;gap:12px;margin-top:10px;text-decoration:none;color:#1C2620">
+      <svg width="44" height="44" viewBox="0 0 44 44" role="img" aria-label="Checklist 4 of 7 done"><circle cx="22" cy="22" r="18" fill="none" stroke="#E4E6DF" stroke-width="5"/><circle cx="22" cy="22" r="18" fill="none" stroke="#1F5C3A" stroke-width="5" stroke-dasharray="64.6 113" transform="rotate(-90 22 22)" stroke-linecap="round"/></svg>
+      <div style="flex:1"><b style="font-size:15px">Daily checklist</b><div style="font-size:13px;color:#56655B">4 of 7 done · 3 tasks remaining</div></div>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#56655B" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+    </a>
+
+    <div class="h2"><b>Barn heat stress</b><a href="#">Update reading</a></div>
+    <div class="card" style="background:#FBF1E2">
+      <div style="display:flex;align-items:center;gap:14px">
+        <div style="width:64px;height:64px;border-radius:14px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none"><span style="font-size:11px;font-weight:700;color:#7A4B0E">THI</span><span style="font-size:24px;font-weight:700;color:#4A3210">76</span></div>
+        <div style="flex:1;color:#4A3210"><b style="font-size:15px">Moderate stress</b><div style="font-size:13px;margin-top:2px">34 °C · 62 % humidity · 2:00 PM</div><div style="font-size:13px;margin-top:4px">Run fans and sprinklers, give extra water. Expect 5–10 % lower evening yield.</div></div>
+      </div>
+      <div style="display:flex;height:8px;border-radius:4px;overflow:hidden;margin-top:12px" aria-hidden="true"><span style="flex:72;background:#7FA88C"></span><span style="flex:7;background:#D9A55A"></span><span style="flex:10;background:#C2410C"></span><span style="flex:11;background:#8E2216"></span></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:600;color:#4A3210;margin-top:4px"><span>&lt;72 none</span><span>72–78 mild–mod</span><span>79–88 severe</span><span>&gt;88</span></div>
+    </div>
+
+    <div class="h2"><b>Top producers · 7 d avg</b><a href="CompareCows.dc.html">Compare</a></div>
+    <div class="card" style="padding:4px 14px">
+      <a class="row" href="#" style="border-top:0"><span style="width:20px;font-weight:700;color:#56655B">1</span><span style="flex:1"><b>VD-001</b> Lakshmi</span><span style="width:90px;height:6px;border-radius:3px;background:#E7F0E9"><span style="display:block;width:100%;height:6px;border-radius:3px;background:#1F5C3A"></span></span><b style="width:56px;text-align:right">18.4 L</b></a>
+      <a class="row" href="#"><span style="width:20px;font-weight:700;color:#56655B">2</span><span style="flex:1"><b>VD-002</b> Ponni</span><span style="width:90px;height:6px;border-radius:3px;background:#E7F0E9"><span style="display:block;width:82%;height:6px;border-radius:3px;background:#1F5C3A"></span></span><b style="width:56px;text-align:right">15.1 L</b></a>
+      <a class="row" href="#"><span style="width:20px;font-weight:700;color:#56655B">3</span><span style="flex:1"><b>VD-003</b> Kamala</span><span style="width:90px;height:6px;border-radius:3px;background:#E7F0E9"><span style="display:block;width:76%;height:6px;border-radius:3px;background:#1F5C3A"></span></span><b style="width:56px;text-align:right">14.0 L</b></a>
+    </div>
+
+    <div class="h2"><b>Upcoming calvings</b><a href="#">Calendar</a></div>
+    <div class="card" style="padding:4px 14px">
+      <a class="row" href="#" style="border-top:0"><span style="flex:1"><b>VD-008</b> Kaveri <span style="color:#56655B;font-size:13px">· Jersey · dry</span></span><span class="b" style="background:#FBF1E2;color:#7A4B0E">2 Nov · 12 d</span></a>
+      <a class="row" href="#"><span style="flex:1"><b>VD-001</b> Lakshmi <span style="color:#56655B;font-size:13px">· HF · pregnant</span></span><span class="b" style="background:#E6EEF8;color:#1F4E87">[date] · dry-off first</span></a>
+    </div>
+    <div style="text-align:center;font-size:12px;color:#56655B;padding:16px 0">© 2026 Dairy Farm. All rights reserved.</div>
+  </div>
+
+  <nav class="nav" aria-label="Main">
+    <a class="ni" href="Main.dc.html" style="color:#1F5C3A"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-6 9 6v10H3z"/></svg>Home</a>
+    <a class="ni" href="#"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>Herd</a>
+    <a class="ni" href="#" aria-label="Add record"><span style="width:48px;height:48px;border-radius:24px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;margin-top:-18px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span></a>
+    <a class="ni" href="AlertsList.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/></svg>Alerts</a>
+    <a class="ni" href="Reports.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>More</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1400}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

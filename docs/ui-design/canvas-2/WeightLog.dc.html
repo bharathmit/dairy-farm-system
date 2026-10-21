@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Log weight, height and BCS</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.lab{font-size:13px;font-weight:600;color:#3B4A41;display:block;margin-bottom:6px}
+.inp{width:100%;box-sizing:border-box;height:48px;border:1px solid #C9D0C6;border-radius:10px;padding:0 14px;font:inherit;font-size:16px;background:#fff;color:#1C2620}
+.two{display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:12px}
+.seg{display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));background:#E4E6DF;border-radius:12px;padding:4px}
+.sb{height:40px;border:0;border-radius:9px;background:transparent;font:inherit;font-weight:600;font-size:14px;color:#3B4A41}
+.on{background:#fff;color:#1C2620}
+.card{background:#fff;border-radius:14px;padding:14px}
+</style>
+</helmet>
+<div style="width:390px;height:900px;background:#F4F3EE;display:flex;flex-direction:column">
+  <div style="display:flex;align-items:center;gap:4px;padding:8px 12px">
+    <a href="#" aria-label="Close" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+    <h1 style="margin:0;font-size:20px;font-weight:700">Weight &amp; condition</h1>
+  </div>
+  <div style="padding:4px 16px;display:flex;flex-direction:column;gap:14px">
+    <div class="two">
+      <div><label class="lab" for="an">Animal *</label><select class="inp" id="an"><option>VD-015 · Ganga</option></select></div>
+      <div><label class="lab" for="dt">Date</label><input class="inp" id="dt" type="date" value="2026-10-21"></div>
+    </div>
+    <div style="font-size:13px;color:#56655B;margin-top:-6px">Heifer · 14 m · last 238 kg on 14 Oct</div>
+
+    <div><span class="lab">Method</span><div class="seg"><button class="sb">Scale</button><button class="sb on">Tape</button><button class="sb">Estimate</button></div></div>
+    <div class="card">
+      <div class="two">
+        <div><label class="lab" for="hg">Heart girth (cm)</label><input class="inp" id="hg" inputmode="decimal" value="152"></div>
+        <div><label class="lab" for="wt">Weight (kg) *</label><input class="inp" id="wt" inputmode="decimal" value="246"></div>
+      </div>
+      <div style="font-size:12px;color:#56655B;margin-top:6px">Weight estimated from girth — you can overwrite it.</div>
+      <div style="margin-top:12px"><label class="lab" for="ht">Height at withers (cm)</label><input class="inp" id="ht" inputmode="decimal" value="118"><div style="font-size:12px;color:#56655B;margin-top:4px">For calves and heifers — compared with growth target</div></div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:baseline"><b>Body condition score</b><span style="font-size:22px;font-weight:700">3.0</span></div>
+      <input type="range" min="1" max="5" step="0.25" value="3" aria-label="Body condition score" style="width:100%;accent-color:#1F5C3A;height:44px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:#56655B"><span>1 Thin</span><span>3 Ideal</span><span>5 Fat</span></div>
+      <div style="font-size:12px;color:#56655B;margin-top:8px">An alert is raised below 2.5 or above 4.0.</div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:12px;background:#E7F0E9;border-radius:12px;padding:12px 14px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F5C3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/></svg>
+      <div style="font-size:14px;color:#1C3A28">+8 kg in 7 days · 1.1 kg/day · on target for first AI (250–280 kg)</div>
+    </div>
+    <div><label class="lab" for="nt">Notes</label><input class="inp" id="nt" placeholder="Optional"></div>
+  </div>
+  <div style="margin-top:auto;padding:14px 16px 24px;border-top:1px solid #E1E4DC;display:flex;gap:10px">
+    <a href="WeightTrend.dc.html" style="height:50px;flex:1;border-radius:12px;border:1px solid #C9D0C6;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;text-decoration:none;color:#1C2620">Save &amp; next</a>
+    <a href="WeightTrend.dc.html" style="height:50px;flex:1;border-radius:12px;background:#1F5C3A;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;text-decoration:none">Save</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":900}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Alert detail</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.card{background:#fff;border-radius:14px;padding:14px}
+.b{font-size:12px;font-weight:600;padding:2px 8px;border-radius:6px;white-space:nowrap}
+.k{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#56655B;margin-bottom:8px}
+.dl{display:grid;grid-template-columns:120px minmax(0, 1fr);row-gap:8px;font-size:14px}
+.dl span{color:#56655B}
+.btn{height:50px;border-radius:12px;border:1px solid #C9D0C6;background:#fff;font:inherit;font-size:15px;font-weight:600;color:#1C2620;display:flex;align-items:center;justify-content:center;text-decoration:none}
+</style>
+</helmet>
+<div style="width:390px;height:900px;background:#F4F3EE;display:flex;flex-direction:column">
+  <div style="display:flex;align-items:center;gap:4px;padding:8px 12px">
+    <a href="AlertsList.dc.html" aria-label="Back" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+    <h1 style="margin:0;font-size:20px;font-weight:700;flex:1">Alert</h1>
+    <a href="#" aria-label="Snooze" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M5 3L2 6M19 3l3 3"/></svg></a>
+  </div>
+
+  <div style="padding:4px 16px;display:flex;flex-direction:column;gap:12px">
+    <div>
+      <div style="display:flex;gap:6px"><span class="b" style="background:#FBE4E1;color:#8E2216">High</span><span class="b" style="background:#F1EEF8;color:#4B3A7A">Reproduction</span><span class="b" style="background:#FBE4E1;color:#8E2216">3 d overdue</span></div>
+      <h2 style="margin:10px 0 0;font-size:24px;font-weight:700">Pregnancy check due</h2>
+      <div style="font-size:14px;color:#56655B;margin-top:4px">Raised 18 Oct · daily job</div>
+    </div>
+
+    <a href="#" class="card" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:#1C2620">
+      <span style="width:52px;height:52px;border-radius:12px;background:#E7F0E9;display:flex;align-items:center;justify-content:center;font-weight:700;color:#1F5C3A;font-size:13px;flex:none">HF</span>
+      <span style="flex:1"><b style="font-size:16px">VD-002</b> Ponni<br><span style="font-size:13px;color:#56655B">Cow · HF · Milking · DIM 112 · 15.1 L/day</span></span>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#56655B" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+    </a>
+
+    <div class="card">
+      <div class="k">Why you see this</div>
+      <div style="font-size:15px;line-height:1.45">Ponni was inseminated <b>48 days ago</b>. The rule asks for a pregnancy check <b>45 days after AI</b>, and no check has been recorded yet.</div>
+      <div class="dl" style="margin-top:12px">
+        <span>Rule</span><b>Pregnancy check · 45 d after AI</b>
+        <span>Service date</span><b>3 Sep 2026</b>
+        <span>Method</span><b>AI · [bull / straw ID]</b>
+        <span>Due on</span><b>18 Oct 2026</b>
+        <span>Last heat</span><b>3 Sep 2026</b>
+      </div>
+      <a href="AlertRules.dc.html" style="display:inline-flex;align-items:center;min-height:44px;font-size:14px;font-weight:600;text-decoration:none">Change this rule</a>
+    </div>
+
+    <div class="card">
+      <div class="k">Who sees it</div>
+      <div style="font-size:14px">Owner only</div>
+    </div>
+  </div>
+
+  <div style="margin-top:auto;padding:14px 16px 24px;border-top:1px solid #E1E4DC;background:#fff;display:flex;flex-direction:column;gap:10px">
+    <a href="#" style="height:50px;border-radius:12px;background:#1F5C3A;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;text-decoration:none">Log pregnancy check</a>
+    <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:10px">
+      <a class="btn" href="AlertsList.dc.html">Mark done</a>
+      <a class="btn" href="AlertsList.dc.html" style="color:#8E2216">Dismiss</a>
+    </div>
+    <div style="text-align:center;font-size:12px;color:#56655B;padding-top:4px">© 2026 Dairy Farm. All rights reserved.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":900}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

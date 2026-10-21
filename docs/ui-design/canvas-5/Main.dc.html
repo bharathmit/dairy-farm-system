@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Finance</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.st{background:#fff;border-radius:12px;padding:12px}
+.k{font-size:12px;color:#56655B;font-weight:600}.v{font-size:20px;font-weight:700;margin-top:2px}
+.chip{height:36px;padding:0 12px;border-radius:18px;border:1px solid #C9D0C6;background:#fff;font:inherit;font-size:14px;font-weight:500;color:#1C2620;white-space:nowrap}
+.on{background:#1F5C3A;border-color:#1F5C3A;color:#fff}
+.g{font-size:12px;font-weight:700;padding:2px 7px;border-radius:6px;white-space:nowrap}
+.br{display:grid;grid-template-columns:110px minmax(0, 1fr) 72px;align-items:center;gap:8px;font-size:14px;min-height:28px}
+.bt{height:10px;border-radius:5px;background:#EEF0EA;overflow:hidden}
+.e{display:flex;align-items:center;gap:10px;min-height:60px;padding:8px 12px;border-top:1px solid #EEF0EA;text-decoration:none;color:#1C2620}
+.nav{position:absolute;left:0;right:0;bottom:0;height:72px;background:#fff;border-top:1px solid #E1E4DC;display:grid;grid-template-columns:repeat(5, minmax(0, 1fr))}
+.ni{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:600;color:#56655B;text-decoration:none}
+</style>
+</helmet>
+<div style="width:390px;height:1300px;background:#F4F3EE;position:relative">
+  <div style="display:flex;align-items:center;gap:4px;padding:8px 12px">
+    <a href="#" aria-label="Back" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+    <span aria-hidden="true" style="width:28px;height:28px;border-radius:8px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;margin-right:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"/></svg></span>
+    <h1 style="margin:0;font-size:22px;font-weight:700;flex:1">Finance</h1>
+    <a href="AddTransaction.dc.html" style="height:40px;padding:0 14px;border-radius:10px;background:#1F5C3A;color:#fff;display:flex;align-items:center;font-weight:600;font-size:14px;text-decoration:none">+ Add</a>
+  </div>
+
+  <div style="padding:4px 16px 0">
+    <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:#56655B;margin-bottom:10px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#56655B" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Owner only · workers cannot see this</div>
+    <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:2px"><button class="chip on">This month</button><button class="chip">Last month</button><button class="chip">Quarter</button><button class="chip">Year</button><button class="chip">Custom</button></div>
+    <div style="font-size:14px;color:#56655B;margin:10px 0 8px">1 – 21 Oct 2026 · Villupuram Dairy</div>
+
+    <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:10px">
+      <div class="st"><div class="k">Income</div><div class="v" style="color:#1F5C3A">₹1,48,600</div><div style="font-size:12px;color:#56655B;margin-top:2px">+6 % vs Sep</div></div>
+      <div class="st"><div class="k">Expense</div><div class="v" style="color:#A3271B">₹1,03,100</div><div style="font-size:12px;color:#56655B;margin-top:2px">+11 % vs Sep</div></div>
+      <div class="st"><div class="k">Net</div><div class="v">₹45,500</div><div style="font-size:12px;color:#56655B;margin-top:2px">income − expense</div></div>
+      <div class="st" style="background:#FBF1E2"><div class="k" style="color:#7A4B0E">Margin</div><div class="v" style="color:#7A4B0E">30.6 %</div><div style="font-size:12px;font-weight:600;color:#7A4B0E;margin-top:2px">Near 30 % alert</div></div>
+    </div>
+
+    <a href="#" style="display:flex;align-items:center;gap:12px;background:#FBF1E2;border-radius:12px;padding:12px 14px;margin-top:10px;text-decoration:none;color:#4A3210"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7A4B0E" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span style="flex:1;font-size:15px"><b>4 pending payments</b> · ₹18,250</span><span style="font-weight:700;color:#7A4B0E">View</span></a>
+
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <a href="AnimalPnL.dc.html" style="flex:1;height:44px;border-radius:10px;background:#fff;border:1px solid #C9D0C6;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;text-decoration:none">Profit per animal</a>
+      <a href="Workers.dc.html" style="flex:1;height:44px;border-radius:10px;background:#fff;border:1px solid #C9D0C6;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;text-decoration:none">Workers &amp; wages</a>
+    </div>
+
+    <div style="background:#fff;border-radius:14px;padding:14px;margin-top:14px;display:flex;flex-direction:column;gap:6px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline"><b style="font-size:15px">Income by category</b><span style="font-size:13px;color:#56655B">₹1,48,600</span></div>
+      <div class="br"><span>Milk sales</span><div class="bt"><div style="width:100%;height:10px;background:#1F5C3A"></div></div><b style="text-align:right">₹1,32,400</b></div>
+      <div class="br"><span>Animal sales</span><div class="bt"><div style="width:9%;height:10px;background:#1F5C3A"></div></div><b style="text-align:right">₹12,000</b></div>
+      <div class="br"><span>Manure</span><div class="bt"><div style="width:4%;height:10px;background:#1F5C3A"></div></div><b style="text-align:right">₹4,200</b></div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:10px"><b style="font-size:15px">Expense by category</b><span style="font-size:13px;color:#56655B">₹1,03,100</span></div>
+      <div class="br"><span>Feed</span><div class="bt"><div style="width:100%;height:10px;background:#A3271B"></div></div><b style="text-align:right">₹61,800</b></div>
+      <div class="br"><span>Labour</span><div class="bt"><div style="width:44%;height:10px;background:#A3271B"></div></div><b style="text-align:right">₹27,000</b></div>
+      <div class="br"><span>Vet &amp; medicine</span><div class="bt"><div style="width:10%;height:10px;background:#A3271B"></div></div><b style="text-align:right">₹6,400</b></div>
+      <div class="br"><span>Equipment</span><div class="bt"><div style="width:5%;height:10px;background:#A3271B"></div></div><b style="text-align:right">₹3,200</b></div>
+      <div class="br"><span>Utilities</span><div class="bt"><div style="width:5%;height:10px;background:#A3271B"></div></div><b style="text-align:right">₹2,900</b></div>
+      <div class="br"><span>Semen</span><div class="bt"><div style="width:3%;height:10px;background:#A3271B"></div></div><b style="text-align:right">₹1,800</b></div>
+      <div style="font-size:12px;color:#56655B;margin-top:4px">Feed is 41.6 % of milk income</div>
+    </div>
+
+    <div style="display:flex;align-items:center;margin-top:16px"><b style="font-size:15px;flex:1">Entries</b><span style="font-size:13px;color:#56655B">newest first</span></div>
+    <div style="background:#fff;border-radius:14px;overflow:hidden;margin-top:8px">
+      <div style="padding:8px 12px;font-size:12px;font-weight:700;color:#56655B;background:#F7F7F3">Today · Wed 21 Oct</div>
+      <a class="e" href="AddTransaction.dc.html" style="border-top:0"><span style="flex:1"><b style="font-size:15px">Milk sales</b><span style="display:block;font-size:13px;color:#56655B">[Society name] · 163.5 L × ₹42</span></span><span style="text-align:right"><b style="color:#1F5C3A;display:block">+₹6,867</b><span class="g" style="background:#E6EEF8;color:#1F4E87">Auto · milk</span></span></a>
+      <a class="e" href="AddTransaction.dc.html"><span style="flex:1"><b style="font-size:15px">Feed</b><span style="display:block;font-size:13px;color:#56655B">Concentrate mix 50 kg</span></span><span style="text-align:right"><b style="color:#A3271B;display:block">−₹1,450</b><span class="g" style="background:#E6EEF8;color:#1F4E87">Auto · feed</span></span></a>
+      <div style="padding:8px 12px;font-size:12px;font-weight:700;color:#56655B;background:#F7F7F3">Tue 20 Oct</div>
+      <a class="e" href="AddTransaction.dc.html" style="border-top:0"><span style="flex:1"><b style="font-size:15px">Vet &amp; medicine</b><span style="display:block;font-size:13px;color:#56655B">VD-002 Ponni · mastitis treatment</span></span><span style="text-align:right"><b style="color:#A3271B;display:block">−₹850</b><span class="g" style="background:#E6EEF8;color:#1F4E87">Auto · health</span></span></a>
+      <a class="e" href="PayWages.dc.html"><span style="flex:1"><b style="font-size:15px">Labour</b><span style="display:block;font-size:13px;color:#56655B">Murugan · 12–18 Oct</span></span><span style="text-align:right"><b style="color:#A3271B;display:block">−₹3,000</b><span class="g" style="background:#FBF1E2;color:#7A4B0E">Pending</span></span></a>
+      <a class="e" href="AddTransaction.dc.html"><span style="flex:1"><b style="font-size:15px">Utilities</b><span style="display:block;font-size:13px;color:#56655B">TNEB electricity · UPI</span></span><span style="text-align:right"><b style="color:#A3271B;display:block">−₹2,900</b><span class="g" style="background:#EEF0EA;color:#3B4A41">Manual</span></span></a>
+      <a class="e" href="AddTransaction.dc.html"><span style="flex:1"><b style="font-size:15px">Manure</b><span style="display:block;font-size:13px;color:#56655B">2 tractor loads · cash</span></span><span style="text-align:right"><b style="color:#1F5C3A;display:block">+₹4,200</b><span class="g" style="background:#EEF0EA;color:#3B4A41">Manual</span></span></a>
+    </div>
+    <div style="text-align:center;font-size:12px;color:#56655B;padding:14px 0">© 2026 Dairy Farm. All rights reserved.</div>
+  </div>
+
+  <nav class="nav" aria-label="Main">
+    <a class="ni" href="#"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-6 9 6v10H3z"/></svg>Home</a>
+    <a class="ni" href="#"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>Herd</a>
+    <a class="ni" href="AddTransaction.dc.html" aria-label="Add record"><span style="width:48px;height:48px;border-radius:24px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;margin-top:-18px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span></a>
+    <a class="ni" href="#"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/></svg>Alerts</a>
+    <a class="ni" href="#" style="color:#1F5C3A"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>More</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1300}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

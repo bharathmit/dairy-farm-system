@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Concentrate formula</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.lab{font-size:13px;font-weight:600;color:#3B4A41;display:block;margin-bottom:6px}
+.inp{width:100%;box-sizing:border-box;height:48px;border:1px solid #C9D0C6;border-radius:10px;padding:0 14px;font:inherit;font-size:16px;background:#fff;color:#1C2620}
+.two{display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:12px}
+.r{display:grid;grid-template-columns:1.8fr 0.9fr 0.8fr;align-items:center;gap:8px;min-height:54px;padding:0 12px;border-top:1px solid #EEF0EA;font-size:14px}
+.q{width:100%;box-sizing:border-box;height:44px;border:1px solid #C9D0C6;border-radius:10px;text-align:center;font:inherit;font-size:16px;font-weight:700;color:#1C2620;background:#fff}
+.m{text-align:right;color:#56655B}
+.b{font-size:12px;font-weight:700;padding:2px 8px;border-radius:6px;white-space:nowrap}
+.n{display:grid;grid-template-columns:1fr 1fr 1fr 0.8fr;align-items:center;min-height:46px;padding:0 12px;border-top:1px solid #EEF0EA;font-size:14px}
+</style>
+</helmet>
+<div style="width:390px;height:1450px;background:#F4F3EE;display:flex;flex-direction:column">
+  <div style="display:flex;align-items:center;gap:4px;padding:8px 12px">
+    <a href="Main.dc.html" aria-label="Back" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+    <span aria-hidden="true" style="width:28px;height:28px;border-radius:8px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;margin-right:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"/></svg></span>
+    <h1 style="margin:0;font-size:20px;font-weight:700">Concentrate formula</h1>
+  </div>
+  <div style="padding:4px 16px;display:flex;flex-direction:column;gap:14px">
+    <div class="two">
+      <div><label class="lab" for="fn">Formula name</label><input class="inp" id="fn" value="Villupuram 100 kg"></div>
+      <div><label class="lab" for="mi">Makes item</label><select class="inp" id="mi"><option>Concentrate mix</option></select></div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:12px;background:#E7F0E9;border-radius:12px;padding:12px 14px">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F5C3A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>
+      <div style="flex:1"><div style="font-size:13px;font-weight:600;color:#3B4A41">Batch total</div><div style="font-size:22px;font-weight:700">100.0 kg <span style="font-size:14px;color:#1F5C3A">of 100</span></div></div>
+      <div style="text-align:right"><div style="font-size:13px;font-weight:600;color:#3B4A41">Cost per kg</div><div style="font-size:22px;font-weight:700">₹24.10</div></div>
+    </div>
+    <div style="font-size:12px;color:#56655B;margin-top:-8px">Target range ₹21–27/kg · batch ₹2,410 · prices from latest purchases</div>
+
+    <div style="background:#fff;border-radius:14px;overflow:hidden">
+      <div class="r" style="border-top:0;font-size:12px;font-weight:700;color:#56655B;min-height:40px"><span>Ingredient</span><span style="text-align:center">kg</span><span style="text-align:right">₹</span></div>
+      <div class="r"><span>Maize</span><input class="q" aria-label="Maize kg" value="20"><span class="m">[₹]</span></div>
+      <div class="r"><span>Sorghum</span><input class="q" aria-label="Sorghum kg" value="15"><span class="m">[₹]</span></div>
+      <div class="r"><span>Groundnut cake</span><input class="q" aria-label="Groundnut cake kg" value="10"><span class="m">[₹]</span></div>
+      <div class="r"><span>Coconut cake</span><input class="q" aria-label="Coconut cake kg" value="8"><span class="m">[₹]</span></div>
+      <div class="r" style="background:#FBF1E2"><span><span style="display:block">Gingelly cake</span><span class="b" style="background:#fff;color:#7A4B0E">Over max [MAX %]</span></span><input class="q" aria-label="Gingelly cake kg" value="7" style="border-color:#C2410C"><span class="m">[₹]</span></div>
+      <div class="r"><span>Ulundhu / green gram chunni</span><input class="q" aria-label="Chunni kg" value="10"><span class="m">[₹]</span></div>
+      <div class="r"><span>Rice bran</span><input class="q" aria-label="Rice bran kg" value="15"><span class="m">[₹]</span></div>
+      <div class="r"><span>Wheat bran</span><input class="q" aria-label="Wheat bran kg" value="6.7"><span class="m">[₹]</span></div>
+      <div class="r"><span>Molasses / Vellam</span><input class="q" aria-label="Molasses kg" value="5"><span class="m">[₹]</span></div>
+      <div class="r"><span>Salt</span><input class="q" aria-label="Salt kg" value="1"><span class="m">[₹]</span></div>
+      <div class="r"><span>Baking soda</span><input class="q" aria-label="Baking soda kg" value="0.3"><span class="m">[₹]</span></div>
+      <div class="r"><span>Mineral mixture</span><input class="q" aria-label="Mineral mixture kg" value="2"><span class="m">[₹]</span></div>
+      <div class="r" style="background:#F7F7F3"><b>Total</b><b style="text-align:center">100.0</b><b style="text-align:right">₹2,410</b></div>
+    </div>
+    <a href="FormulaEditor.dc.html" style="height:44px;border-radius:10px;border:1px dashed #C9D0C6;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;text-decoration:none">+ Add ingredient</a>
+
+    <div style="display:flex;gap:10px;background:#FBE4E1;border-radius:12px;padding:12px 14px;color:#5A1A12;font-size:14px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A3271B" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="flex:none"><circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/></svg>
+      <span><b style="color:#8E2216">Cottonseed cake can't be added.</b> It is marked Excluded — gossypol.</span>
+    </div>
+    <div style="display:flex;gap:10px;background:#FBF1E2;border-radius:12px;padding:12px 14px;color:#4A3210;font-size:14px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7A4B0E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M12 3l10 18H2zM12 10v5M12 18h.01"/></svg>
+      <span><b style="color:#7A4B0E">Gingelly cake 7 % is above its max inclusion [MAX %].</b> Save is allowed with a warning.</span>
+    </div>
+
+    <div style="background:#fff;border-radius:14px;overflow:hidden">
+      <div style="padding:12px 12px 6px;display:flex;justify-content:space-between"><b style="font-size:15px">Nutrients in mix vs target</b><span style="font-size:13px;color:#56655B">per kg</span></div>
+      <div class="n" style="font-size:12px;font-weight:700;color:#56655B;min-height:36px"><span>Nutrient</span><span>Mix</span><span>Target</span><span></span></div>
+      <div class="n"><span>DM</span><span>[DM %]</span><span>[target]</span><span class="b" style="background:#E7F0E9;color:#1F5C3A;justify-self:end">OK</span></div>
+      <div class="n"><span>CP</span><span>[CP %]</span><span>[target]</span><span class="b" style="background:#E7F0E9;color:#1F5C3A;justify-self:end">OK</span></div>
+      <div class="n"><span>TDN</span><span>[TDN %]</span><span>[target]</span><span class="b" style="background:#FBF1E2;color:#7A4B0E;justify-self:end">Low</span></div>
+      <div class="n"><span>Ca</span><span>[Ca %]</span><span>[target]</span><span class="b" style="background:#E7F0E9;color:#1F5C3A;justify-self:end">OK</span></div>
+      <div class="n"><span>P</span><span>[P %]</span><span>[target]</span><span class="b" style="background:#E6EEF8;color:#1F4E87;justify-self:end">High</span></div>
+    </div>
+    <div style="font-size:12px;color:#56655B">Values fill in once each ingredient's nutrients are entered on its feed item.</div>
+  </div>
+  <div style="margin-top:auto;padding:14px 16px 24px;border-top:1px solid #E1E4DC;background:#fff">
+    <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:10px">
+      <a href="Main.dc.html" style="height:50px;border-radius:12px;border:1px solid #C9D0C6;color:#1C2620;display:flex;align-items:center;justify-content:center;font-weight:600;text-decoration:none;box-sizing:border-box">Save formula</a>
+      <a href="PrepareBatch.dc.html" style="height:50px;border-radius:12px;background:#1F5C3A;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;text-decoration:none">Prepare batch</a>
+    </div>
+    <div style="text-align:center;font-size:12px;color:#56655B;padding-top:12px">© 2026 Dairy Farm. All rights reserved.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1450}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

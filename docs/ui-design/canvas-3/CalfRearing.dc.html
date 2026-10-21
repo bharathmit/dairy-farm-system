@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Calf rearing</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.st{background:#fff;border-radius:12px;padding:12px}
+.k{font-size:12px;color:#56655B;font-weight:600}.v{font-size:20px;font-weight:700;margin-top:2px}
+.chip{height:36px;padding:0 12px;border-radius:18px;border:1px solid #C9D0C6;background:#fff;font:inherit;font-size:14px;font-weight:500;color:#1C2620;white-space:nowrap}
+.on{background:#1F5C3A;border-color:#1F5C3A;color:#fff}
+.card{display:flex;flex-direction:column;gap:10px;background:#fff;border-radius:14px;padding:14px;text-decoration:none;color:#1C2620}
+.b{font-size:12px;font-weight:600;padding:2px 8px;border-radius:6px;white-space:nowrap}
+.m{display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:8px;font-size:13px;color:#56655B}
+.m b{display:block;font-size:15px;color:#1C2620}
+.bar{height:6px;border-radius:3px;background:#EEF0EA;position:relative}
+</style>
+</helmet>
+<div style="width:390px;height:1100px;background:#F4F3EE">
+  <div style="display:flex;align-items:center;gap:4px;padding:8px 12px">
+    <a href="Main.dc.html" aria-label="Back" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+    <span aria-hidden="true" style="width:28px;height:28px;border-radius:8px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;margin-right:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"/></svg></span>
+    <h1 style="margin:0;font-size:22px;font-weight:700;flex:1">Calves</h1>
+    <a href="CalfFeeding.dc.html" style="height:40px;padding:0 14px;border-radius:10px;background:#1F5C3A;color:#fff;display:flex;align-items:center;font-weight:600;font-size:14px;text-decoration:none">+ Feeding</a>
+  </div>
+
+  <div style="padding:4px 16px 0;display:flex;flex-direction:column;gap:12px">
+    <div style="display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:10px">
+      <div class="st"><div class="k">Calves</div><div class="v">4</div></div>
+      <div class="st"><div class="k">Milk today</div><div class="v">11 L</div></div>
+      <div class="st"><div class="k">Need action</div><div class="v" style="color:#A3271B">3</div></div>
+    </div>
+    <div style="display:flex;gap:8px"><button class="chip on">All 4</button><button class="chip">Female 3</button><button class="chip">Male 1</button><button class="chip">Weaning</button></div>
+
+    <a class="card" href="CalfFeeding.dc.html">
+      <div style="display:flex;align-items:center;gap:8px"><b style="font-size:16px">VD-021</b><span style="color:#3B4A41;flex:1">♀ · dam Kaveri · Jersey</span><span style="font-weight:700">0 d</span></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="b" style="background:#FBE4E1;color:#8E2216">Colostrum due · 1 h 10 m</span></div>
+      <div class="m"><span>Milk<b>— L/d</b></span><span>Starter<b>— kg/d</b></span><span>Weight<b>24 kg</b></span></div>
+    </a>
+
+    <a class="card" href="CalfFeeding.dc.html">
+      <div style="display:flex;align-items:center;gap:8px"><b style="font-size:16px">VD-019</b><span style="color:#3B4A41;flex:1">♀ · Jersey</span><span style="font-weight:700">23 d</span></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="b" style="background:#E7F0E9;color:#1F5C3A">Colostrum ✓</span><span class="b" style="background:#E7F0E9;color:#1F5C3A">Deworm d15 ✓</span><span class="b" style="background:#FBF1E2;color:#7A4B0E">Deworm d30 in 7 d</span></div>
+      <div class="m"><span>Milk<b>3.0 L/d</b></span><span>Starter<b>0.2 kg/d</b></span><span>Weight<b>38 kg</b></span></div>
+      <div><div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:#56655B;margin-bottom:4px"><span>vs target [40] kg</span><span style="color:#7A4B0E">−5 %</span></div><div class="bar"><div style="width:95%;height:6px;border-radius:3px;background:#7A4B0E"></div></div></div>
+    </a>
+
+    <a class="card" href="CalfFeeding.dc.html">
+      <div style="display:flex;align-items:center;gap:8px"><b style="font-size:16px">VD-017</b><span style="color:#3B4A41;flex:1">♀ · HF × Jersey</span><span style="font-weight:700">94 d</span></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="b" style="background:#E6EEF8;color:#1F4E87">Weaning ready</span><span class="b" style="background:#E7F0E9;color:#1F5C3A">Deworm ✓</span></div>
+      <div class="m"><span>Milk<b>2.0 L/d</b></span><span>Starter<b>1.2 kg/d</b></span><span>Weight<b>96 kg</b></span></div>
+      <div><div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:#56655B;margin-bottom:4px"><span>vs target [90] kg</span><span style="color:#1F5C3A">+7 %</span></div><div class="bar"><div style="width:100%;height:6px;border-radius:3px;background:#1F5C3A"></div></div></div>
+      <div style="font-size:12px;color:#56655B">≥ 90 days and ≥ 1 kg starter/day for 3 days</div>
+    </a>
+
+    <a class="card" href="CalfFeeding.dc.html">
+      <div style="display:flex;align-items:center;gap:8px"><b style="font-size:16px">VD-020</b><span style="color:#3B4A41;flex:1">♂ · HF</span><span style="font-weight:700">41 d</span></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="b" style="background:#FBF1E2;color:#7A4B0E">Male · sell window 30–90 d</span></div>
+      <div class="m"><span>Milk<b>3.5 L/d</b></span><span>Starter<b>0.4 kg/d</b></span><span>Weight<b>52 kg</b></span></div>
+      <div style="font-size:12px;color:#56655B">49 days left in sell window · est. ₹[price]</div>
+    </a>
+
+    <div style="text-align:center;font-size:12px;color:#56655B;padding:4px 0 14px">© 2026 Dairy Farm. All rights reserved.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1100}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

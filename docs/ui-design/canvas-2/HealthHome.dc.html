@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Health</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.st{background:#fff;border-radius:12px;padding:12px}
+.k{font-size:12px;color:#56655B;font-weight:600}.v{font-size:20px;font-weight:700;margin-top:2px}
+.chip{height:36px;padding:0 12px;border-radius:18px;border:1px solid #C9D0C6;background:#fff;font:inherit;font-size:14px;font-weight:500;color:#1C2620;white-space:nowrap}
+.on{background:#1F5C3A;border-color:#1F5C3A;color:#fff}
+.g{font-size:12px;font-weight:700;padding:2px 7px;border-radius:6px;white-space:nowrap}
+.rec{display:block;padding:12px 14px;border-top:1px solid #EEF0EA;text-decoration:none;color:#1C2620}
+.sd{display:flex;align-items:center;gap:12px;background:#fff;border-radius:12px;padding:12px 14px;min-height:44px;box-sizing:border-box;text-decoration:none;color:#1C2620}
+.m{font-size:13px;color:#56655B}
+</style>
+</helmet>
+<div root style="width:390px;height:1000px;background:#F4F3EE">
+  <div style="display:flex;align-items:center;gap:4px;padding:8px 12px">
+    <a href="Main.dc.html" aria-label="Back" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+    <span aria-hidden="true" style="width:28px;height:28px;border-radius:8px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;margin-right:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"/></svg></span>
+    <h1 style="margin:0;font-size:22px;font-weight:700;flex:1">Health</h1>
+    <a href="HealthBatch.dc.html" style="height:40px;padding:0 12px;border-radius:10px;border:1px solid #1F5C3A;color:#1F5C3A;display:flex;align-items:center;font-weight:600;font-size:14px;text-decoration:none;margin-right:6px">Batch</a>
+    <a href="HealthForm.dc.html" style="height:40px;padding:0 12px;border-radius:10px;background:#1F5C3A;color:#fff;display:flex;align-items:center;font-weight:600;font-size:14px;text-decoration:none">+ Health record</a>
+  </div>
+
+  <div style="padding:4px 16px 0">
+    <div style="display:grid;grid-template-columns:repeat(4, minmax(0, 1fr));gap:8px">
+      <div class="st" style="padding:10px"><div class="k">At risk</div><div class="v" style="color:#A3271B">2</div></div>
+      <a class="st" href="WithdrawalList.dc.html" style="padding:10px;text-decoration:none;color:#1C2620"><div class="k">Withdrawal</div><div class="v" style="color:#7A4B0E">2</div></a>
+      <div class="st" style="padding:10px"><div class="k">Follow-ups</div><div class="v" style="color:#1F4E87">3</div></div>
+      <div class="st" style="padding:10px"><div class="k">This month</div><div class="v">14</div></div>
+    </div>
+
+    <a href="WithdrawalList.dc.html" style="display:flex;align-items:center;gap:12px;background:#FBE4E1;border-radius:12px;padding:12px 14px;margin-top:12px;text-decoration:none;color:#8E2216">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8E2216" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"/><path d="M5 5l14 14"/></svg>
+      <span style="flex:1;font-size:15px"><b>2 cows in milk withdrawal</b><br><span style="font-size:13px">Do not sell milk · VD-002, VD-011</span></span>
+      <span style="font-weight:700">View</span>
+    </a>
+
+    <div style="display:flex;gap:8px;margin-top:16px;overflow:hidden"><button class="chip on">All</button><button class="chip">Follow-ups</button><button class="chip">Withdrawal</button><button class="chip">Vaccination</button><button class="chip">Deworming</button></div>
+
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:16px"><b style="font-size:15px">Due by schedule</b><span class="m">next 7 days</span></div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+      <a class="sd" href="HealthForm.dc.html" style="background:#FBF1E2;color:#4A3210"><span style="width:10px;height:10px;border-radius:5px;background:#C2410C"></span><span style="flex:1;font-size:15px"><b>VD-019</b> deworm day 30 due</span><span style="font-weight:700;color:#7A4B0E">Today</span></a>
+      <a class="sd" href="HealthBatch.dc.html"><span style="width:10px;height:10px;border-radius:5px;background:#1F4E87"></span><span style="flex:1;font-size:15px"><b>FMD vaccine</b> due for 6 cows</span><span class="m">Sat 24 Oct</span></a>
+      <a class="sd" href="HealthForm.dc.html"><span style="width:10px;height:10px;border-radius:5px;background:#1F4E87"></span><span style="flex:1;font-size:15px"><b>VD-002</b> Ponni · mastitis recheck</span><span class="m">Fri 23 Oct</span></a>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:16px"><b style="font-size:15px">Recent records</b><a href="#" style="font-size:14px;font-weight:600">See all</a></div>
+    <div style="background:#fff;border-radius:14px;overflow:hidden;margin-top:8px">
+      <a class="rec" href="HealthForm.dc.html" style="border-top:0">
+        <div style="display:flex;align-items:center;gap:8px"><b style="flex:1;font-size:15px">VD-002 Ponni</b><span class="g" style="background:#FBE4E1;color:#8E2216">Treatment</span></div>
+        <div class="m" style="margin-top:4px">Mastitis · [Ceftriaxone] 10 ml · 19 Oct</div>
+        <div style="font-size:13px;font-weight:600;color:#1F4E87;margin-top:4px">Next: recheck udder · 23 Oct</div>
+      </a>
+      <a class="rec" href="HealthForm.dc.html">
+        <div style="display:flex;align-items:center;gap:8px"><b style="flex:1;font-size:15px">VD-011 Malar</b><span class="g" style="background:#FBE4E1;color:#8E2216">Illness</span></div>
+        <div class="m" style="margin-top:4px">Fever 39.8 °C · [Meloxicam] 5 ml · 20 Oct</div>
+        <div style="font-size:13px;font-weight:600;color:#1F4E87;margin-top:4px">Next: temperature check · 22 Oct</div>
+      </a>
+      <a class="rec" href="HealthForm.dc.html">
+        <div style="display:flex;align-items:center;gap:8px"><b style="flex:1;font-size:15px">VD-015 Ganga</b><span class="g" style="background:#E6EEF8;color:#1F4E87">Vaccination</span></div>
+        <div class="m" style="margin-top:4px">HS vaccine · 2 ml · 16 Oct</div>
+        <div class="m" style="margin-top:4px">Next: booster · [placeholder date]</div>
+      </a>
+      <a class="rec" href="HealthForm.dc.html">
+        <div style="display:flex;align-items:center;gap:8px"><b style="flex:1;font-size:15px">VD-008 Kaveri</b><span class="g" style="background:#E7F0E9;color:#1F5C3A">Deworming</span></div>
+        <div class="m" style="margin-top:4px">[Albendazole] 15 ml · 12 Oct</div>
+        <div class="m" style="margin-top:4px">No follow-up</div>
+      </a>
+      <a class="rec" href="HealthForm.dc.html">
+        <div style="display:flex;align-items:center;gap:8px"><b style="flex:1;font-size:15px">VD-001 Lakshmi</b><span class="g" style="background:#FBF1E2;color:#7A4B0E">Injury</span></div>
+        <div class="m" style="margin-top:4px">Hoof cut, cleaned · povidone spray · 9 Oct</div>
+        <div class="m" style="margin-top:4px">Closed</div>
+      </a>
+    </div>
+    <div style="text-align:center;font-size:12px;color:#56655B;padding:14px 0">© 2026 Dairy Farm. All rights reserved.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1000}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

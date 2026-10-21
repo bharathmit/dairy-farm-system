@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Feed item</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.lab{font-size:13px;font-weight:600;color:#3B4A41;display:block;margin-bottom:6px}
+.inp{width:100%;box-sizing:border-box;height:48px;border:1px solid #C9D0C6;border-radius:10px;padding:0 14px;font:inherit;font-size:16px;background:#fff;color:#1C2620}
+.card{background:#fff;border-radius:14px;padding:14px}
+.two{display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:12px}
+.three{display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:10px}
+.chip{height:40px;padding:0 12px;border-radius:20px;border:1px solid #C9D0C6;background:#fff;font:inherit;font-size:14px;font-weight:500;color:#1C2620;white-space:nowrap}
+.on{background:#1F5C3A;border-color:#1F5C3A;color:#fff}
+.hint{font-size:12px;color:#56655B;margin-top:4px}
+</style>
+</helmet>
+<div style="width:390px;height:1400px;background:#F4F3EE;display:flex;flex-direction:column">
+  <div style="display:flex;align-items:center;gap:4px;padding:8px 12px">
+    <a href="Main.dc.html" aria-label="Close" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+    <span aria-hidden="true" style="width:28px;height:28px;border-radius:8px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;margin-right:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"/></svg></span>
+    <h1 style="margin:0;font-size:20px;font-weight:700">Feed item</h1>
+  </div>
+  <div style="padding:4px 16px;display:flex;flex-direction:column;gap:14px">
+    <div><label class="lab" for="nm">Name *</label><input class="inp" id="nm" value="Gingelly cake"></div>
+
+    <div>
+      <span class="lab">Category *</span>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <button class="chip on">Concentrate ingredient</button><button class="chip">Green fodder</button><button class="chip">Dry fodder</button><button class="chip">Silage</button><button class="chip">Mineral</button><button class="chip">Mix</button>
+      </div>
+      <div class="hint">"Mix" = a prepared concentrate made from a formula; its stock comes from batches.</div>
+    </div>
+
+    <div class="two">
+      <div><label class="lab" for="un">Unit</label><select class="inp" id="un"><option>kg</option></select></div>
+      <div><label class="lab" for="cp">Cost per kg (₹)</label><input class="inp" id="cp" inputmode="decimal" value="[PRICE]"><div class="hint">Updates from latest purchase</div></div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center"><b>Nutrients per kg</b><span style="font-size:13px;color:#56655B">as-fed basis</span></div>
+      <div class="three" style="margin-top:12px">
+        <div><label class="lab" for="dm">DM %</label><input class="inp" id="dm" inputmode="decimal" placeholder="[DM %]"></div>
+        <div><label class="lab" for="crp">CP %</label><input class="inp" id="crp" inputmode="decimal" placeholder="[CP %]"></div>
+        <div><label class="lab" for="tdn">TDN %</label><input class="inp" id="tdn" inputmode="decimal" placeholder="[TDN %]"></div>
+        <div><label class="lab" for="ca">Ca %</label><input class="inp" id="ca" inputmode="decimal" placeholder="[Ca %]"></div>
+        <div><label class="lab" for="p">P %</label><input class="inp" id="p" inputmode="decimal" placeholder="[P %]"></div>
+      </div>
+      <div class="hint" style="margin-top:8px">Used for formula and ration nutrient checks.</div>
+    </div>
+
+    <div class="card">
+      <b>Use limits</b>
+      <div style="margin-top:12px"><label class="lab" for="mx">Max inclusion in a concentrate (%)</label><input class="inp" id="mx" inputmode="decimal" value="[MAX %]"><div class="hint">Formula shows a warning above this.</div></div>
+      <div style="display:flex;align-items:center;gap:12px;margin-top:14px">
+        <label for="ex" style="flex:1"><span style="display:block;font-weight:600">Excluded</span><span style="font-size:13px;color:#56655B">Block this item in every formula and ration</span></label>
+        <input id="ex" type="checkbox" role="switch" style="width:52px;height:30px;accent-color:#1F5C3A">
+      </div>
+      <div style="margin-top:12px"><label class="lab" for="rs">Reason for exclusion</label><input class="inp" id="rs" placeholder="e.g. Gossypol (cottonseed cake)" disabled style="background:#F7F7F3"></div>
+      <div style="margin-top:14px;background:#FBF1E2;color:#4A3210;border-radius:10px;padding:10px 12px;font-size:13px"><b style="color:#7A4B0E">Stage-wise daily limits</b> for gingelly cake are set in the ration rules.<a href="RationPlanner.dc.html" style="display:inline-block;margin-left:6px;font-weight:600;color:#7A4B0E">Open ration rules</a></div>
+    </div>
+
+    <div class="card">
+      <b>Reorder</b>
+      <div class="two" style="margin-top:12px">
+        <div><label class="lab" for="rl">Reorder level (kg)</label><input class="inp" id="rl" inputmode="decimal" value="20"></div>
+        <div><label class="lab" for="lt">Lead time (days)</label><input class="inp" id="lt" inputmode="numeric" value="3"></div>
+      </div>
+      <div class="hint" style="margin-top:8px">Alert when stock falls below the level, or days left ≤ lead time.</div>
+    </div>
+
+    <div class="card">
+      <b>Supplier</b>
+      <div style="margin-top:12px"><label class="lab" for="sp">Supplier name</label><input class="inp" id="sp" value="[SUPPLIER NAME]"></div>
+      <div style="margin-top:12px"><label class="lab" for="sc">Contact</label><input class="inp" id="sc" type="tel" inputmode="tel" placeholder="[PHONE]"></div>
+    </div>
+
+    <div><label class="lab" for="nt">Notes</label><input class="inp" id="nt" placeholder="Optional"></div>
+  </div>
+  <div style="margin-top:auto;padding:14px 16px 24px;border-top:1px solid #E1E4DC;background:#fff">
+    <a href="Main.dc.html" style="height:50px;border-radius:12px;background:#1F5C3A;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;text-decoration:none">Save item</a>
+    <div style="text-align:center;font-size:12px;color:#56655B;padding-top:12px">© 2026 Dairy Farm. All rights reserved.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1400}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

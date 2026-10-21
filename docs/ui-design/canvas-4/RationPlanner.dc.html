@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Ration planner</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.lab{font-size:13px;font-weight:600;color:#3B4A41;display:block;margin-bottom:6px}
+.inp{width:100%;box-sizing:border-box;height:48px;border:1px solid #C9D0C6;border-radius:10px;padding:0 14px;font:inherit;font-size:16px;background:#fff;color:#1C2620}
+.two{display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:12px}
+.seg{display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));background:#E4E6DF;border-radius:12px;padding:4px}
+.sb{height:40px;border-radius:9px;font:inherit;font-weight:600;font-size:14px;color:#3B4A41;border:0;background:transparent}
+.sel{background:#fff;color:#1C2620}
+.chip{height:36px;padding:0 12px;border-radius:18px;border:1px solid #C9D0C6;background:#fff;font:inherit;font-size:14px;font-weight:500;color:#1C2620;white-space:nowrap;flex:none}
+.on{background:#1F5C3A;border-color:#1F5C3A;color:#fff}
+.st{background:#fff;border-radius:12px;padding:12px}
+.k{font-size:12px;color:#56655B;font-weight:600}.v{font-size:20px;font-weight:700;margin-top:2px}
+.gh{display:flex;justify-content:space-between;align-items:baseline;padding:12px 12px 4px}
+.r{display:flex;justify-content:space-between;align-items:center;min-height:40px;padding:0 12px;border-top:1px solid #EEF0EA;font-size:14px}
+.b{font-size:12px;font-weight:700;padding:2px 8px;border-radius:6px;white-space:nowrap}
+.n{display:grid;grid-template-columns:1fr 1fr 1fr 0.8fr;align-items:center;min-height:44px;padding:0 12px;border-top:1px solid #EEF0EA;font-size:14px}
+</style>
+</helmet>
+<div style="width:390px;height:1450px;background:#F4F3EE;display:flex;flex-direction:column">
+  <div style="display:flex;align-items:center;gap:4px;padding:8px 12px">
+    <a href="Main.dc.html" aria-label="Back" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+    <span aria-hidden="true" style="width:28px;height:28px;border-radius:8px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;margin-right:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"/></svg></span>
+    <h1 style="margin:0;font-size:20px;font-weight:700;flex:1">Ration planner</h1>
+    <a href="FarmFeedNeed.dc.html" style="height:40px;padding:0 12px;border-radius:10px;border:1px solid #C9D0C6;background:#fff;color:#1C2620;display:flex;align-items:center;font-weight:600;font-size:14px;text-decoration:none">Farm total</a>
+  </div>
+  <div style="padding:4px 16px;display:flex;flex-direction:column;gap:14px">
+    <div class="seg"><button class="sb">By category</button><button class="sb sel">One cow</button></div>
+    <div style="display:flex;gap:8px;overflow:hidden"><button class="chip on">Milking 9</button><button class="chip">Dry 3</button><button class="chip">Heifer 2</button><button class="chip">Calf 4</button><button class="chip">Bull</button></div>
+
+    <div><label class="lab" for="cw">Cow</label><select class="inp" id="cw"><option>VD-001 · Lakshmi · HF · Milking · DIM 84</option></select></div>
+    <div class="two">
+      <div><label class="lab" for="bw">Body weight (kg)</label><input class="inp" id="bw" inputmode="decimal" value="450"><div style="font-size:12px;color:#56655B;margin-top:4px">Last weighed 02 Oct</div></div>
+      <div><label class="lab" for="ml">Milk yesterday (L)</label><input class="inp" id="ml" inputmode="decimal" value="18.5"><div style="font-size:12px;color:#56655B;margin-top:4px">From milk log</div></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:10px">
+      <div class="st"><div class="k">Green</div><div class="v">25.0 kg</div></div>
+      <div class="st"><div class="k">Dry</div><div class="v">10.0 kg</div></div>
+      <div class="st"><div class="k">Concentrate</div><div class="v">8.9 kg</div></div>
+    </div>
+    <div style="font-size:13px;color:#3B4A41;margin-top:-6px">Total 43.9 kg vs body weight × 10 % = 45 kg · concentrate = 1.5 + 18.5 L × 0.4</div>
+
+    <div style="background:#fff;border-radius:14px;overflow:hidden">
+      <div class="gh"><b style="font-size:15px">Green fodder</b><span style="font-size:13px;color:#56655B">6 AM, before milking</span></div>
+      <div class="r"><span>Velimasal / Karamani (protein fodder)</span><b>8.0 kg</b></div>
+      <div class="r"><span>CO4 / CO5 / Super Napier grass</span><b>12.0 kg</b></div>
+      <div class="r"><span>Sorghum / maize green</span><b>5.0 kg</b></div>
+      <div class="gh" style="border-top:1px solid #EEF0EA"><b style="font-size:15px">Dry fodder</b><span style="font-size:13px;color:#56655B">after milking</span></div>
+      <div class="r"><span>Paddy straw</span><b>6.0 kg</b></div>
+      <div class="r"><span>Sorghum / maize stalk</span><b>4.0 kg</b></div>
+      <div class="gh" style="border-top:1px solid #EEF0EA"><b style="font-size:15px">Concentrate</b><span style="font-size:13px;color:#56655B">after milking · AM + PM</span></div>
+      <div class="r"><span>Concentrate mix (Villupuram)</span><b>8.9 kg</b></div>
+      <div class="r" style="color:#56655B;font-size:13px"><span>of which gingelly cake (7 %)</span><span>0.62 kg</span></div>
+      <div class="r" style="background:#F7F7F3"><b>Cost per day</b><b>₹[COST/DAY]</b></div>
+    </div>
+    <div style="font-size:12px;color:#56655B;margin-top:-6px">Split per session: half at 6 AM, half at 6 PM.</div>
+
+    <div style="display:flex;gap:10px;background:#FBF1E2;border-radius:12px;padding:12px 14px;color:#4A3210;font-size:14px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7A4B0E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M12 3l10 18H2zM12 10v5M12 18h.01"/></svg>
+      <span><b style="color:#7A4B0E">Gingelly cake 0.62 kg/day</b> — check against the early-lactation limit [LIMIT kg/day].</span>
+    </div>
+    <div style="display:flex;gap:10px;background:#FBF1E2;border-radius:12px;padding:12px 14px;color:#4A3210;font-size:14px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7A4B0E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M12 3l10 18H2zM12 10v5M12 18h.01"/></svg>
+      <span><b style="color:#7A4B0E">Concentrate 8.9 kg</b> — max for Milking is [MAX CONC kg]. Planner caps at the max if exceeded.</span>
+    </div>
+
+    <div style="background:#fff;border-radius:14px;overflow:hidden">
+      <div style="padding:12px 12px 6px;display:flex;justify-content:space-between"><b style="font-size:15px">Nutrient check</b><span style="font-size:13px;color:#56655B">whole day ration</span></div>
+      <div class="n" style="font-size:12px;font-weight:700;color:#56655B;min-height:36px"><span>Nutrient</span><span>Ration</span><span>Need</span><span></span></div>
+      <div class="n"><span>DM</span><span>[DM kg]</span><span>[need]</span><span class="b" style="background:#E7F0E9;color:#1F5C3A;justify-self:end">OK</span></div>
+      <div class="n"><span>CP</span><span>[CP kg]</span><span>[need]</span><span class="b" style="background:#E7F0E9;color:#1F5C3A;justify-self:end">OK</span></div>
+      <div class="n"><span>TDN</span><span>[TDN kg]</span><span>[need]</span><span class="b" style="background:#FBF1E2;color:#7A4B0E;justify-self:end">Low</span></div>
+      <div class="n"><span>Ca</span><span>[Ca g]</span><span>[need]</span><span class="b" style="background:#E7F0E9;color:#1F5C3A;justify-self:end">OK</span></div>
+      <div class="n"><span>P</span><span>[P g]</span><span>[need]</span><span class="b" style="background:#E7F0E9;color:#1F5C3A;justify-self:end">OK</span></div>
+    </div>
+    <a href="RationPlanner.dc.html" style="font-size:14px;font-weight:600">Edit Milking ration rule (effective from 01 Nov 2026)</a>
+  </div>
+  <div style="margin-top:auto;padding:14px 16px 24px;border-top:1px solid #E1E4DC;background:#fff">
+    <a href="FeedUsage.dc.html" style="height:50px;border-radius:12px;background:#1F5C3A;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;text-decoration:none">Use as today's feeding plan</a>
+    <div style="text-align:center;font-size:12px;color:#56655B;padding-top:12px">© 2026 Dairy Farm. All rights reserved.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1450}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

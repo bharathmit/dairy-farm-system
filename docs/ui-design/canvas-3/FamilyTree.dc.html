@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Family tree</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.lab{font-size:13px;font-weight:600;color:#3B4A41;display:block;margin-bottom:6px}
+.inp{width:100%;box-sizing:border-box;height:48px;border:1px solid #C9D0C6;border-radius:10px;padding:0 14px;font:inherit;font-size:16px;background:#fff;color:#1C2620}
+.card{background:#fff;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.hd{font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px}
+.node{display:block;border-radius:10px;padding:8px 10px;font-size:13px;text-decoration:none;color:#1C2620;border:1px solid #C9D0C6;background:#fff;min-height:44px;box-sizing:border-box}
+.node b{display:block;font-size:14px}
+.unk{border-style:dashed;color:#56655B}
+.g4{display:grid;grid-template-columns:repeat(4, minmax(0, 1fr));gap:6px}
+.g2{display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:10px}
+.lv{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#56655B}
+.row{display:flex;align-items:center;gap:10px;min-height:48px;border-top:1px solid #EEF0EA;font-size:14px;text-decoration:none;color:#1C2620}
+.b{font-size:12px;font-weight:600;padding:2px 8px;border-radius:6px;white-space:nowrap}
+.sub{font-size:13px;color:#56655B}
+</style>
+</helmet>
+<div style="width:390px;height:1450px;background:#F4F3EE">
+  <div style="display:flex;align-items:center;gap:4px;padding:8px 12px">
+    <a href="Main.dc.html" aria-label="Back" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+    <span aria-hidden="true" style="width:28px;height:28px;border-radius:8px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;margin-right:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"/></svg></span>
+    <h1 style="margin:0;font-size:22px;font-weight:700;flex:1">Family tree</h1>
+  </div>
+
+  <div style="padding:4px 16px 0;display:flex;flex-direction:column;gap:12px">
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="width:52px;height:52px;border-radius:12px;background:#E7F0E9;display:flex;align-items:center;justify-content:center;font-weight:700;color:#1F5C3A;flex:none">HF</span>
+        <div style="flex:1"><div style="font-weight:700;font-size:17px">VD-001 Lakshmi</div><div class="sub">Cow · HF · 5 y 2 m · 3 calvings</div></div>
+      </div>
+      <div><div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:#56655B;margin-bottom:4px"><span>Pedigree complete</span><span style="color:#1C2620">67 % · 4 of 6</span></div><div style="height:6px;border-radius:3px;background:#EEF0EA"><div style="width:67%;height:6px;border-radius:3px;background:#1F5C3A"></div></div></div>
+    </div>
+
+    <div class="card">
+      <div class="hd">Ancestors</div>
+      <div class="lv">Grand-parents</div>
+      <div class="g4">
+        <a class="node" href="#"><b>[GD]</b>Dam's dam</a>
+        <a class="node unk" href="#"><b>+ Add</b>Dam's sire</a>
+        <a class="node" href="#"><b>[GS-1]</b>Sire's sire</a>
+        <a class="node unk" href="#"><b>+ Add</b>Sire's dam</a>
+      </div>
+      <svg width="326" height="18" viewBox="0 0 326 18" aria-hidden="true" style="display:block"><path d="M40 0v9h80V0M206 0v9h80V0M80 9v9M246 9v9" fill="none" stroke="#C9D0C6" stroke-width="1.5"/></svg>
+      <div class="lv">Parents</div>
+      <div class="g2">
+        <a class="node" href="#" style="background:#E7F0E9;border-color:#1F5C3A"><b>VD-004 [Dam]</b>Dam · HF · culled 2024</a>
+        <a class="node" href="SemenStock.dc.html" style="background:#E6EEF8;border-color:#1F4E87"><b>[Bull A]</b>Sire · AI · [HF-1234]</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="hd"><span style="flex:1">Siblings</span><span class="sub">2</span></div>
+      <a class="row" href="#"><span style="flex:1"><b>VD-002</b> Ponni<div class="sub">Full sibling · same dam &amp; sire</div></span><span class="b" style="background:#E7F0E9;color:#1F5C3A">Full</span></a>
+      <a class="row" href="#"><span style="flex:1"><b>VD-009</b> [Name]<div class="sub">Half sibling · same dam</div></span><span class="b" style="background:#F4F3EE;color:#3B4A41">Half</span></a>
+    </div>
+
+    <div class="card">
+      <div class="hd"><span style="flex:1">Offspring &amp; birth history</span><span class="sub">calving interval avg 392 d</span></div>
+      <a class="row" href="#"><span style="flex:1"><b>VD-015</b> Ganga ♀<div class="sub">12 Aug 2025 · sire [Bull D] · easy · 30 kg</div></span><span class="b" style="background:#E6EEF8;color:#1F4E87">Heifer</span></a>
+      <a class="row" href="#"><span style="flex:1"><b>[VD-0xx]</b> ♂<div class="sub">10 Jul 2024 · sire [Bull B] · assisted · 32 kg</div></span><span class="b" style="background:#F4F3EE;color:#3B4A41">Sold 62 d</span></a>
+      <a class="row" href="#"><span style="flex:1"><b>[VD-0xx]</b> ♀<div class="sub">18 Jun 2023 · sire [Bull A] · easy · 28 kg</div></span><span class="b" style="background:#F4F3EE;color:#3B4A41">[status]</span></a>
+      <div class="row"><span style="flex:1;color:#1F5C3A;font-weight:600">Pregnant · due 14 Apr 2027 · sire [Bull C]</span></div>
+    </div>
+
+    <div class="card">
+      <div class="hd"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg>Mate-risk checker</div>
+      <div><label class="lab" for="bl">Pick a bull for next service</label><select class="inp" id="bl"><option>[Bull A] · HF · [HF-1234]</option><option>[Bull C] · Gir</option><option>[Bull D] · HF</option></select></div>
+      <div style="display:flex;gap:10px;align-items:flex-start;background:#FBE4E1;border-radius:12px;padding:12px 14px;color:#8E2216;font-size:14px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8E2216" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="flex:none"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L2 18a2 2 0 0 0 1.7 3h16.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+        <span><b>High risk — do not use.</b> [Bull A] is Lakshmi's own sire (father × daughter). Shared ancestors: [Bull A], [GS-1].</span>
+      </div>
+      <div style="display:flex;gap:10px;align-items:flex-start;background:#E7F0E9;border-radius:12px;padding:12px 14px;color:#1F5C3A;font-size:14px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F5C3A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M5 12l5 5 9-10"/></svg>
+        <span>[Bull C] · Gir — no shared ancestors in known pedigree (2 generations).</span>
+      </div>
+      <div style="font-size:12px;color:#56655B">Checks only recorded ancestors. Missing links (33 %) can hide risk.</div>
+    </div>
+
+    <div style="text-align:center;font-size:12px;color:#56655B;padding:4px 0 14px">© 2026 Dairy Farm. All rights reserved.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1450}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

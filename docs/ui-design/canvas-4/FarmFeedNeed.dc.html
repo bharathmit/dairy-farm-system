@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Farm feed need</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.st{background:#fff;border-radius:12px;padding:12px}
+.k{font-size:12px;color:#56655B;font-weight:600}.v{font-size:20px;font-weight:700;margin-top:2px}
+.r{display:grid;grid-template-columns:1.6fr 0.8fr 0.8fr 0.8fr;align-items:center;gap:6px;min-height:50px;padding:0 12px;border-top:1px solid #EEF0EA;font-size:14px}
+.m{text-align:right;color:#56655B}
+.d{text-align:right;font-weight:700}
+.sh{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#56655B;padding:12px 12px 4px;background:#F7F7F3}
+</style>
+</helmet>
+<div style="width:390px;height:1150px;background:#F4F3EE;display:flex;flex-direction:column">
+  <div style="display:flex;align-items:center;gap:4px;padding:8px 12px">
+    <a href="Main.dc.html" aria-label="Back" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+    <span aria-hidden="true" style="width:28px;height:28px;border-radius:8px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;margin-right:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"/></svg></span>
+    <h1 style="margin:0;font-size:20px;font-weight:700">Farm feed need</h1>
+  </div>
+  <div style="padding:4px 16px;display:flex;flex-direction:column;gap:14px">
+    <div style="font-size:14px;color:#56655B">Villupuram Dairy · 20 animals · from ration plan</div>
+    <div style="display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:10px">
+      <div class="st"><div class="k">Green / day</div><div class="v">329 kg</div></div>
+      <div class="st"><div class="k">Dry / day</div><div class="v">86 kg</div></div>
+      <div class="st"><div class="k">Concentrate</div><div class="v">110 kg</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:10px">
+      <div class="st"><div class="k">Feed cost / day</div><div class="v">₹[COST/DAY]</div><div style="font-size:12px;color:#56655B;margin-top:2px">Concentrate alone ₹2,651</div></div>
+      <div class="st"><div class="k">Feed cost / month</div><div class="v">₹[COST/MONTH]</div><div style="font-size:12px;color:#56655B;margin-top:2px">Concentrate alone ₹79,530</div></div>
+    </div>
+
+    <div style="background:#fff;border-radius:14px;overflow:hidden">
+      <div class="r" style="border-top:0;font-size:12px;font-weight:700;color:#56655B;min-height:40px"><span>Item</span><span style="text-align:right">Need/day</span><span style="text-align:right">Stock</span><span style="text-align:right">Days</span></div>
+      <div class="sh">Green fodder</div>
+      <div class="r"><span>Velimasal / Karamani</span><span class="m">105</span><span class="m">210</span><span class="d" style="color:#8E2216">2.0</span></div>
+      <div class="r"><span>CO5 / Super Napier</span><span class="m">158</span><span class="m">1,450</span><span class="d">9.2</span></div>
+      <div class="r" style="background:#FBE4E1"><span>Sorghum / maize green</span><span class="m" style="color:#5A1A12">66</span><span class="m" style="color:#5A1A12">25</span><span class="d" style="color:#8E2216">0.4</span></div>
+      <div class="sh">Dry fodder</div>
+      <div class="r"><span>Paddy straw</span><span class="m">52</span><span class="m">1,800</span><span class="d">35</span></div>
+      <div class="r"><span>Sorghum / maize stalk</span><span class="m">34</span><span class="m">380</span><span class="d">11</span></div>
+      <div class="sh">Concentrate</div>
+      <div class="r"><span>Concentrate mix</span><span class="m">110</span><span class="m">420</span><span class="d" style="color:#8E2216">3.8</span></div>
+      <div class="r"><span>Gingelly cake (for batches)</span><span class="m">7.7</span><span class="m">9</span><span class="d" style="color:#8E2216">1.2</span></div>
+      <div class="r"><span>Groundnut cake (for batches)</span><span class="m">11</span><span class="m">45</span><span class="d" style="color:#7A4B0E">4.1</span></div>
+    </div>
+    <div style="font-size:12px;color:#56655B;margin-top:-6px">Ingredient need = concentrate need × formula share. Red = days left ≤ lead time.</div>
+
+    <div style="background:#FBE4E1;border-radius:14px;padding:14px;color:#5A1A12">
+      <b style="color:#8E2216;font-size:15px">4 shortfalls in the next 7 days</b>
+      <div style="font-size:14px;margin-top:6px;line-height:1.5">Sorghum green ~440 kg · Velimasal ~525 kg · gingelly cake ~45 kg · concentrate batch 200 kg</div>
+    </div>
+  </div>
+  <div style="margin-top:auto;padding:14px 16px 24px;border-top:1px solid #E1E4DC;background:#fff">
+    <a href="FeedPurchase.dc.html" style="height:50px;border-radius:12px;background:#1F5C3A;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;text-decoration:none">Create procurement note</a>
+    <div style="font-size:12px;color:#56655B;text-align:center;margin-top:8px">Adds a Feed alert per shortfall: item, quantity, expected price, needed by.</div>
+    <div style="text-align:center;font-size:12px;color:#56655B;padding-top:10px">© 2026 Dairy Farm. All rights reserved.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1150}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

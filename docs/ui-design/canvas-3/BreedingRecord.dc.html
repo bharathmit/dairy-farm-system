@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Breeding record</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.lab{font-size:13px;font-weight:600;color:#3B4A41;display:block;margin-bottom:6px}
+.inp{width:100%;box-sizing:border-box;height:48px;border:1px solid #C9D0C6;border-radius:10px;padding:0 14px;font:inherit;font-size:16px;background:#fff;color:#1C2620}
+.card{background:#fff;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:12px}
+.two{display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:12px}
+.seg{display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));background:#E4E6DF;border-radius:12px;padding:4px;gap:4px}
+.sb{height:40px;border-radius:9px;font:inherit;font-weight:600;font-size:14px;color:#3B4A41;border:0;background:transparent}
+.opt{display:flex;align-items:center;gap:10px;min-height:56px;padding:0 12px;border:1px solid #C9D0C6;border-radius:10px;cursor:pointer;box-sizing:border-box}
+.opt input{width:20px;height:20px;accent-color:#1F5C3A;margin:0}
+.b{font-size:12px;font-weight:600;padding:2px 8px;border-radius:6px;white-space:nowrap}
+.hd{font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px}
+</style>
+</helmet>
+<div style="width:390px;height:1250px;background:#F4F3EE;display:flex;flex-direction:column">
+  <div style="display:flex;align-items:center;gap:4px;padding:8px 12px">
+    <a href="Main.dc.html" aria-label="Close" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+    <h1 style="margin:0;font-size:20px;font-weight:700">Breeding / service</h1>
+  </div>
+  <div style="padding:4px 16px;display:flex;flex-direction:column;gap:14px">
+    <div class="two">
+      <div><label class="lab" for="cw">Cow *</label><select class="inp" id="cw"><option>VD-002 · Ponni</option></select></div>
+      <div><label class="lab" for="dt">Service date *</label><input class="inp" id="dt" type="date" value="2026-10-21"></div>
+    </div>
+    <div><label class="lab" for="ht">Linked heat</label><select class="inp" id="ht"><option>21 Oct 6:15 AM · Strong · 3 signs</option><option>None recorded</option></select></div>
+
+    <div>
+      <div class="lab">Method</div>
+      <div class="seg" role="group" aria-label="Breeding method"><button class="sb">Natural</button><button class="sb" style="background:#fff;color:#1C2620">AI</button><button class="sb">ET</button></div>
+    </div>
+
+    <div class="card">
+      <div class="hd"><span style="flex:1">Artificial insemination</span><a href="SemenStock.dc.html" style="font-size:13px;font-weight:600">Stock</a></div>
+      <fieldset style="border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:8px">
+        <legend class="lab" style="padding:0">Semen batch *</legend>
+        <label class="opt" style="background:#E7F0E9;border-color:#1F5C3A"><input type="radio" name="sm" checked><span style="flex:1"><b>[Bull A]</b> · HF<div style="font-size:13px;color:#56655B">Code [HF-1234] · exp Mar 2027</div></span><span class="b" style="background:#fff;color:#1F5C3A">12 straws</span></label>
+        <label class="opt"><input type="radio" name="sm"><span style="flex:1"><b>[Bull B]</b> · Jersey<div style="font-size:13px;color:#56655B">Code [JY-0456] · exp 15 Nov</div></span><span class="b" style="background:#FBE4E1;color:#8E2216">3 left</span></label>
+        <label class="opt"><input type="radio" name="sm"><span style="flex:1"><b>[Bull C]</b> · Gir<div style="font-size:13px;color:#56655B">Code [GR-0789] · exp Aug 2027</div></span><span class="b" style="background:#F4F3EE;color:#3B4A41">8 straws</span></label>
+      </fieldset>
+      <div class="two">
+        <div><label class="lab" for="st">Straws used</label><input class="inp" id="st" inputmode="numeric" value="1"></div>
+        <div><label class="lab" for="tm">Time</label><input class="inp" id="tm" type="time" value="18:15"></div>
+      </div>
+      <div><label class="lab" for="tc">Technician</label><select class="inp" id="tc"><option>[AI technician name]</option><option>Vet — [name]</option><option>+ Add technician</option></select></div>
+      <div style="font-size:12px;color:#56655B">After save: [Bull A] will have 11 straws left.</div>
+    </div>
+
+    <div class="card" style="opacity:.6">
+      <div class="hd"><span style="flex:1">Natural service</span><span class="b" style="background:#F4F3EE;color:#3B4A41">shown when Natural</span></div>
+      <div><label class="lab" for="bl">Bull</label><select class="inp" id="bl"><option>From herd — [VD-0xx bull]</option><option>Outside bull — enter tag</option></select></div>
+      <div class="two">
+        <div><label class="lab" for="es">Exposure start</label><input class="inp" id="es" type="date"></div>
+        <div><label class="lab" for="ee">Exposure end</label><input class="inp" id="ee" type="date"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="hd">Expected due date</div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <input class="inp" aria-label="Expected due date" type="date" value="2027-07-31" style="flex:1">
+        <span class="b" style="background:#E7F0E9;color:#1F5C3A">+283 d</span>
+      </div>
+      <div style="font-size:12px;color:#56655B">Auto: service date + 283 days (cow). Edit if your vet gives another date. Pregnancy check reminder set for <b>5 Dec</b> (45 d).</div>
+    </div>
+
+    <div><label class="lab" for="nt">Notes</label><input class="inp" id="nt" placeholder="Optional"></div>
+  </div>
+  <div style="margin-top:auto;padding:14px 16px 16px;border-top:1px solid #E1E4DC;background:#fff">
+    <a href="Main.dc.html" style="height:50px;border-radius:12px;background:#1F5C3A;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;text-decoration:none">Save service</a>
+    <div style="text-align:center;font-size:12px;color:#56655B;padding-top:12px">© 2026 Dairy Farm. All rights reserved.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1250}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

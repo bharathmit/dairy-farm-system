@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Health schedules</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.seg{display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));background:#E4E6DF;border-radius:12px;padding:4px}
+.sb{height:38px;border-radius:9px;font-weight:600;font-size:14px;color:#3B4A41;display:flex;align-items:center;justify-content:center;border:0;background:transparent;font-family:inherit}
+.card{background:#fff;border-radius:14px;padding:14px}
+.step{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid #EEF0EA}
+.step:first-of-type{border-top:0}
+.n{width:28px;height:28px;border-radius:14px;background:#E7F0E9;color:#1F5C3A;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex:none}
+.t{font-size:15px;font-weight:600}.m{font-size:13px;color:#56655B;margin-top:2px}
+.ed{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none;margin-left:auto}
+.b{font-size:12px;font-weight:600;padding:2px 8px;border-radius:6px;white-space:nowrap}
+.lab{font-size:13px;font-weight:600;color:#3B4A41;display:block;margin-bottom:6px}
+.inp{width:100%;box-sizing:border-box;height:48px;border:1px solid #C9D0C6;border-radius:10px;padding:0 14px;font:inherit;font-size:16px;background:#fff;color:#1C2620}
+.two{display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:12px}
+</style>
+</helmet>
+<div style="width:390px;height:1100px;background:#F4F3EE">
+  <div style="display:flex;align-items:center;gap:4px;padding:8px 12px">
+    <a href="AlertRules.dc.html" aria-label="Back" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+    <h1 style="margin:0;font-size:20px;font-weight:700">Health schedules</h1>
+  </div>
+  <div style="padding:0 16px;display:flex;flex-direction:column;gap:12px">
+    <div class="seg"><button class="sb" style="background:#fff;color:#1C2620">Deworming</button><button class="sb">Vaccination</button></div>
+
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between"><b style="font-size:16px">Calf &amp; heifer deworming</b><span class="b" style="background:#E7F0E9;color:#1F5C3A">On · workers see</span></div>
+      <div class="m" style="margin-bottom:6px">Counted from date of birth. Alerts 2 days before each dose.</div>
+      <div class="step"><span class="n">1</span><div><div class="t">Day 15</div><div class="m">Single dose · [drug, e.g. Piperazine]</div></div><a class="ed" href="#" aria-label="Edit day 15 rule"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#56655B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg></a></div>
+      <div class="step"><span class="n">2</span><div><div class="t">Day 30</div><div class="m">Single dose</div></div><a class="ed" href="#" aria-label="Edit day 30 rule"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#56655B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg></a></div>
+      <div class="step"><span class="n">3</span><div><div class="t">Every 2 months until 6 months</div><div class="m">Repeat · ~3 doses</div></div><a class="ed" href="#" aria-label="Edit 2-monthly rule"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#56655B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg></a></div>
+      <div class="step"><span class="n">4</span><div><div class="t">Every 3 months until 1 year</div><div class="m">Repeat · 2 doses</div></div><a class="ed" href="#" aria-label="Edit 3-monthly rule"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#56655B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg></a></div>
+      <div class="step"><span class="n">5</span><div><div class="t">Yearly after 1 year</div><div class="m">All adult animals</div></div><a class="ed" href="#" aria-label="Edit yearly rule"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#56655B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg></a></div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between"><b style="font-size:16px">FMD vaccination</b><span class="b" style="background:#E7F0E9;color:#1F5C3A">On · workers see</span></div>
+      <div class="step"><span class="n">1</span><div><div class="t">At 4 months of age</div><div class="m">First dose</div></div><a class="ed" href="#" aria-label="Edit FMD first dose"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#56655B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg></a></div>
+      <div class="step"><span class="n">2</span><div><div class="t">Booster · [weeks] after first</div><div class="m">Interval to confirm with vet</div></div><a class="ed" href="#" aria-label="Edit FMD booster"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#56655B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg></a></div>
+      <div class="step"><span class="n">3</span><div><div class="t">Every 6 months</div><div class="m">Whole herd</div></div><a class="ed" href="#" aria-label="Edit FMD 6-monthly"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#56655B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg></a></div>
+    </div>
+
+    <div class="card" style="box-shadow:inset 0 0 0 1.5px #1F5C3A">
+      <b style="font-size:16px">Add / edit rule</b>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:12px">
+        <div class="two">
+          <div><label class="lab" for="ty">Type</label><select class="inp" id="ty"><option>Deworming</option><option>Vaccination</option></select></div>
+          <div><label class="lab" for="ap">Applies to</label><select class="inp" id="ap"><option>Calves &amp; heifers</option><option>All animals</option><option>Milking cows</option></select></div>
+        </div>
+        <div class="two">
+          <div><label class="lab" for="st">Start at age</label><div style="display:flex;gap:6px"><input class="inp" id="st" value="4" style="width:64px;text-align:center"><select class="inp" aria-label="Start unit"><option>months</option><option>days</option></select></div></div>
+          <div><label class="lab" for="rp">Repeat every</label><div style="display:flex;gap:6px"><input class="inp" id="rp" value="6" style="width:64px;text-align:center"><select class="inp" aria-label="Repeat unit"><option>months</option><option>days</option><option>none</option></select></div></div>
+        </div>
+        <div class="two">
+          <div><label class="lab" for="un">Until age</label><input class="inp" id="un" placeholder="No end"></div>
+          <div><label class="lab" for="md">Medicine / vaccine</label><input class="inp" id="md" placeholder="[name]"></div>
+        </div>
+        <a href="#" style="height:50px;border-radius:12px;background:#1F5C3A;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;text-decoration:none">Save rule</a>
+      </div>
+    </div>
+    <div style="text-align:center;font-size:12px;color:#56655B;padding:4px 0 14px">© 2026 Dairy Farm. All rights reserved.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1100}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

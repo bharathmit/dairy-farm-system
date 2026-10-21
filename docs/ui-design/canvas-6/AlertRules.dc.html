@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Alert rules</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.sec{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#56655B;margin:18px 0 8px}
+.card{background:#fff;border-radius:14px;padding:0 14px}
+.ru{padding:12px 0;border-top:1px solid #EEF0EA}
+.ru:first-child{border-top:0}
+.hd{display:flex;align-items:center;gap:10px}
+.nm{flex:1;font-size:15px;font-weight:600}
+.th{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13px;color:#56655B;flex-wrap:wrap}
+.num{width:64px;height:44px;box-sizing:border-box;border:1px solid #C9D0C6;border-radius:10px;text-align:center;font:inherit;font-size:16px;font-weight:700;color:#1C2620}
+.ws{display:flex;align-items:center;gap:6px;margin-left:auto;font-size:13px;color:#3B4A41;min-height:44px}
+.ws input{width:20px;height:20px;accent-color:#1F5C3A;margin:0}
+.tg{width:52px;height:30px;accent-color:#1F5C3A;margin:0;flex:none}
+.off .nm{color:#56655B}
+</style>
+</helmet>
+<div style="width:390px;height:1500px;background:#F4F3EE">
+  <div style="display:flex;align-items:center;gap:4px;padding:8px 12px">
+    <a href="AlertsList.dc.html" aria-label="Back" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+    <h1 style="margin:0;font-size:20px;font-weight:700;flex:1">Alert rules</h1>
+    <a href="HealthSchedules.dc.html" style="height:40px;padding:0 12px;border-radius:10px;border:1px solid #C9D0C6;display:flex;align-items:center;font-weight:600;font-size:14px;text-decoration:none;color:#1C2620">Schedules</a>
+  </div>
+  <div style="padding:0 16px">
+    <div style="font-size:14px;color:#56655B">Owner only. Change a number and it applies from tonight's check. Toggle on the right turns the rule on/off.</div>
+
+    <div class="sec">Reproduction</div>
+    <div class="card">
+      <div class="ru"><div class="hd"><label class="nm" for="r1">Heat expected</label><input class="tg" id="r1" type="checkbox" checked></div><div class="th"><input class="num" aria-label="Days after last heat" value="21">days after last heat<label class="ws"><input type="checkbox">Workers see</label></div></div>
+      <div class="ru"><div class="hd"><label class="nm" for="r2">Pregnancy check due</label><input class="tg" id="r2" type="checkbox" checked></div><div class="th"><input class="num" aria-label="Days after AI" value="45">days after AI<label class="ws"><input type="checkbox">Workers see</label></div></div>
+      <div class="ru"><div class="hd"><label class="nm" for="r3">Calving due soon</label><input class="tg" id="r3" type="checkbox" checked></div><div class="th"><input class="num" aria-label="Days before due date" value="7">days before due date<label class="ws"><input type="checkbox">Workers see</label></div></div>
+      <div class="ru"><div class="hd"><label class="nm" for="r4">No heat after calving</label><input class="tg" id="r4" type="checkbox" checked></div><div class="th"><input class="num" aria-label="Days after calving" value="60">days after calving<label class="ws"><input type="checkbox">Workers see</label></div></div>
+      <div class="ru"><div class="hd"><label class="nm" for="r5">Long calving interval</label><input class="tg" id="r5" type="checkbox" checked></div><div class="th">more than<input class="num" aria-label="Days between calvings" value="400">days<label class="ws"><input type="checkbox">Workers see</label></div></div>
+    </div>
+
+    <div class="sec">Calves &amp; heifers</div>
+    <div class="card">
+      <div class="ru"><div class="hd"><label class="nm" for="c1">Colostrum due</label><input class="tg" id="c1" type="checkbox" checked></div><div class="th">within<input class="num" aria-label="Hours after calving" value="2">hours of calving<label class="ws"><input type="checkbox" checked>Workers see</label></div></div>
+      <div class="ru"><div class="hd"><label class="nm" for="c2">Weaning reminder</label><input class="tg" id="c2" type="checkbox" checked></div><div class="th">from<input class="num" aria-label="Days of age" value="90">days, starter ≥<input class="num" aria-label="kg per day" value="1">kg/day<label class="ws"><input type="checkbox" checked>Workers see</label></div></div>
+      <div class="ru"><div class="hd"><label class="nm" for="c3">Heifer first AI due</label><input class="tg" id="c3" type="checkbox" checked></div><div class="th"><input class="num" aria-label="Weight kg" value="250">kg or<input class="num" aria-label="Age months" value="15">months<label class="ws"><input type="checkbox">Workers see</label></div></div>
+    </div>
+
+    <div class="sec">Health</div>
+    <div class="card">
+      <div class="ru"><div class="hd"><label class="nm" for="h1">BCS out of range</label><input class="tg" id="h1" type="checkbox" checked></div><div class="th">below<input class="num" aria-label="BCS low" value="2.5">or above<input class="num" aria-label="BCS high" value="4.0"><label class="ws"><input type="checkbox" checked>Workers see</label></div></div>
+      <div class="ru"><div class="hd"><label class="nm" for="h2">Withdrawal active</label><input class="tg" id="h2" type="checkbox" checked disabled></div><div class="th">Always on — milk safety<label class="ws"><input type="checkbox" checked disabled>Workers see</label></div></div>
+    </div>
+
+    <div class="sec">Milk</div>
+    <div class="card">
+      <div class="ru"><div class="hd"><label class="nm" for="m1">Sudden yield drop</label><input class="tg" id="m1" type="checkbox" checked></div><div class="th">more than<input class="num" aria-label="Percent drop" value="20">% vs recent avg<label class="ws"><input type="checkbox">Workers see</label></div></div>
+      <div class="ru"><div class="hd"><label class="nm" for="m2">Low fat %</label><input class="tg" id="m2" type="checkbox" checked></div><div class="th">below<input class="num" aria-label="Fat percent" value="3.5">%<label class="ws"><input type="checkbox">Workers see</label></div></div>
+      <div class="ru"><div class="hd"><label class="nm" for="m3">High SCC</label><input class="tg" id="m3" type="checkbox" checked></div><div class="th">above<input class="num" aria-label="SCC thousand cells" value="200">k cells/mL<label class="ws"><input type="checkbox" checked>Workers see</label></div></div>
+      <div class="ru"><div class="hd"><label class="nm" for="m4">Dry-off due</label><input class="tg" id="m4" type="checkbox" checked></div><div class="th"><input class="num" aria-label="Days before calving" value="90">d before calving or<input class="num" aria-label="Months of lactation" value="8">m lactation</div></div>
+    </div>
+
+    <div class="sec">Finance &amp; ops</div>
+    <div class="card">
+      <div class="ru"><div class="hd"><label class="nm" for="f1">Semen stock low</label><input class="tg" id="f1" type="checkbox" checked></div><div class="th">fewer than<input class="num" aria-label="Straws" value="5">straws</div></div>
+      <div class="ru"><div class="hd"><label class="nm" for="f2">Cow replacement due</label><input class="tg" id="f2" type="checkbox" checked></div><div class="th">at age<input class="num" aria-label="Years" value="8">years</div></div>
+      <div class="ru"><div class="hd"><label class="nm" for="f3">Low margin</label><input class="tg" id="f3" type="checkbox" checked></div><div class="th">weekly margin below<input class="num" aria-label="Margin percent" value="30">%</div></div>
+      <div class="ru off"><div class="hd"><label class="nm" for="f4">Equipment maintenance</label><input class="tg" id="f4" type="checkbox"></div><div class="th">Off · per equipment schedule</div></div>
+    </div>
+
+    <a href="AlertsList.dc.html" style="margin-top:16px;height:50px;border-radius:12px;background:#1F5C3A;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;text-decoration:none">Save rules</a>
+    <div style="text-align:center;font-size:12px;color:#56655B;padding:14px 0">© 2026 Dairy Farm. All rights reserved.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1500}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

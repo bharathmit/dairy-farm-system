@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Profit and loss</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.seg{flex:1;height:44px;border-radius:9px;border:0;background:transparent;font:inherit;font-size:15px;font-weight:600;color:#3B4A41}
+.g{font-size:12px;font-weight:700;padding:2px 7px;border-radius:6px;white-space:nowrap}
+.r{display:grid;grid-template-columns:28px minmax(0, 1fr) 96px;align-items:center;gap:8px;min-height:58px;padding:6px 12px;border-top:1px solid #EEF0EA;font-size:14px;text-decoration:none;color:#1C2620}
+.ln{display:flex;justify-content:space-between;align-items:center;min-height:40px;border-top:1px solid #EEF0EA;font-size:15px}
+.chip{height:36px;padding:0 12px;border-radius:18px;border:1px solid #C9D0C6;background:#fff;font:inherit;font-size:14px;font-weight:500;color:#1C2620;white-space:nowrap}
+.on{background:#1F5C3A;border-color:#1F5C3A;color:#fff}
+</style>
+</helmet>
+<div style="width:390px;height:1300px;background:#F4F3EE">
+  <div style="display:flex;align-items:center;gap:4px;padding:8px 12px">
+    <a href="Main.dc.html" aria-label="Back" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+    <span aria-hidden="true" style="width:28px;height:28px;border-radius:8px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;margin-right:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"/></svg></span>
+    <h1 style="margin:0;font-size:22px;font-weight:700;flex:1">Profit &amp; loss</h1>
+  </div>
+  <div style="padding:4px 16px 0">
+    <div style="display:flex;gap:4px;background:#E4E6DF;border-radius:12px;padding:4px">
+      <button class="seg">Farm</button>
+      <button class="seg" style="background:#fff;color:#1F5C3A;box-shadow:0 1px 2px rgba(0,0,0,.08)">Per animal</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px"><button class="chip on">Lifetime</button><button class="chip">This year</button><button class="chip">This month</button></div>
+    <div style="font-size:13px;color:#56655B;margin:10px 0 8px">Net = milk income − feed − health − purchase + sale. Shared feed split by head-days.</div>
+
+    <div style="background:#fff;border-radius:14px;overflow:hidden">
+      <div class="r" style="border-top:0;font-size:12px;font-weight:700;color:#56655B;min-height:40px"><span>#</span><span>Animal · ranked by net</span><span style="text-align:right">Lifetime net</span></div>
+      <a class="r" href="#detail" style="background:#E7F0E9"><b>1</b><span><b>VD-001</b> Lakshmi<span style="display:block;font-size:12px;color:#56655B">HF · milking · 3rd lactation</span></span><b style="text-align:right;color:#1F5C3A">₹1,84,200</b></a>
+      <a class="r" href="#detail"><b>2</b><span><b>VD-002</b> Ponni<span style="display:block;font-size:12px;color:#56655B">milking</span></span><b style="text-align:right;color:#1F5C3A">₹1,12,600</b></a>
+      <a class="r" href="#detail"><b>3</b><span><b>VD-003</b> Kamala<span style="display:block;font-size:12px;color:#56655B">milking</span></span><b style="text-align:right;color:#1F5C3A">₹74,300</b></a>
+      <a class="r" href="#detail"><b>4</b><span><b>VD-011</b> Malar<span style="display:block;font-size:12px;color:#56655B">Jersey · milking</span></span><b style="text-align:right;color:#1F5C3A">₹38,900</b></a>
+      <a class="r" href="#detail"><b>5</b><span><b>VD-008</b> Kaveri<span style="display:block;font-size:12px;color:#56655B">Jersey · dry · calving soon</span></span><b style="text-align:right;color:#1F5C3A">₹21,400</b></a>
+      <a class="r" href="#detail"><b>6</b><span><b>VD-019</b> calf<span style="display:block;font-size:12px;color:#56655B">23 days · no income yet</span></span><b style="text-align:right;color:#A3271B">−₹1,900</b></a>
+      <a class="r" href="#detail" style="background:#FBE4E1"><b>7</b><span><b>VD-015</b> Ganga<span style="display:block;font-size:12px;color:#8E2216">heifer · 14 m · rearing cost</span></span><b style="text-align:right;color:#8E2216">−₹38,600</b></a>
+    </div>
+
+    <div id="detail" style="background:#fff;border-radius:14px;padding:14px;margin-top:14px">
+      <div style="display:flex;align-items:center;gap:8px"><b style="font-size:17px;flex:1">VD-001 Lakshmi</b><span class="g" style="background:#E7F0E9;color:#1F5C3A">Rank 1 of 7</span></div>
+      <div style="font-size:13px;color:#56655B;margin-top:2px">Bought Mar 2023 · 31 months on farm</div>
+      <div style="margin-top:10px">
+        <div class="ln" style="border-top:0"><span>Milk income <span style="font-size:12px;color:#56655B">· 11,840 L</span></span><b style="color:#1F5C3A">+₹4,97,300</b></div>
+        <div class="ln"><span>Feed <span style="font-size:12px;color:#56655B">· allocated share</span></span><b style="color:#A3271B">−₹2,28,400</b></div>
+        <div class="ln"><span>Health &amp; vet</span><b style="color:#A3271B">−₹9,700</b></div>
+        <div class="ln"><span>Semen / AI</span><b style="color:#A3271B">−₹2,000</b></div>
+        <div class="ln"><span>Purchase price</span><b style="color:#A3271B">−₹73,000</b></div>
+        <div class="ln"><span>Sale price</span><span style="color:#56655B">— not sold</span></div>
+        <div class="ln" style="border-top:2px solid #1C2620;min-height:48px;font-size:17px"><b>Lifetime net</b><b style="color:#1F5C3A">₹1,84,200</b></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:8px;margin-top:10px">
+        <div style="background:#F4F3EE;border-radius:10px;padding:10px"><div style="font-size:12px;color:#56655B;font-weight:600">Per day</div><b>₹198</b></div>
+        <div style="background:#F4F3EE;border-radius:10px;padding:10px"><div style="font-size:12px;color:#56655B;font-weight:600">Cost / L</div><b>₹26.3</b></div>
+        <div style="background:#F4F3EE;border-radius:10px;padding:10px"><div style="font-size:12px;color:#56655B;font-weight:600">Margin</div><b>37 %</b></div>
+      </div>
+      <a href="#" style="height:44px;border-radius:10px;border:1px solid #C9D0C6;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;text-decoration:none;margin-top:12px">See all entries for Lakshmi</a>
+    </div>
+    <div style="text-align:center;font-size:12px;color:#56655B;padding:14px 0">© 2026 Dairy Farm. All rights reserved.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1300}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

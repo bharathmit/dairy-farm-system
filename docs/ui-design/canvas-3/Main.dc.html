@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Breeding home</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Figtree',system-ui,sans-serif;color:#1C2620}
+a{color:#1F5C3A}a:hover{color:#164429}
+.ql{display:flex;flex-direction:column;align-items:flex-start;gap:6px;background:#fff;border-radius:14px;padding:12px;text-decoration:none;color:#1C2620;min-height:84px;box-sizing:border-box}
+.qi{width:36px;height:36px;border-radius:10px;background:#F4F3EE;display:flex;align-items:center;justify-content:center}
+.qt{font-weight:600;font-size:14px}
+.day{flex:none;width:64px;background:#fff;border-radius:12px;padding:8px 6px;text-align:center;box-sizing:border-box}
+.dn{font-size:12px;color:#56655B;font-weight:600}.dd{font-size:18px;font-weight:700}
+.dot{display:block;font-size:11px;font-weight:700;border-radius:6px;padding:2px 4px;margin-top:4px}
+.grp{background:#fff;border-radius:14px;overflow:hidden}
+.gh{display:flex;align-items:center;gap:10px;padding:12px 14px;font-weight:700;font-size:15px}
+.cnt{font-size:12px;font-weight:700;padding:2px 8px;border-radius:10px}
+.row{display:flex;align-items:center;gap:10px;min-height:52px;padding:0 14px;border-top:1px solid #EEF0EA;text-decoration:none;color:#1C2620;font-size:14px}
+.sub{font-size:13px;color:#56655B}
+.b{font-size:12px;font-weight:600;padding:2px 8px;border-radius:6px;white-space:nowrap}
+.nav{position:absolute;left:0;right:0;bottom:0;height:72px;background:#fff;border-top:1px solid #E1E4DC;display:grid;grid-template-columns:repeat(5, minmax(0, 1fr))}
+.ni{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:600;color:#56655B;text-decoration:none}
+</style>
+</helmet>
+<div style="width:390px;height:1150px;background:#F4F3EE;position:relative;overflow:hidden">
+  <div style="display:flex;align-items:center;gap:4px;padding:8px 12px">
+    <a href="#" aria-label="Back" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+    <span aria-hidden="true" style="width:28px;height:28px;border-radius:8px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;margin-right:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z"/></svg></span>
+    <h1 style="margin:0;font-size:22px;font-weight:700;flex:1">Breeding</h1>
+    <a href="BreedingRecord.dc.html" style="height:40px;padding:0 14px;border-radius:10px;background:#1F5C3A;color:#fff;display:flex;align-items:center;font-weight:600;font-size:14px;text-decoration:none">+ Service</a>
+  </div>
+
+  <div style="padding:4px 16px 0;display:flex;flex-direction:column;gap:14px">
+    <div style="font-size:14px;color:#56655B">Villupuram Dairy · 11 breedable · Wed 21 Oct</div>
+
+    <div style="display:grid;grid-template-columns:repeat(4, minmax(0, 1fr));gap:8px">
+      <a class="ql" href="HeatWatch.dc.html" style="position:relative"><span class="qi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A3271B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c2 4 6 5 6 10a6 6 0 0 1-12 0c0-3 2-4 3-6 1 2 3 2 3-4z"/></svg></span><span class="qt">Heat watch</span><span style="position:absolute;top:8px;right:8px;font-size:11px;font-weight:700;background:#FBE4E1;color:#8E2216;border-radius:8px;padding:1px 6px">3</span></a>
+      <a class="ql" href="PregnancyCheck.dc.html"><span class="qi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F4E87" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></span><span class="qt">Preg. check</span></a>
+      <a class="ql" href="Calving.dc.html"><span class="qi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F5C3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0"/></svg></span><span class="qt">Calving</span></a>
+      <a class="ql" href="SemenStock.dc.html"><span class="qi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7A4B0E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v6l-5 9a3 3 0 0 0 3 4h8a3 3 0 0 0 3-4l-5-9V2M8 2h8"/></svg></span><span class="qt">Semen</span></a>
+    </div>
+
+    <div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px"><b style="font-size:15px">Next 14 days</b><a href="#" style="font-size:13px;font-weight:600">Full calendar</a></div>
+      <div style="display:flex;gap:8px;overflow:hidden">
+        <div class="day" style="outline:2px solid #1F5C3A"><div class="dn">Wed</div><div class="dd">21</div><span class="dot" style="background:#FBE4E1;color:#8E2216">Heat</span></div>
+        <div class="day"><div class="dn">Fri</div><div class="dd">23</div><span class="dot" style="background:#E6EEF8;color:#1F4E87">PD</span></div>
+        <div class="day"><div class="dn">Mon</div><div class="dd">26</div><span class="dot" style="background:#F4F3EE;color:#3B4A41">Dry-off</span></div>
+        <div class="day"><div class="dn">Tue</div><div class="dd">27</div><span class="dot" style="background:#FBF1E2;color:#7A4B0E">Calving</span></div>
+        <div class="day"><div class="dn">Sat</div><div class="dd">31</div><span class="dot" style="background:#E7F0E9;color:#1F5C3A">Heat?</span></div>
+      </div>
+    </div>
+
+    <div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#56655B;margin-bottom:-6px">By status</div>
+
+    <div class="grp">
+      <div class="gh" style="background:#FBE4E1;color:#8E2216"><span style="flex:1">Overdue to calve</span><span class="cnt" style="background:#fff">1</span></div>
+      <a class="row" href="Calving.dc.html"><span style="flex:1"><b>VD-003</b> Kamala<div class="sub">Due 17 Oct · HF</div></span><span class="b" style="background:#FBE4E1;color:#8E2216">+4 d</span></a>
+    </div>
+
+    <div class="grp">
+      <div class="gh" style="background:#FBF1E2;color:#7A4B0E"><span style="flex:1">Due in 7 days</span><span class="cnt" style="background:#fff">1</span></div>
+      <a class="row" href="Calving.dc.html"><span style="flex:1"><b>VD-008</b> Kaveri<div class="sub">Due 27 Oct · Jersey · dry</div></span><span class="b" style="background:#FBF1E2;color:#7A4B0E">6 d</span></a>
+    </div>
+
+    <div class="grp">
+      <div class="gh"><span style="flex:1">Open / not bred</span><span class="cnt" style="background:#F4F3EE;color:#3B4A41">3</span></div>
+      <a class="row" href="HeatWatch.dc.html"><span style="flex:1"><b>VD-011</b> Malar<div class="sub">72 d since calving · no heat</div></span><span class="b" style="background:#FBE4E1;color:#8E2216">Check</span></a>
+      <a class="row" href="HeatWatch.dc.html"><span style="flex:1"><b>VD-015</b> Ganga<div class="sub">Heifer · 14 m · first service</div></span><span class="b" style="background:#E6EEF8;color:#1F4E87">First AI due</span></a>
+      <a class="row" href="HeatWatch.dc.html"><span style="flex:1"><b>VD-002</b> Ponni<div class="sub">Last heat 30 Sep</div></span><span class="b" style="background:#FBF1E2;color:#7A4B0E">Heat due today</span></a>
+    </div>
+
+    <div class="grp">
+      <div class="gh"><span style="flex:1">Served · awaiting check</span><span class="cnt" style="background:#F4F3EE;color:#3B4A41">1</span></div>
+      <a class="row" href="PregnancyCheck.dc.html"><span style="flex:1"><b>VD-005</b> [Name]<div class="sub">AI 8 Sep · [Bull]</div></span><span class="b" style="background:#E6EEF8;color:#1F4E87">PD in 2 d</span></a>
+    </div>
+
+    <div class="grp">
+      <div class="gh"><span style="flex:1">Pregnant</span><span class="cnt" style="background:#E7F0E9;color:#1F5C3A">4</span></div>
+      <a class="row" href="FamilyTree.dc.html"><span style="flex:1"><b>VD-001</b> Lakshmi<div class="sub">Due 14 Apr 2027 · dry-off 13 Feb</div></span><span class="b" style="background:#E7F0E9;color:#1F5C3A">5 m</span></a>
+      <a class="row" href="#"><span style="flex:1"><b>VD-012</b> [Name]<div class="sub">Due 26 Oct · dry-off 26 Oct</div></span><span class="b" style="background:#FBF1E2;color:#7A4B0E">Dry-off due</span></a>
+      <a class="row" href="#" style="justify-content:center;color:#1F5C3A;font-weight:600">Show 2 more</a>
+    </div>
+
+    <div class="grp">
+      <div class="gh"><span style="flex:1">Dry</span><span class="cnt" style="background:#F4F3EE;color:#3B4A41">2</span></div>
+      <a class="row" href="#"><span style="flex:1"><b>VD-008</b> Kaveri<div class="sub">Dry since 28 Aug · due 27 Oct</div></span></a>
+      <a class="row" href="#"><span style="flex:1"><b>VD-003</b> Kamala<div class="sub">Dry since 18 Aug · overdue</div></span></a>
+    </div>
+
+    <div style="text-align:center;font-size:12px;color:#56655B;padding:4px 0 90px">© 2026 Dairy Farm. All rights reserved.</div>
+  </div>
+
+  <nav class="nav" aria-label="Main">
+    <a class="ni" href="#"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-6 9 6v10H3z"/></svg>Home</a>
+    <a class="ni" href="#" style="color:#1F5C3A"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>Herd</a>
+    <a class="ni" href="#" aria-label="Add record"><span style="width:48px;height:48px;border-radius:24px;background:#1F5C3A;display:flex;align-items:center;justify-content:center;margin-top:-18px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span></a>
+    <a class="ni" href="#"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/></svg>Alerts</a>
+    <a class="ni" href="#"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>More</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1150}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
