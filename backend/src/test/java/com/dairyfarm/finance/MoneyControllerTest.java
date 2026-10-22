@@ -205,6 +205,8 @@ class MoneyControllerTest extends IntegrationTest {
         assertThat(line(p, "HEALTH")).isEqualTo(-650);
         assertThat(line(p, "PURCHASE")).isEqualTo(-50000);
         assertThat(p.get("net").asDouble()).isEqualTo(-50930);
+        // (1000 feed + 650 health) / 18 L — the purchase price is not a running cost
+        assertThat(p.get("costPerLitre").asDouble()).isEqualTo(91.67);
         assertThat(p.get("rank").asInt()).isEqualTo(1);
         assertThat(p.get("onFarmDays").asLong()).isEqualTo(31);
 

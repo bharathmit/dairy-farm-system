@@ -309,7 +309,10 @@ public class FinanceService {
             }
             BigDecimal net = c.net();
             BigDecimal positive = c.lines().values().stream().filter(v -> v.signum() > 0).reduce(ZERO, BigDecimal::add);
-            BigDecimal costs = c.lines().values().stream().filter(v -> v.signum() < 0).reduce(ZERO, BigDecimal::add).negate();
+            // Cost per litre counts running costs only (feed, health, breeding, other), not the price paid for her.
+            BigDecimal costs = c.lines().entrySet().stream()
+                    .filter(e -> e.getKey() != LineKey.PURCHASE && e.getValue().signum() < 0)
+                    .map(Map.Entry::getValue).reduce(ZERO, BigDecimal::add).negate();
             return new AnimalPnl(c.animal(), range[0], range[1], c.days(), c.litres(), lines, net,
                     c.days() > 0 ? net.divide(BigDecimal.valueOf(c.days()), 2, RoundingMode.HALF_UP) : null,
                     c.litres().signum() > 0 ? costs.divide(c.litres(), 2, RoundingMode.HALF_UP) : null,
