@@ -173,13 +173,19 @@ source (MANUAL, LOW_STOCK, FEED_NEED) · notes. Equipment is `item` EQUIPMENT (d
 serviceEveryDays, serviceTask, reminderDays, purchaseDate, purchaseCost); a service is `item_txn` SERVICE with
 V6 columns work_done, mechanic_name, next_service_date.
 
-## 12. `alert` — every to-do in one list
-source (RULE, MANUAL, CHECKLIST, HEAT_SIGN, PROCUREMENT) · config_id (rule or checklist template) ·
-category (REPRODUCTION, CALF, HEALTH, MILK, FINANCE, FEED, OPERATIONS) · title · notes ·
-animal_id · related_type / related_id · due_date · due_time · severity · worker_visible ·
-status (OPEN, DONE, DISMISSED) · done_by · done_at · details JSONB (procurement: item, quantity,
-expected price, needed by).
-UNIQUE (farm_id, source, config_id, animal_id, related_id, due_date) so the daily job never duplicates.
+## 12. `alert` — every to-do in one list (built in V7)
+source RULE | REMINDER | PROCUREMENT · rule_code · rule_key (identity of a rule hit; unique per farm while set,
+released to NULL once the condition clears so a recurrence alerts again) · category REPRODUCTION | CALF | HEALTH |
+MILK | FEED | FINANCE_OPS · severity HIGH | MEDIUM | INFO · title · detail · animal_id · related_type / related_id ·
+due_date · due_time · worker_visible · status OPEN | DONE | DISMISSED · snoozed_until · done_by (member) · done_at ·
+auto_closed · repeat NONE | DAILY | WEEKLY | MONTHLY (reminders) · reminder_type · details JSONB {why, facts, action, notes}.
+V7 also adds `farm.alert_rules` JSONB (per-rule on/off, worker visibility, own numbers; shared numbers stay in breeding
+settings, milk grading and farm settings), `farm.alerts_refreshed_at`, `farm.schedules_seeded`,
+**`health_schedule`** (type, name, applies_to, medicine, steps JSONB [{label, atAgeDays, repeatEveryDays, untilAgeDays}],
+alert_days_before, worker_visible, active), **`checklist_task`** (name, repeat_daily, worker_visible, task_date, sort_order),
+**`checklist_tick`** (task_key, tick_date, member_id; unique per farm/key/day) and `animal.cull_keep_until`.
+Barn readings are `farm_event` BARN_READING rows (details.temperatureC, humidityPct, thi); health records can carry
+details.scheduleId / scheduleStep.
 
 ## 13. `config` — small configurable lists (farm_id null = system default)
 config_type · code · name · species · breed · params JSONB · worker_visible · sort_order · active.

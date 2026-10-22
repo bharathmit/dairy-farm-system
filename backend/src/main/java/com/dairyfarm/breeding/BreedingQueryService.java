@@ -284,6 +284,13 @@ public class BreedingQueryService {
     // ---------- shared ----------
 
     /** Active females that can be bred now or soon: heifers near service age, milking and dry cows. */
+    /** Breeding status of every breedable female (alerts, home, cull advisor). */
+    @Transactional(readOnly = true)
+    public List<CowStatus> allStatuses(Long farmId, boolean showMoney) {
+        LocalDate today = DailyDates.today();
+        return statuses(farmId, breedable(farmId, today), today, showMoney).stream().map(Result::status).toList();
+    }
+
     List<Animal> breedable(Long farmId, LocalDate today) {
         var s = breedingSettingsMonths(farmId);
         return animals.findByFarmIdOrderByTagAsc(farmId).stream()

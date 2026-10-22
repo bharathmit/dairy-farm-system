@@ -39,6 +39,8 @@ public final class HealthViews {
         LocalDate nextActionDate();
         String nextAction();
         String notes();
+        Long scheduleId();
+        String scheduleStep();
     }
 
     public record HealthRequest(
@@ -56,7 +58,9 @@ public final class HealthViews {
             @Min(value = 0, message = "Use 0 to 365 days") @Max(value = 365, message = "Use 0 to 365 days") Integer meatWithdrawalDays,
             LocalDate nextActionDate,
             @Size(max = 160) String nextAction,
-            @Size(max = 2000) String notes) implements Fields {
+            @Size(max = 2000) String notes,
+            Long scheduleId,
+            @Size(max = 40) String scheduleStep) implements Fields {
     }
 
     public record HealthBatchRequest(
@@ -74,7 +78,9 @@ public final class HealthViews {
             @Min(value = 0, message = "Use 0 to 365 days") @Max(value = 365, message = "Use 0 to 365 days") Integer meatWithdrawalDays,
             LocalDate nextActionDate,
             @Size(max = 160) String nextAction,
-            @Size(max = 2000) String notes) implements Fields {
+            @Size(max = 2000) String notes,
+            Long scheduleId,
+            @Size(max = 40) String scheduleStep) implements Fields {
     }
 
     public record FollowUpRequest(@NotNull Boolean done) {

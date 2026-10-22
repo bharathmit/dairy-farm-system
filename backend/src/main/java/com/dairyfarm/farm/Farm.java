@@ -38,6 +38,16 @@ public class Farm extends Auditable {
     @Column(name = "breeding_settings", columnDefinition = "jsonb")
     private com.dairyfarm.breeding.BreedingSettings breedingSettings;
 
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "alert_rules", columnDefinition = "jsonb")
+    private java.util.Map<String, com.dairyfarm.alert.RuleSetting> alertRules;
+
+    @Column(name = "alerts_refreshed_at")
+    private java.time.Instant alertsRefreshedAt;
+
+    @Column(name = "schedules_seeded", nullable = false)
+    private boolean schedulesSeeded;
+
     protected Farm() {
     }
 
@@ -123,5 +133,29 @@ public class Farm extends Auditable {
 
     public void setBreedingSettings(com.dairyfarm.breeding.BreedingSettings breedingSettings) {
         this.breedingSettings = breedingSettings;
+    }
+
+    public java.util.Map<String, com.dairyfarm.alert.RuleSetting> getAlertRules() {
+        return alertRules == null ? new java.util.LinkedHashMap<>() : new java.util.LinkedHashMap<>(alertRules);
+    }
+
+    public void setAlertRules(java.util.Map<String, com.dairyfarm.alert.RuleSetting> alertRules) {
+        this.alertRules = alertRules;
+    }
+
+    public java.time.Instant getAlertsRefreshedAt() {
+        return alertsRefreshedAt;
+    }
+
+    public void setAlertsRefreshedAt(java.time.Instant alertsRefreshedAt) {
+        this.alertsRefreshedAt = alertsRefreshedAt;
+    }
+
+    public boolean isSchedulesSeeded() {
+        return schedulesSeeded;
+    }
+
+    public void setSchedulesSeeded(boolean schedulesSeeded) {
+        this.schedulesSeeded = schedulesSeeded;
     }
 }

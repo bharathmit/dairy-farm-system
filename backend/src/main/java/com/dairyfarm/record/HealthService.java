@@ -240,7 +240,7 @@ public class HealthService {
             e.setNextActionDone(false);
         }
         e.setDetails(Details.health(blank(req.symptoms()), blank(req.diagnosis()), blank(req.medicine()), blank(req.dose()),
-                blank(req.route()), req.milkWithdrawalDays(), req.meatWithdrawalDays()));
+                blank(req.route()), req.milkWithdrawalDays(), req.meatWithdrawalDays(), req.scheduleId(), blank(req.scheduleStep())));
         e.setNotes(blank(req.notes()));
     }
 

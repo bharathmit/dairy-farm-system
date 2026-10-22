@@ -14,8 +14,12 @@ effective dates — full shapes in `docs/api-feed.md`. The draft feed rows below
 **Built (money & team, Canvas 5, owner only):** Finance summary, entries (manual + automatic from milk sales,
 purchases, health costs, breeding fees, animal prices, equipment services), profit & loss for the farm and per
 animal, workers, weekly attendance, wages due and payments (advances), equipment and services, procurement notes
-(suggestions, order, receive, from feed need) — full shapes in `docs/api-money.md`. Everything else below is still
-a draft.
+(suggestions, order, receive, from feed need) — full shapes in `docs/api-money.md`.
+**Built (home, alerts & reports, Canvas 6):** Home by role, daily checklist (built-in tasks tick themselves, custom
+tasks), barn readings with THI, alerts from 23 rules (daily 05:00 job + refresh, auto-close), reminders with repeat,
+done / dismiss / snooze, alert rules (shared numbers stored once), deworming & vaccination schedules, reports (summary,
+JSON and CSV for milk, cows, breeding, feed, health, P&L), cull advisor (keep / mark dry), compare cows — full shapes in
+`docs/api-home-alerts.md`. Everything else below is still a draft.
 
 Base path `/api/v1`. JSON. Auth: `Authorization: Bearer <Supabase JWT>`.
 Spring Boot validates the JWT (OAuth 2.0 resource server, Supabase JWKS).

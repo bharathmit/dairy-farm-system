@@ -29,28 +29,42 @@ public class FarmEvent extends FarmScoped {
                           Integer milkWithdrawalDays, Integer meatWithdrawalDays, BigDecimal heartGirthCm,
                           java.util.List<String> signs,
                           BigDecimal milkAm, BigDecimal milkPm, BigDecimal starterKg, BigDecimal waterL,
-                          BigDecimal colostrumLitres, String colostrumAt) {
+                          BigDecimal colostrumLitres, String colostrumAt,
+                          Long scheduleId, String scheduleStep,
+                          BigDecimal temperatureC, BigDecimal humidityPct, BigDecimal thi) {
         public static final Details EMPTY = new Details(null, null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null);
+                null, null, null, null, null, null, null, null, null, null, null, null);
 
         public static Details health(String symptoms, String diagnosis, String medicine, String dose, String route,
                                      Integer milkWithdrawalDays, Integer meatWithdrawalDays) {
+            return health(symptoms, diagnosis, medicine, dose, route, milkWithdrawalDays, meatWithdrawalDays, null, null);
+        }
+
+        public static Details health(String symptoms, String diagnosis, String medicine, String dose, String route,
+                                     Integer milkWithdrawalDays, Integer meatWithdrawalDays, Long scheduleId, String scheduleStep) {
             return new Details(symptoms, diagnosis, medicine, dose, route, milkWithdrawalDays, meatWithdrawalDays,
-                    null, null, null, null, null, null, null, null);
+                    null, null, null, null, null, null, null, null, scheduleId, scheduleStep, null, null, null);
+        }
+
+        public static Details barn(BigDecimal temperatureC, BigDecimal humidityPct, BigDecimal thi) {
+            return new Details(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+                    null, null, temperatureC, humidityPct, thi);
         }
 
         public static Details measurement(BigDecimal heartGirthCm) {
-            return new Details(null, null, null, null, null, null, null, heartGirthCm, null, null, null, null, null, null, null);
+            return new Details(null, null, null, null, null, null, null, heartGirthCm, null, null, null, null, null, null, null,
+                    null, null, null, null, null);
         }
 
         public static Details heat(java.util.List<String> signs) {
-            return new Details(null, null, null, null, null, null, null, null, signs, null, null, null, null, null, null);
+            return new Details(null, null, null, null, null, null, null, null, signs, null, null, null, null, null, null,
+                    null, null, null, null, null);
         }
 
         public static Details calfFeeding(BigDecimal milkAm, BigDecimal milkPm, BigDecimal starterKg, BigDecimal waterL,
                                           BigDecimal colostrumLitres, String colostrumAt) {
             return new Details(null, null, null, null, null, null, null, null, null,
-                    milkAm, milkPm, starterKg, waterL, colostrumLitres, colostrumAt);
+                    milkAm, milkPm, starterKg, waterL, colostrumLitres, colostrumAt, null, null, null, null, null);
         }
     }
 

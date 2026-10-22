@@ -100,3 +100,36 @@ CullRow = { animal: AnimalRef + {breed, ageYears, lactationNumber, daysInMilk, c
 CowCard = { animal, breed, status, daysInMilk, stage, litres7d:[number|null], avgLitres, trendPct, fat30d,
   health:{count, cost}, activeIssue, breeding: string, lifetimeNet }
 ```
+
+## Backend notes (as built)
+- **Health records** accept top-level `scheduleId` and `scheduleStep` (e.g. `"0-0"` = first step, first dose); stored as
+  `details.scheduleId/scheduleStep` and used to close the matching SCHEDULE_DUE alert. Without a link, a deworming record
+  (or a vaccination whose medicine/diagnosis/notes mention the vaccine's first word) from 14 days before the dose counts.
+- **`Alert.action.params`**: LOG_PD `{animalId, serviceId}` · LOG_HEALTH `{animalId, type, medicine, scheduleId, step}` for
+  schedule doses, `{animalId, healthRecordId}` for withdrawals and follow-ups, `{animalId}` for milk/SCC checks ·
+  OPEN_FEED `{itemId}` · OPEN_EQUIPMENT `{equipmentId}` · OPEN_PROCUREMENT `{itemId}` or `{noteId}` ·
+  LOG_HEAT / LOG_SERVICE / LOG_CALVING / LOG_WEIGHT `{animalId}`. `Alert` includes `notes` (reminders).
+- **Link kinds** (`Home.tasks[].link`, checklist `Task.link`): MILK_AM, MILK_PM, FEED_AM, FEED_PM, FEED_STOCK, HEAT_STRESS,
+  ALERT `{id}`, CHECKLIST `{id}` (custom tasks). Checklist `Task` = `{key, id, name, builtIn, done, doneBy, doneAt, detail,
+  auto, workerVisible, repeatDaily, link}`; custom tasks have `id`, `repeatDaily`, `workerVisible`. Custom task request
+  `{name, repeatDaily, workerVisible, date}` (date for a one-off task).
+- **Rule params** use these keys: HEAT_EXPECTED `heatCycleDays` · PD_DUE `pdAfterDays` · CALVING_SOON `daysBefore` ·
+  NO_HEAT_AFTER_CALVING `days` · LONG_CALVING_INTERVAL `days` · COLOSTRUM_DUE `colostrumHours` · WEANING `weanMinDays`,
+  `weanStarterKg` · HEIFER_FIRST_AI `heiferFirstServiceKg`, `heiferFirstServiceMonths` · WEIGHT_OVERDUE `everyDays` ·
+  BCS_RANGE `min`, `max` · YIELD_DROP `dropAlertPct` · LOW_FAT `minFatPct` · HIGH_SCC `maxSccK` · DRY_OFF_DUE
+  `dryOffDaysBeforeDue` · SEMEN_LOW `minStraws` · REPLACEMENT_AGE `ageYears` · LOW_MARGIN `marginAlertPct`. `Rule` also has
+  `description` and `ownerOnly`. PUT takes `[{code, enabled, workerVisible, params}]` (partial; out-of-range → 400) and
+  runs the rules again. WITHDRAWAL can't be turned off; LOW_MARGIN is never shown to workers. Defaults hidden from workers:
+  REPLACEMENT_AGE, LOW_MARGIN, PROCUREMENT_DUE.
+- **Rolling alerts** (withdrawal, feed reorder, semen low, margin, weaning, replacement age, BCS, SCC, low fat, heifer
+  first AI) are dated today while they last; dated alerts (PD, calving, heats, doses, follow-ups, weights, equipment)
+  keep their due date and show as overdue. A person's done/dismiss stands while the condition lasts.
+- **Report rows** are objects keyed by `columns[].key`; cells are strings, numbers, dates or null; `totals` values may be
+  null. CSV starts with a UTF-8 BOM (opens correctly in Excel) and ends with a totals block.
+- **Cull advisor**: also `POST /reports/cull-advisor/{animalId}/dry` (active milking cow → DRY; 400 otherwise). Rows cover
+  active MILKING/DRY females. Only problem alerts (yield drop, SCC, low fat, BCS, withdrawal, health follow-up) push a cow
+  to MONITOR — routine doses don't. A dry cow's production is not scored (70); no milk in 90 days scores 60.
+- **Home**: `greeting` is the caller's team-member name; worker `tiles` leave margin out (absent in JSON).
+  Tasks: PENDING before the session time, DUE for 3 hours after, then LATE. `barn` is the latest reading from today or
+  yesterday. Snoozed alerts are left out of counts and lists until the snooze ends.
+- Null fields are left out of JSON responses (as elsewhere in the API).

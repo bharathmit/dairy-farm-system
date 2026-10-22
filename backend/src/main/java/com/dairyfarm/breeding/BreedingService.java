@@ -404,7 +404,7 @@ public class BreedingService {
             LocalDate today = DailyDates.today();
             health.create(farmId, new HealthRequest(damId, req.date(), HealthType.ILLNESS, "Retained placenta after calving",
                     "Retained placenta", null, null, null, null, null, null, null,
-                    today.isBefore(req.date()) ? req.date() : today, "Vet check — retained placenta", null), showMoney);
+                    today.isBefore(req.date()) ? req.date() : today, "Vet check — retained placenta", null, null, null), showMoney);
         }
         finance.sync(farmId);
         return new CalvingResult(views(farmId, List.of(r), showMoney).get(0), created);
