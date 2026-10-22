@@ -45,6 +45,9 @@ export default function SettingsHome() {
         <Row to="/breeding" icon="heart" title="Breeding" sub="Heat, services, pregnancy, calving" />
         <Row to="/calves" icon="leaf" title="Calves" sub="Rearing and feeding" />
         <Row to="/breeding/semen" icon="drop" title="Semen stock" sub="Straws, expiry" />
+        <Row to="/feed" icon="leaf" title="Feed" sub="Stock, feeding, batches, ration plan" />
+        <Row to="/feed/items" icon="list" title="Feed items" sub="Nutrients, limits, reorder, suppliers" />
+        <Row to="/feed/ration-rules" icon="check" title="Ration rules" sub="Daily ration by animal category" />
       </div>
 
       <div className="sec">App</div>

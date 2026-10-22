@@ -179,6 +179,9 @@ const RECORD_TILES: { to: string; icon: IconName; color: string; title: string; 
   { to: '/breeding/pregnancy-check', icon: 'check', color: '#1F4E87', title: 'Pregnancy check', sub: 'Confirm or back to open' },
   { to: '/breeding/calving', icon: 'leaf', color: '#1F5C3A', title: 'Calving', sub: 'Dam, calf, colostrum' },
   { to: '/calves/feeding', icon: 'drop', color: '#1F5C3A', title: 'Calf feeding', sub: 'One calf or a group' },
+  { to: '/feed/log', icon: 'leaf', color: '#1F5C3A', title: 'Log feeding', sub: '6 AM / 6 PM, planned vs actual' },
+  { to: '/feed/buy', icon: 'download', color: '#7A4B0E', title: 'Buy feed', sub: 'Stock in, price, supplier' },
+  { to: '/feed/batch', icon: 'list', color: '#7A4B0E', title: 'Prepare batch', sub: 'Concentrate from a formula' },
 ]
 
 /** The + button's sheet: every daily record plus adding an animal. */
@@ -201,7 +204,7 @@ export function AddRecordSheet({ onClose }: { onClose: () => void }) {
         <Link to="/animals/new" className="btn2 mt-2.5 h-12 gap-2 text-[15px]"><Icon name="plus" size={18} />Add animal</Link>
         <div className="mb-2 mt-4 text-xs font-bold uppercase tracking-[.06em] text-ink-3">Coming in later modules</div>
         <div className="grid grid-cols-2 gap-2 text-center text-xs font-semibold text-ink-2">
-          {['Feed', 'Money'].map((l) => <span key={l} className="rounded-xl bg-ground px-1 py-3 opacity-55">{l}</span>)}
+          {['Money', 'Alerts'].map((l) => <span key={l} className="rounded-xl bg-ground px-1 py-3 opacity-55">{l}</span>)}
         </div>
       </div>
     </Sheet>

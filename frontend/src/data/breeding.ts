@@ -90,7 +90,7 @@ export interface Family {
 }
 export interface MateCheck { risk: 'HIGH' | 'MEDIUM' | 'NONE'; relation?: string | null; sharedAncestors: string[]; knownPct: number; text: string }
 export interface BreedingSettings {
-  gestationDays: Record<string, number>; heatCycleDays: number; voluntaryWaitDays: number; pdAfterDays: number; dryOffDaysBeforeDue: number
+  gestationDays: Record<string, number>; heatCycleDays: number; voluntaryWaitDays: number; pdAfterDays: number; pdMinDays?: number; dryOffDaysBeforeDue: number
   targetDaysOpen: number; sellDaysOpen: number; sellFailedServices: number; heiferFirstServiceMonths: number; heiferFirstServiceKg: number
   colostrumHours: number; calfTaper: TaperStep[]; weanMinDays: number; weanStarterKg: number; weanStarterDays: number; maleSellFromDay: number; maleSellToDay: number
 }

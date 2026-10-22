@@ -48,6 +48,18 @@ import FamilyTree from './pages/breeding/FamilyTree'
 import CalfList from './pages/calves/CalfList'
 import CalfFeeding from './pages/calves/CalfFeeding'
 import CalfFeedingGroup from './pages/calves/CalfFeedingGroup'
+import FeedHome from './pages/feed/FeedHome'
+import FeedItems from './pages/feed/FeedItems'
+import FeedItemForm from './pages/feed/FeedItemForm'
+import FeedPurchase from './pages/feed/FeedPurchase'
+import FeedUsage from './pages/feed/FeedUsage'
+import FormulaList from './pages/feed/FormulaList'
+import FormulaEditor from './pages/feed/FormulaEditor'
+import PrepareBatch from './pages/feed/PrepareBatch'
+import RationPlanner from './pages/feed/RationPlanner'
+import RationRules from './pages/feed/RationRules'
+import RationRuleEditor from './pages/feed/RationRuleEditor'
+import FarmFeedNeed from './pages/feed/FarmFeedNeed'
 
 function Loading() {
   return (
@@ -111,6 +123,20 @@ export default function App() {
               <Route path="/calves" element={<CalfList />} />
               <Route path="/calves/feeding" element={<CalfFeeding />} />
               <Route path="/calves/feeding/group" element={<CalfFeedingGroup />} />
+              <Route path="/feed" element={<FeedHome />} />
+              <Route path="/feed/items" element={<FeedItems />} />
+              <Route path="/feed/items/new" element={<FeedItemForm />} />
+              <Route path="/feed/items/:id" element={<FeedItemForm />} />
+              <Route path="/feed/buy" element={<FeedPurchase />} />
+              <Route path="/feed/log" element={<FeedUsage />} />
+              <Route path="/feed/formulas" element={<FormulaList />} />
+              <Route path="/feed/formulas/new" element={<FormulaEditor />} />
+              <Route path="/feed/formulas/:id" element={<FormulaEditor />} />
+              <Route path="/feed/batch" element={<PrepareBatch />} />
+              <Route path="/feed/ration" element={<RationPlanner />} />
+              <Route path="/feed/ration-rules" element={<RationRules />} />
+              <Route path="/feed/ration-rules/:category" element={<RationRuleEditor />} />
+              <Route path="/feed/need" element={<FarmFeedNeed />} />
               <Route path="/milk" element={<MilkHome />} />
               <Route path="/milk/sheet" element={<MilkSheet />} />
               <Route path="/milk/cow" element={<MilkSingle />} />

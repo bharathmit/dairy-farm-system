@@ -43,9 +43,15 @@ export default function PregnancyCheck() {
   const r = svc.data
   useEffect(() => { if (r?.expectedDueDate) setDue(r.expectedDueDate) }, [r])
   const dryOff = due ? addDays(due, -(settings.data?.dryOffDaysBeforeDue ?? 60)) : ''
+  // A check needs at least pdMinDays after service (the API enforces it too).
+  const pdMin = settings.data?.pdMinDays ?? 28
+  const earliest = r?.serviceDate ? addDays(r.serviceDate, pdMin) : ''
+  const tooEarly = Boolean(earliest) && earliest > todayIso()
+  useEffect(() => { if (earliest && date < earliest && !tooEarly) setDate(todayIso()) }, [earliest, date, tooEarly])
 
   const save = async () => {
     if (!r) { notify('Choose the cow'); return }
+    if (earliest && date < earliest) { notify(`A pregnancy check needs at least ${pdMin} days after service — earliest ${shortDate(earliest)}.`); return }
     setBusy(true)
     try {
       await br.pregnancyCheck(r.id, {
@@ -73,7 +79,8 @@ export default function PregnancyCheck() {
         {r && r.serviceDate && (
           <div className="rounded-xl bg-white px-3.5 py-3 text-sm">Served <b>{shortDate(r.serviceDate)}</b> by {methodLabel(r.method)}{r.semen ? ` · ${r.semen.bullName}` : r.sire ? ` · ${r.sire.tag}` : r.sireTag ? ` · ${r.sireTag}` : ''} · <b>{daysBetween(r.serviceDate, date)} days</b> ago</div>
         )}
-        <div><label className="lab" htmlFor="pd-dt">Check date *</label><input className="inp" id="pd-dt" type="date" max={todayIso()} value={date} onChange={(e) => e.target.value && setDate(e.target.value)} /></div>
+        <div><label className="lab" htmlFor="pd-dt">Check date *</label><input className="inp" id="pd-dt" type="date" min={earliest || undefined} max={todayIso()} value={date} onChange={(e) => e.target.value && setDate(e.target.value)} />
+          {earliest && <div className={`hint ${tooEarly || date < earliest ? 'font-semibold text-danger-text' : ''}`}>Earliest check: {shortDate(earliest)} ({pdMin} days after service){tooEarly ? ' — too early to check today.' : ''}</div>}</div>
         <div><div className="lab">Method</div><Segmented label="Method" options={PD_METHODS} value={method} onChange={setMethod} /></div>
         <div><div className="lab">Result *</div><Segmented label="Result" options={[{ value: 'PREGNANT', label: 'Confirmed' }, { value: 'NOT_PREGNANT', label: 'Not confirmed' }]} value={result} onChange={setResult} /></div>
         {result === 'PREGNANT' ? (
@@ -94,7 +101,7 @@ export default function PregnancyCheck() {
         </div>
       </div>
       <div className="sticky bottom-0 mt-auto border-t border-line-soft bg-white px-4 pb-6 pt-3.5">
-        <button type="button" className="btn" disabled={busy || !r} onClick={save}>{busy ? 'Saving…' : 'Save check'}</button>
+        <button type="button" className="btn" disabled={busy || !r || tooEarly} onClick={save}>{busy ? 'Saving…' : 'Save check'}</button>
       </div>
     </Screen>
   )

@@ -53,6 +53,7 @@ export default function Home() {
         <div className="grid grid-cols-2 gap-3">
           <Link to="/breeding" className="flex items-center gap-2 rounded-[14px] bg-white p-4 text-ink no-underline hover:text-ink"><Icon name="heart" color="#7A4B0E" /><b className="flex-1 text-base">Breeding</b><Icon name="chevron" size={18} color="#8A968D" /></Link>
           <Link to="/calves" className="flex items-center gap-2 rounded-[14px] bg-white p-4 text-ink no-underline hover:text-ink"><Icon name="leaf" color="#1F5C3A" /><b className="flex-1 text-base">Calves</b><Icon name="chevron" size={18} color="#8A968D" /></Link>
+          <Link to="/feed" className="col-span-2 flex items-center gap-2 rounded-[14px] bg-white p-4 text-ink no-underline hover:text-ink"><Icon name="leaf" color="#7A4B0E" /><b className="flex-1 text-base">Feed &amp; ration</b><span className="text-[13px] text-ink-3">stock, feeding, batches</span><Icon name="chevron" size={18} color="#8A968D" /></Link>
         </div>
         <button type="button" onClick={() => setAdding(true)} className="btn gap-2"><Icon name="plus" color="#fff" size={20} />Add a record</button>
         <div className="rounded-[14px] bg-white p-4 text-sm text-ink-3">The full dashboard and KPIs come in a later module. <Link to="/animals" className="font-semibold">Go to the herd</Link></div>
