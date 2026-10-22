@@ -1,6 +1,7 @@
 import { useState, type ReactNode, type InputHTMLAttributes } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Icon, type IconName } from './icons'
+import { useStore } from '../data/store'
 
 /** Phone-width column. On wider screens it sits centred like a device. */
 export function Screen({ children, className = '' }: { children: ReactNode; className?: string }) {
@@ -186,6 +187,11 @@ const RECORD_TILES: { to: string; icon: IconName; color: string; title: string; 
 
 /** The + button's sheet: every daily record plus adding an animal. */
 export function AddRecordSheet({ onClose }: { onClose: () => void }) {
+  const { farm } = useStore()
+  const owner = farm?.role === 'Owner'
+  const tiles = owner
+    ? [...RECORD_TILES, { to: '/money/entries/new', icon: 'farm' as IconName, color: '#1F5C3A', title: 'Add transaction', sub: 'Income or expense' }]
+    : RECORD_TILES
   return (
     <Sheet label="Add a record" onClose={onClose}>
       <div className="overflow-y-auto px-4 pb-6">
@@ -194,7 +200,7 @@ export function AddRecordSheet({ onClose }: { onClose: () => void }) {
           <Link to="/animals/scan" className="flex h-10 items-center gap-1.5 rounded-[10px] border border-line px-3 text-sm font-semibold text-ink no-underline"><Icon name="scan" size={18} color="currentColor" />Scan cow first</Link>
         </div>
         <div className="grid grid-cols-2 gap-2.5">
-          {RECORD_TILES.map((t) => (
+          {tiles.map((t) => (
             <Link key={t.to} to={t.to} className="flex min-h-24 flex-col items-start gap-2 rounded-[14px] bg-ground p-3.5 text-ink no-underline hover:text-ink">
               <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white"><Icon name={t.icon} color={t.color} /></span>
               <span className="text-[15px] font-semibold">{t.title}</span><span className="-mt-1.5 text-xs text-ink-3">{t.sub}</span>
@@ -202,9 +208,9 @@ export function AddRecordSheet({ onClose }: { onClose: () => void }) {
           ))}
         </div>
         <Link to="/animals/new" className="btn2 mt-2.5 h-12 gap-2 text-[15px]"><Icon name="plus" size={18} />Add animal</Link>
-        <div className="mb-2 mt-4 text-xs font-bold uppercase tracking-[.06em] text-ink-3">Coming in later modules</div>
+        <div className="mb-2 mt-4 text-xs font-bold uppercase tracking-[.06em] text-ink-3">Coming in a later module</div>
         <div className="grid grid-cols-2 gap-2 text-center text-xs font-semibold text-ink-2">
-          {['Money', 'Alerts'].map((l) => <span key={l} className="rounded-xl bg-ground px-1 py-3 opacity-55">{l}</span>)}
+          {['Alerts'].map((l) => <span key={l} className="rounded-xl bg-ground px-1 py-3 opacity-55">{l}</span>)}
         </div>
       </div>
     </Sheet>

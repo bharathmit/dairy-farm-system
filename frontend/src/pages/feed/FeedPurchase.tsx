@@ -94,7 +94,7 @@ export default function FeedPurchase() {
         )}
         {isOwner && (
           <div className="rounded-xl bg-brand-soft px-3.5 py-3 text-sm">
-            <b>Saved for Finance</b><div className="mt-0.5 text-[13px] text-ink-2">Feed expense{shownTotal != null ? ` · ${inr0(shownTotal)}` : ''}. The item's cost per {unit} is updated. Finance entries arrive with the Money module.</div>
+            <b>Saved for Finance</b><div className="mt-0.5 text-[13px] text-ink-2">Feed expense{shownTotal != null ? ` · ${inr0(shownTotal)}` : ''} added to Finance{paid ? '' : ' as pending'}. The item's cost per {unit} is updated.</div>
           </div>
         )}
         <div><label className="lab" htmlFor="fp-notes">Notes</label><input className="inp" id="fp-notes" placeholder="Bill no., vehicle, etc." value={notes} onChange={(e) => setNotes(e.target.value)} /></div>

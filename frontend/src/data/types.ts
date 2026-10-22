@@ -85,6 +85,8 @@ export interface Settings {
   morningMilking: string
   eveningMilking: string
   marginAlertPct: number
+  /** Paid leave days a month for monthly wages; more absences are deducted. */
+  leaveDaysPerMonth: number
   notify: { enabled: boolean; health: boolean; breeding: boolean; checklist: boolean; lead: string; reminderTime: string; digest: boolean; digestTime: string; quietHours: string }
 }
 

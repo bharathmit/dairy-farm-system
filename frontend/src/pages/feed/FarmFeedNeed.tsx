@@ -1,4 +1,7 @@
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { moneyApi } from '../../data/money'
+import { errorMessage } from '../../lib/api'
 import { Footer, Screen, TopBar } from '../../components/ui'
 import { LoadState } from '../../components/records'
 import { Tile, useFeed } from '../../components/feed'
@@ -23,7 +26,18 @@ function Rows({ rows }: { rows: NeedRow[] }) {
 }
 
 export default function FarmFeedNeed() {
-  const { fd, isOwner } = useFeed()
+  const { fd, isOwner, farmId } = useFeed()
+  const nav = useNavigate()
+  const { notify } = useStore()
+  const [making, setMaking] = useState(false)
+  const makeNotes = async () => {
+    setMaking(true)
+    try {
+      const made = await moneyApi(farmId).fromFeedNeed(7)
+      notify(made.length ? `${made.length} procurement note${made.length === 1 ? '' : 's'} added` : 'Already planned — nothing new to add')
+      nav('/money/procurement')
+    } catch (e) { notify(errorMessage(e)) } finally { setMaking(false) }
+  }
   const { farm } = useStore()
   const res = useLoad(() => fd.need(7), [fd])
   const n = res.data
@@ -63,7 +77,8 @@ export default function FarmFeedNeed() {
                 <b className="text-warn-ink">{n.shortfalls.length} shortfall{n.shortfalls.length === 1 ? '' : 's'} in the next 7 days</b>
                 <span>{n.shortfalls.map((s) => `${s.item.name} ~${kg(s.quantityKg, 0)} kg${s.neededBy ? ` by ${shortDate(s.neededBy)}` : ''}${isOwner && s.expectedPrice != null ? ` (${inr0(s.expectedPrice)})` : ''}`).join(' · ')}</span>
                 <div className="flex flex-wrap gap-2">{n.shortfalls.slice(0, 3).map((s) => <Link key={s.item.id} to={`/feed/buy?item=${s.item.id}`} className="flex h-10 items-center rounded-[10px] border border-line bg-white px-3 text-sm font-semibold text-ink no-underline">Buy {s.item.name}</Link>)}</div>
-                <button type="button" disabled className="btn2 h-11 opacity-60">Create procurement note · coming with Alerts</button>
+                {isOwner && <button type="button" disabled={making} onClick={makeNotes} className="btn2 h-11">{making ? 'Adding…' : 'Create procurement notes'}</button>}
+                {isOwner && <span className="text-xs">Adds a planned note per shortfall: item, quantity, expected price, needed by.</span>}
               </div>
             )}
           </>

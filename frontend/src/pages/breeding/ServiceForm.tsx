@@ -158,7 +158,7 @@ export default function ServiceForm() {
             </div>
             <div className="flex justify-between border-t border-line-faint pt-2.5 text-[15px]"><span>Breeding cost</span><b>{inr0(total)}</b></div>
             <label className="flex min-h-10 items-center gap-2.5 text-sm"><input type="checkbox" checked={paid} onChange={(e) => setPaid(e.target.checked)} className="h-5 w-5 accent-brand" /> Fees paid (else pending)</label>
-            <div className="text-xs text-ink-3">Fees are kept for Finance as a Breeding expense against this cow. Semen cost is counted when the straw is used.</div>
+            <div className="text-xs text-ink-3">Fees go to Finance as a Breeding expense against this cow. Semen is counted when bought, and in her profit when the straw is used.</div>
           </div>
         )}
 

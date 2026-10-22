@@ -124,7 +124,7 @@ export default function MilkSale() {
         )}
       </div>
       <div className="sticky bottom-0 mt-auto border-t border-line-soft bg-ground px-4 pb-6 pt-3.5">
-        <button type="button" className="btn" disabled={busy} onClick={save}>{busy ? 'Saving…' : 'Save sale'}</button>
+        <button type="button" className="btn" disabled={busy} onClick={save}>{busy ? 'Saving…' : isOwner ? 'Save & add to Finance' : 'Save sale'}</button>
       </div>
     </Screen>
   )

@@ -60,6 +60,17 @@ import RationPlanner from './pages/feed/RationPlanner'
 import RationRules from './pages/feed/RationRules'
 import RationRuleEditor from './pages/feed/RationRuleEditor'
 import FarmFeedNeed from './pages/feed/FarmFeedNeed'
+import FinanceHome from './pages/money/FinanceHome'
+import TransactionForm from './pages/money/TransactionForm'
+import ProfitLoss from './pages/money/ProfitLoss'
+import EntryList from './pages/money/EntryList'
+import Workers from './pages/money/Workers'
+import Attendance from './pages/money/Attendance'
+import PayWages from './pages/money/PayWages'
+import EquipmentList from './pages/money/EquipmentList'
+import EquipmentForm from './pages/money/EquipmentForm'
+import EquipmentService from './pages/money/EquipmentService'
+import Procurement from './pages/money/Procurement'
 
 function Loading() {
   return (
@@ -137,6 +148,20 @@ export default function App() {
               <Route path="/feed/ration-rules" element={<RationRules />} />
               <Route path="/feed/ration-rules/:category" element={<RationRuleEditor />} />
               <Route path="/feed/need" element={<FarmFeedNeed />} />
+              <Route path="/money" element={<FinanceHome />} />
+              <Route path="/money/entries" element={<EntryList />} />
+              <Route path="/money/entries/new" element={<TransactionForm />} />
+              <Route path="/money/entries/:id" element={<TransactionForm />} />
+              <Route path="/money/pnl" element={<ProfitLoss />} />
+              <Route path="/money/workers" element={<Workers />} />
+              <Route path="/money/attendance" element={<Attendance />} />
+              <Route path="/money/pay" element={<PayWages />} />
+              <Route path="/money/equipment" element={<EquipmentList />} />
+              <Route path="/money/equipment/new" element={<EquipmentForm />} />
+              <Route path="/money/equipment/:id" element={<EquipmentForm />} />
+              <Route path="/money/equipment/:id/service" element={<EquipmentService />} />
+              <Route path="/money/service" element={<EquipmentService />} />
+              <Route path="/money/procurement" element={<Procurement />} />
               <Route path="/milk" element={<MilkHome />} />
               <Route path="/milk/sheet" element={<MilkSheet />} />
               <Route path="/milk/cow" element={<MilkSingle />} />

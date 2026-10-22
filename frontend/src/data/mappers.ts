@@ -8,7 +8,7 @@ export interface ApiFarmSummary { id: number; name: string; village?: string; di
 export interface ApiFarm { id: number; name: string; village?: string; district?: string; state?: string; country?: string; role: string }
 export interface ApiMe { id: string; fullName?: string; email?: string; phone?: string; preferences: { theme: string; language: string }; farms: ApiFarmSummary[] }
 export interface ApiNotifications { enabled: boolean; health: boolean; breeding: boolean; checklist: boolean; leadDays: number; reminderTime: string; digest: boolean; digestTime: string; quietHoursStart: string; quietHoursEnd: string }
-export interface ApiSettings { milkRate?: number; morningMilking: string; eveningMilking: string; marginAlertPct: number; notifications: ApiNotifications }
+export interface ApiSettings { milkRate?: number; morningMilking: string; eveningMilking: string; marginAlertPct: number; leaveDaysPerMonth?: number; notifications: ApiNotifications }
 export interface ApiParent { id?: number; tag: string; name?: string }
 export interface ApiAnimal {
   id: number; tag: string; name?: string; nationalId?: string; species: string; breed?: string; sex: string
@@ -72,6 +72,7 @@ export function toSettings(s: ApiSettings, prefs: ApiMe['preferences']): Setting
     morningMilking: s.morningMilking,
     eveningMilking: s.eveningMilking,
     marginAlertPct: s.marginAlertPct,
+    leaveDaysPerMonth: s.leaveDaysPerMonth ?? 4,
     notify: {
       enabled: n.enabled, health: n.health, breeding: n.breeding, checklist: n.checklist,
       lead: LEADS[n.leadDays] ?? `${n.leadDays} days`, reminderTime: n.reminderTime, digest: n.digest,
@@ -87,6 +88,7 @@ export function fromSettingsPatch(p: Partial<Settings>): Partial<ApiSettings> | 
   if (p.morningMilking !== undefined) out.morningMilking = p.morningMilking
   if (p.eveningMilking !== undefined) out.eveningMilking = p.eveningMilking
   if (p.marginAlertPct !== undefined) out.marginAlertPct = p.marginAlertPct
+  if (p.leaveDaysPerMonth !== undefined) out.leaveDaysPerMonth = p.leaveDaysPerMonth
   if (p.notify) {
     const n = p.notify
     const lead = Number(Object.entries(LEADS).find(([, v]) => v === n.lead)?.[0] ?? 1)

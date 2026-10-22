@@ -50,6 +50,18 @@ export default function SettingsHome() {
         <Row to="/feed/ration-rules" icon="check" title="Ration rules" sub="Daily ration by animal category" />
       </div>
 
+      {farm?.role === 'Owner' && (
+        <>
+          <div className="sec">Money &amp; team</div>
+          <div className="grp">
+            <Row to="/money" icon="farm" title="Finance" sub="Income, expenses, profit per animal" />
+            <Row to="/money/workers" icon="team" title="Workers & wages" sub="Attendance, pay, advances" />
+            <Row to="/money/equipment" icon="gear" title="Equipment" sub="Service schedule and costs" />
+            <Row to="/money/procurement" icon="list" title="Procurement" sub="What to buy, ordered, received" />
+          </div>
+        </>
+      )}
+
       <div className="sec">App</div>
       <div className="grp">
         <Row to="/settings/notifications" icon="bell" title="Notifications" sub={settings.notify.enabled ? `Reminders ${settings.notify.lead.toLowerCase()} · ${settings.notify.digestTime} digest` : 'Reminders off'} />
