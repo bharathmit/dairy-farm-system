@@ -58,6 +58,13 @@ export default function SettingsHome() {
             <Row to="/money/workers" icon="team" title="Workers & wages" sub="Attendance, pay, advances" />
             <Row to="/money/equipment" icon="gear" title="Equipment" sub="Service schedule and costs" />
             <Row to="/money/procurement" icon="list" title="Procurement" sub="What to buy, ordered, received" />
+            <Row to="/reports" icon="list" title="Reports" sub="Exports, cull advisor, compare cows" />
+          </div>
+          <div className="sec">Alerts &amp; tasks</div>
+          <div className="grp">
+            <Row to="/settings/alert-rules" icon="bell" title="Alert rules" sub="What raises an alert, who sees it" />
+            <Row to="/settings/health-schedules" icon="health" title="Health schedules" sub="Deworming and vaccination by age" />
+            <Row to="/checklist" icon="check" title="Checklist tasks" sub="Daily built-in and custom tasks" />
           </div>
         </>
       )}
@@ -66,7 +73,7 @@ export default function SettingsHome() {
       <div className="grp">
         <Row to="/settings/notifications" icon="bell" title="Notifications" sub={settings.notify.enabled ? `Reminders ${settings.notify.lead.toLowerCase()} · ${settings.notify.digestTime} digest` : 'Reminders off'} />
         <Row to="/settings/preferences" icon="sun" title="Theme & language" sub={`${settings.theme} · ${lang}`} />
-        <Row to="/alerts" icon="list" title="Alert rules & schedules" sub="Set up in a later module" muted />
+        <Row to="/alerts" icon="bell" title="Alerts" sub="Open alerts and reminders" />
       </div>
 
       <div className="grp mt-5">

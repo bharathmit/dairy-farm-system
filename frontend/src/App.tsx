@@ -6,7 +6,6 @@ import CreateAccount from './pages/auth/CreateAccount'
 import ForgotPassword from './pages/auth/ForgotPassword'
 import UpdatePassword from './pages/auth/UpdatePassword'
 import FarmPicker from './pages/auth/FarmPicker'
-import Placeholder from './pages/Placeholder'
 import SettingsHome from './pages/settings/SettingsHome'
 import SettingsFarm from './pages/settings/SettingsFarm'
 import SettingsTeam from './pages/settings/SettingsTeam'
@@ -71,6 +70,16 @@ import EquipmentList from './pages/money/EquipmentList'
 import EquipmentForm from './pages/money/EquipmentForm'
 import EquipmentService from './pages/money/EquipmentService'
 import Procurement from './pages/money/Procurement'
+import Checklist from './pages/alerts/Checklist'
+import AlertsList from './pages/alerts/AlertsList'
+import AlertDetail from './pages/alerts/AlertDetail'
+import ReminderForm from './pages/alerts/ReminderForm'
+import AlertRules from './pages/alerts/AlertRules'
+import HealthSchedules from './pages/alerts/HealthSchedules'
+import Reports from './pages/reports/Reports'
+import ReportView from './pages/reports/ReportView'
+import CullAdvisor from './pages/reports/CullAdvisor'
+import CompareCows from './pages/reports/CompareCows'
 
 function Loading() {
   return (
@@ -113,7 +122,17 @@ export default function App() {
             <Route path="/farms" element={<FarmPicker />} />
             <Route element={<RequireFarm />}>
               <Route path="/home" element={<Home />} />
-              <Route path="/alerts" element={<Placeholder title="Alerts" tab="alerts" />} />
+              <Route path="/alerts" element={<AlertsList />} />
+              <Route path="/alerts/:id" element={<AlertDetail />} />
+              <Route path="/reminders/new" element={<ReminderForm />} />
+              <Route path="/reminders/:id" element={<ReminderForm />} />
+              <Route path="/checklist" element={<Checklist />} />
+              <Route path="/reports" element={<Reports />} />
+              <Route path="/reports/view/:type" element={<ReportView />} />
+              <Route path="/reports/cull" element={<CullAdvisor />} />
+              <Route path="/reports/compare" element={<CompareCows />} />
+              <Route path="/settings/alert-rules" element={<AlertRules />} />
+              <Route path="/settings/health-schedules" element={<HealthSchedules />} />
               <Route path="/animals" element={<AnimalList />} />
               <Route path="/animals/new" element={<AnimalForm />} />
               <Route path="/animals/import" element={<AnimalImport />} />

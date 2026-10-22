@@ -96,6 +96,8 @@ export interface HealthInput {
   symptoms?: string; diagnosis?: string; medicine?: string; dose?: string; route?: string
   vetContactId?: number; cost?: number; milkWithdrawalDays?: number; meatWithdrawalDays?: number
   nextActionDate?: string; nextAction?: string; notes?: string
+  /** Set when the record is a dose from a health schedule (closes that schedule alert). */
+  scheduleId?: number; scheduleStep?: string
 }
 export interface HealthOverview {
   inWithdrawal: number; openFollowUps: number; thisMonth: number

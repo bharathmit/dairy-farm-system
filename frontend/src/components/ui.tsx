@@ -1,7 +1,8 @@
-import { useState, type ReactNode, type InputHTMLAttributes } from 'react'
+import { useEffect, useState, useSyncExternalStore, type ReactNode, type InputHTMLAttributes } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Icon, type IconName } from './icons'
 import { useStore } from '../data/store'
+import { alertCountSnapshot, loadAlertCount, subscribeAlertCount } from '../data/alerts'
 
 /** Phone-width column. On wider screens it sits centred like a device. */
 export function Screen({ children, className = '' }: { children: ReactNode; className?: string }) {
@@ -183,6 +184,7 @@ const RECORD_TILES: { to: string; icon: IconName; color: string; title: string; 
   { to: '/feed/log', icon: 'leaf', color: '#1F5C3A', title: 'Log feeding', sub: '6 AM / 6 PM, planned vs actual' },
   { to: '/feed/buy', icon: 'download', color: '#7A4B0E', title: 'Buy feed', sub: 'Stock in, price, supplier' },
   { to: '/feed/batch', icon: 'list', color: '#7A4B0E', title: 'Prepare batch', sub: 'Concentrate from a formula' },
+  { to: '/reminders/new', icon: 'bell', color: '#1F4E87', title: 'Reminder', sub: 'Anything to remember, repeats' },
 ]
 
 /** The + button's sheet: every daily record plus adding an animal. */
@@ -208,20 +210,27 @@ export function AddRecordSheet({ onClose }: { onClose: () => void }) {
           ))}
         </div>
         <Link to="/animals/new" className="btn2 mt-2.5 h-12 gap-2 text-[15px]"><Icon name="plus" size={18} />Add animal</Link>
-        <div className="mb-2 mt-4 text-xs font-bold uppercase tracking-[.06em] text-ink-3">Coming in a later module</div>
-        <div className="grid grid-cols-2 gap-2 text-center text-xs font-semibold text-ink-2">
-          {['Alerts'].map((l) => <span key={l} className="rounded-xl bg-ground px-1 py-3 opacity-55">{l}</span>)}
-        </div>
       </div>
     </Sheet>
   )
 }
 
+/** Open-alert count for the nav badge (shared cache, refreshed at most once a minute). */
+function useOpenAlerts() {
+  const { farm } = useStore()
+  const farmId = farm?.id ?? ''
+  const snap = useSyncExternalStore(subscribeAlertCount, () => alertCountSnapshot(farmId))
+  useEffect(() => { void loadAlertCount(farmId) }, [farmId])
+  return snap?.count ?? 0
+}
+
 export function BottomNav({ active }: { active: 'home' | 'herd' | 'alerts' | 'more' }) {
   const [adding, setAdding] = useState(false)
-  const item = (key: typeof active, to: string, icon: Parameters<typeof Icon>[0]['name'], label: string) => (
-    <Link to={to} aria-current={active === key ? 'page' : undefined} className={`flex flex-col items-center justify-center gap-[3px] text-[11px] font-semibold no-underline ${active === key ? 'text-brand' : 'text-ink-3'}`}>
+  const open = useOpenAlerts()
+  const item = (key: typeof active, to: string, icon: Parameters<typeof Icon>[0]['name'], label: string, badge = 0) => (
+    <Link to={to} aria-current={active === key ? 'page' : undefined} aria-label={badge ? `${label}, ${badge} open` : undefined} className={`relative flex flex-col items-center justify-center gap-[3px] text-[11px] font-semibold no-underline ${active === key ? 'text-brand' : 'text-ink-3'}`}>
       <Icon name={icon} color="currentColor" />{label}
+      {badge > 0 && <span aria-hidden="true" className="absolute left-1/2 top-2 ml-1.5 min-w-[18px] rounded-full bg-[#C2410C] px-1 text-center text-[10px] font-bold leading-[18px] text-white">{badge > 99 ? '99+' : badge}</span>}
     </Link>
   )
   return (
@@ -232,7 +241,7 @@ export function BottomNav({ active }: { active: 'home' | 'herd' | 'alerts' | 'mo
         <button type="button" onClick={() => setAdding(true)} aria-label="Add a record" className="flex items-center justify-center border-0 bg-transparent">
           <span className="-mt-[18px] flex h-12 w-12 items-center justify-center rounded-full bg-brand shadow-[0_4px_10px_rgba(31,92,58,.3)]"><Icon name="plus" color="#fff" /></span>
         </button>
-        {item('alerts', '/alerts', 'bell', 'Alerts')}
+        {item('alerts', '/alerts', 'bell', 'Alerts', open)}
         {item('more', '/settings', 'menu', 'More')}
       </nav>
       {adding && <AddRecordSheet onClose={() => setAdding(false)} />}

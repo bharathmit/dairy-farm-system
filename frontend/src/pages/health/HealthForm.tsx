@@ -16,7 +16,13 @@ export default function HealthForm() {
   const nav = useNavigate()
   const existing = useLoad(id ? () => rec.healthRecord(id) : null, [rec, id])
   const [animalId, setAnimalId] = useState(params.get('animal') ?? '')
-  const [d, setD] = useState<HealthDraft>(emptyDraft(todayIso()))
+  const [d, setD] = useState<HealthDraft>(() => {
+    const t = params.get('type') as HealthDraft['type'] | null
+    const base = emptyDraft(todayIso(), t && ['ILLNESS', 'TREATMENT', 'VACCINATION', 'DEWORMING', 'INJURY'].includes(t) ? t : undefined)
+    return { ...base, medicine: params.get('medicine') ?? '' }
+  })
+  // Opened from a deworming / vaccination schedule alert: the record closes that dose.
+  const schedule = params.get('schedule') ? { scheduleId: Number(params.get('schedule')), scheduleStep: params.get('step') ?? undefined } : {}
   const [busy, setBusy] = useState(false)
   const [confirm, setConfirm] = useState(false)
   const set = (p: Partial<HealthDraft>) => setD((cur) => ({ ...cur, ...p }))
@@ -37,7 +43,7 @@ export default function HealthForm() {
     if (!animalId) { notify('Choose an animal'); return }
     setBusy(true)
     try {
-      await rec.saveHealth({ ...draftBody(d, isOwner), animalId: Number(animalId) }, id)
+      await rec.saveHealth({ ...draftBody(d, isOwner), ...schedule, animalId: Number(animalId) }, id)
       notify('Health record saved')
       nav(back)
     } catch (e) { notify(errorMessage(e)) } finally { setBusy(false) }
