@@ -23,7 +23,10 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.dairyfarm.finance.FinancePoster;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,6 +51,14 @@ import jakarta.validation.Validator;
 /** Herd CSV: template, export and import. Column names match the app's template. */
 @Service
 public class AnimalCsvService {
+
+    private FinancePoster finance;
+
+    /** Keeps automatic finance entries in step with these records. */
+    @Autowired
+    void setFinance(FinancePoster finance) {
+        this.finance = finance;
+    }
 
     public static final List<String> COLUMNS = List.of(
             "tag_number", "animal_name", "dob", "sex", "species", "status", "national_id", "dam_tag", "sire_tag",
@@ -166,6 +177,7 @@ public class AnimalCsvService {
         if (dryRun) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
+        finance.sync(farmId);
         return new ImportResult(dryRun, (int) records.stream().filter(r -> !isBlankRow(r)).count(), created,
                 dryRun ? 0 : created, duplicates, errors);
     }

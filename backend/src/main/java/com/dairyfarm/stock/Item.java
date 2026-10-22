@@ -31,8 +31,24 @@ public class Item extends FarmScoped {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public record Details(String bullCode, String breed, Boolean sexed,
                           BigDecimal dmPct, BigDecimal cpPct, BigDecimal tdnPct, BigDecimal caPct, BigDecimal pPct,
-                          BigDecimal maxInclusionPct, Boolean excluded, String excludedReason) {
+                          BigDecimal maxInclusionPct, Boolean excluded, String excludedReason,
+                          String brand, String model, Integer serviceEveryDays, String serviceTask,
+                          Integer reminderDays, LocalDate purchaseDate, BigDecimal purchaseCost) {
         public static final Details EMPTY = new Details(null, null, null);
+
+        public Details(String bullCode, String breed, Boolean sexed,
+                       BigDecimal dmPct, BigDecimal cpPct, BigDecimal tdnPct, BigDecimal caPct, BigDecimal pPct,
+                       BigDecimal maxInclusionPct, Boolean excluded, String excludedReason) {
+            this(bullCode, breed, sexed, dmPct, cpPct, tdnPct, caPct, pPct, maxInclusionPct, excluded, excludedReason,
+                    null, null, null, null, null, null, null);
+        }
+
+        /** EQUIPMENT details. */
+        public static Details equipment(String brand, String model, Integer serviceEveryDays, String serviceTask,
+                                        Integer reminderDays, LocalDate purchaseDate, BigDecimal purchaseCost) {
+            return new Details(null, null, null, null, null, null, null, null, null, null, null,
+                    brand, model, serviceEveryDays, serviceTask, reminderDays, purchaseDate, purchaseCost);
+        }
 
         public Details(String bullCode, String breed, Boolean sexed) {
             this(bullCode, breed, sexed, null, null, null, null, null, null, null, null);

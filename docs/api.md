@@ -10,8 +10,12 @@ group), family tree, mate check, next free tag — full shapes in `docs/api-bree
 **Built (feed & ration, Canvas 4):** Feed overview, feed items (nutrients, limits, reorder, supplier), stock
 (harvest/adjust) and moves, purchases, feeding sheet (farm/group/animal, AM/PM), concentrate formulas, batch
 preview and preparing a batch, ration per animal, ration summary, farm feed need and shortfalls, ration rules with
-effective dates — full shapes in `docs/api-feed.md`. The draft feed rows below are replaced by it. Everything else
-below is still a draft.
+effective dates — full shapes in `docs/api-feed.md`. The draft feed rows below are replaced by it.
+**Built (money & team, Canvas 5, owner only):** Finance summary, entries (manual + automatic from milk sales,
+purchases, health costs, breeding fees, animal prices, equipment services), profit & loss for the farm and per
+animal, workers, weekly attendance, wages due and payments (advances), equipment and services, procurement notes
+(suggestions, order, receive, from feed need) — full shapes in `docs/api-money.md`. Everything else below is still
+a draft.
 
 Base path `/api/v1`. JSON. Auth: `Authorization: Bearer <Supabase JWT>`.
 Spring Boot validates the JWT (OAuth 2.0 resource server, Supabase JWKS).

@@ -15,7 +15,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.dairyfarm.finance.FinancePoster;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dairyfarm.common.ApiException;
@@ -75,6 +78,14 @@ import com.dairyfarm.stock.ItemRepository;
 
 @Service
 public class FeedService {
+
+    private FinancePoster finance;
+
+    /** Keeps automatic finance entries in step with these records. */
+    @Autowired
+    void setFinance(FinancePoster finance) {
+        this.finance = finance;
+    }
 
     private final ItemRepository items;
     private final FeedRepository repo;
@@ -139,6 +150,7 @@ public class FeedService {
             throw ApiException.conflict("This item has stock records or is used in a formula or ration rule. Make it inactive instead.");
         }
         items.delete(i);
+        finance.sync(farmId);
     }
 
     private void nameFree(Long farmId, String name, Long exceptId) {
@@ -255,6 +267,7 @@ public class FeedService {
             i.setCostPerUnit(per);
         }
         Txn t = repo.txn(farmId, id).orElseThrow();
+        finance.sync(farmId);
         return new PurchaseSaved(move(t, supplierMap(farmId, List.of(t)), showMoney), stockItemOf(farmId, i, showMoney));
     }
 

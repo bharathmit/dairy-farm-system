@@ -17,7 +17,10 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.dairyfarm.finance.FinancePoster;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dairyfarm.common.ApiException;
@@ -58,6 +61,14 @@ import com.dairyfarm.security.CurrentUser;
 
 @Service
 public class MilkService {
+
+    private FinancePoster finance;
+
+    /** Keeps automatic finance entries in step with these records. */
+    @Autowired
+    void setFinance(FinancePoster finance) {
+        this.finance = finance;
+    }
 
     private static final BigDecimal ZERO = BigDecimal.ZERO;
 
@@ -295,6 +306,7 @@ public class MilkService {
         Long id = milk.upsertSale(farmId, req.date(), req.session(), product, req.quantity(), sold, rate, income,
                 buyer == null ? null : buyer.getId(), req.fatPct(), req.snfPct(), req.paid(),
                 req.notes() == null || req.notes().isBlank() ? null : req.notes().trim(), CurrentUser.idOrNull());
+        finance.sync(farmId);
         return toSale(farmId, milk.sale(farmId, id).orElseThrow(), buyer, showMoney);
     }
 
@@ -303,6 +315,7 @@ public class MilkService {
         if (milk.deleteSale(farmId, id) == 0) {
             throw ApiException.notFound("Sale not found.");
         }
+        finance.sync(farmId);
     }
 
     // ---- shared

@@ -13,7 +13,10 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.dairyfarm.finance.FinancePoster;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -36,6 +39,14 @@ import com.dairyfarm.group.AnimalGroupRepository;
 
 @Service
 public class AnimalService {
+
+    private FinancePoster finance;
+
+    /** Keeps automatic finance entries in step with these records. */
+    @Autowired
+    void setFinance(FinancePoster finance) {
+        this.finance = finance;
+    }
 
     static final int MAX_PAGE_SIZE = 200;
 
@@ -118,6 +129,7 @@ public class AnimalService {
     public AnimalDetail create(Long farmId, AnimalRequest req) {
         Animal a = createEntity(farmId, req);
         relinkParents(farmId);
+        finance.sync(farmId);
         return detail(load(farmId, a.getId()), true);
     }
 
@@ -146,6 +158,7 @@ public class AnimalService {
         apply(a, req);
         animals.saveAndFlush(a);
         relinkParents(farmId);
+        finance.sync(farmId);
         return detail(load(farmId, id), true);
     }
 
@@ -170,6 +183,7 @@ public class AnimalService {
             a.setExitParty(req.status() == Status.DEAD ? null : blankToNull(req.party()));
             a.setGroupId(null);
         }
+        finance.sync(farmId);
         return detail(a, true);
     }
 
@@ -186,6 +200,7 @@ public class AnimalService {
     @Transactional
     public void delete(Long farmId, Long id) {
         deleteAll(List.of(load(farmId, id)));
+        finance.sync(farmId);
     }
 
     @Transactional
@@ -195,6 +210,7 @@ public class AnimalService {
             throw ApiException.notFound("Some of those animals aren't on this farm. Refresh and try again.");
         }
         deleteAll(found);
+        finance.sync(farmId);
         return found.size();
     }
 

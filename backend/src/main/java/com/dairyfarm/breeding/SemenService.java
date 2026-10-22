@@ -11,7 +11,10 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.dairyfarm.finance.FinancePoster;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dairyfarm.breeding.BreedingViews.AdjustRequest;
@@ -33,6 +36,14 @@ import com.dairyfarm.stock.StockRepository.TxnType;
 /** Semen batches (one per bull batch) and their straw counts. */
 @Service
 public class SemenService {
+
+    private FinancePoster finance;
+
+    /** Keeps automatic finance entries in step with these records. */
+    @Autowired
+    void setFinance(FinancePoster finance) {
+        this.finance = finance;
+    }
 
     static final int LOW = 5;
 
@@ -80,6 +91,7 @@ public class SemenService {
                     i.getCostPerUnit() == null ? null : i.getCostPerUnit().multiply(BigDecimal.valueOf(straws)),
                     i.getSupplierContactId(), null, null, null, "Opening stock");
         }
+        finance.sync(farmId);
         return views(farmId, List.of(i), showMoney).get(0);
     }
 
@@ -88,6 +100,7 @@ public class SemenService {
         Item i = load(farmId, id);
         apply(farmId, i, req, showMoney);
         items.flush();
+        finance.sync(farmId);
         return views(farmId, List.of(i), showMoney).get(0);
     }
 
@@ -113,6 +126,7 @@ public class SemenService {
             throw ApiException.conflict("This batch was used on services and is kept for history.");
         }
         items.delete(i);
+        finance.sync(farmId);
     }
 
     private void apply(Long farmId, Item i, SemenRequest req, boolean showMoney) {

@@ -18,7 +18,10 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.dairyfarm.finance.FinancePoster;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dairyfarm.animal.Animal;
@@ -72,6 +75,14 @@ import com.dairyfarm.stock.StockRepository.TxnType;
 /** Heats, services, pregnancy checks, calvings and the breeding settings. */
 @Service
 public class BreedingService {
+
+    private FinancePoster finance;
+
+    /** Keeps automatic finance entries in step with these records. */
+    @Autowired
+    void setFinance(FinancePoster finance) {
+        this.finance = finance;
+    }
 
     static final String SOURCE = "BREEDING";
 
@@ -213,6 +224,7 @@ public class BreedingService {
         applyService(farmId, r, cow, req, true);
         records.saveAndFlush(r);
         useSemen(farmId, r);
+        finance.sync(farmId);
         return views(farmId, List.of(r), showMoney).get(0);
     }
 
@@ -232,6 +244,7 @@ public class BreedingService {
         }
         records.saveAndFlush(r);
         useSemen(farmId, r);
+        finance.sync(farmId);
         return views(farmId, List.of(r), showMoney).get(0);
     }
 
@@ -243,6 +256,7 @@ public class BreedingService {
         }
         stock.removeForSource(farmId, SOURCE, r.getId());
         records.delete(r);
+        finance.sync(farmId);
     }
 
     @Transactional
@@ -275,6 +289,7 @@ public class BreedingService {
             }
             r.setExpectedDueDate(req.expectedDueDate());
         }
+        finance.sync(farmId);
         return views(farmId, List.of(r), showMoney).get(0);
     }
 
@@ -391,6 +406,7 @@ public class BreedingService {
                     "Retained placenta", null, null, null, null, null, null, null,
                     today.isBefore(req.date()) ? req.date() : today, "Vet check — retained placenta", null), showMoney);
         }
+        finance.sync(farmId);
         return new CalvingResult(views(farmId, List.of(r), showMoney).get(0), created);
     }
 

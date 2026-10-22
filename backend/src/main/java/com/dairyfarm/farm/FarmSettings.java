@@ -23,7 +23,9 @@ public record FarmSettings(
         @JsonFormat(pattern = "HH:mm") LocalTime eveningMilking,
         @Min(value = 0, message = "Use a value from 0 to 100") @Max(value = 100, message = "Use a value from 0 to 100")
         Integer marginAlertPct,
-        @Valid Notifications notifications) {
+        @Valid Notifications notifications,
+        @Min(value = 0, message = "Use 0 to 15 days") @Max(value = 15, message = "Use 0 to 15 days")
+        Integer leaveDaysPerMonth) {
 
     public record Notifications(
             Boolean enabled,
@@ -52,7 +54,7 @@ public record FarmSettings(
     }
 
     public static final FarmSettings DEFAULTS = new FarmSettings(null, LocalTime.of(6, 0), LocalTime.of(18, 0), 30,
-            Notifications.DEFAULTS);
+            Notifications.DEFAULTS, 4);
 
     public FarmSettings resolved() {
         return new FarmSettings(
@@ -60,7 +62,8 @@ public record FarmSettings(
                 or(morningMilking, DEFAULTS.morningMilking),
                 or(eveningMilking, DEFAULTS.eveningMilking),
                 or(marginAlertPct, DEFAULTS.marginAlertPct),
-                notifications == null ? Notifications.DEFAULTS : notifications.resolved());
+                notifications == null ? Notifications.DEFAULTS : notifications.resolved(),
+                or(leaveDaysPerMonth, DEFAULTS.leaveDaysPerMonth));
     }
 
     /** Applies the non-null values of {@code patch} on top of these settings. */
@@ -81,7 +84,8 @@ public record FarmSettings(
                 or(patch.morningMilking, base.morningMilking),
                 or(patch.eveningMilking, base.eveningMilking),
                 or(patch.marginAlertPct, base.marginAlertPct),
-                notifications);
+                notifications,
+                or(patch.leaveDaysPerMonth, base.leaveDaysPerMonth));
     }
 
     private static <T> T or(T value, T fallback) {

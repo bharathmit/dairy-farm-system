@@ -19,7 +19,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.dairyfarm.finance.FinancePoster;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dairyfarm.animal.Animal;
@@ -49,6 +52,14 @@ import com.dairyfarm.record.HealthViews.Withdrawals;
 /** Illness, treatment, vaccination, deworming and injury records, with milk/meat withdrawal and follow-ups. */
 @Service
 public class HealthService {
+
+    private FinancePoster finance;
+
+    /** Keeps automatic finance entries in step with these records. */
+    @Autowired
+    void setFinance(FinancePoster finance) {
+        this.finance = finance;
+    }
 
     private final FarmEventRepository events;
     private final AnimalRepository animals;
@@ -105,6 +116,7 @@ public class HealthService {
         apply(farmId, e, req, vet, true);
         events.saveAndFlush(e);
         milkService.refresh(farmId, List.of(req.animalId()), req.date(), DailyDates.today());
+        finance.sync(farmId);
         return views(farmId, List.of(e), showMoney).get(0);
     }
 
@@ -122,6 +134,7 @@ public class HealthService {
         }
         events.saveAllAndFlush(created);
         milkService.refresh(farmId, ids, req.date(), DailyDates.today());
+        finance.sync(farmId);
         return new BatchResult(batchId, created.size(), views(farmId, created, showMoney));
     }
 
@@ -137,6 +150,7 @@ public class HealthService {
         events.flush();
         LocalDate from = oldDate.isBefore(req.date()) ? oldDate : req.date();
         milkService.refresh(farmId, new HashSet<>(List.of(oldAnimal, req.animalId())), from, DailyDates.today());
+        finance.sync(farmId);
         return views(farmId, List.of(e), showMoney).get(0);
     }
 
@@ -156,6 +170,7 @@ public class HealthService {
         events.delete(e);
         events.flush();
         milkService.refresh(farmId, List.of(e.getAnimalId()), e.getEventDate(), DailyDates.today());
+        finance.sync(farmId);
     }
 
     @Transactional(readOnly = true)

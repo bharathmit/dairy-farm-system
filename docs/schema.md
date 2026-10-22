@@ -154,13 +154,24 @@ Herd milking sheet = one request saving AM and PM rows for every milking cow.
 Milk grade A–D is calculated. MILK per animal only for females in MILKING category; a sale is
 blocked while that cow's milk withdrawal is active.
 
-## 11. `finance_entry`
-direction (EXPENSE, INCOME) · category (FEED, MEDICINE, VET, LABOUR, EQUIPMENT, SEMEN, TRANSPORT,
-UTILITIES, ANIMAL_PURCHASE, OTHER_EXPENSE; MILK_SALES, ANIMAL_SALES, MANURE_SALES, OTHER_INCOME) ·
-amount · entry_date · entry_time · **status (PAID, PENDING)** · payment_method (CASH, UPI,
-BANK_TRANSFER, CARD, CHEQUE, OTHER) · counterparty · member_id (wages) · period_from / period_to
-(wage week) · allocation species / group_id / animal_id · quantity · unit ·
-source_type / source_id (ITEM_TXN, PRODUCTION, EVENT, ANIMAL, MANUAL) · notes.
+## 11. `finance_entry` (built in V6; V6.1 backfills automatic entries)
+direction (INCOME, EXPENSE) · category (MILK_SALES, ANIMAL_SALES, MANURE_SALES, OTHER_INCOME; FEED, LABOUR, VET,
+BREEDING, SEMEN, EQUIPMENT, UTILITIES, TRANSPORT, ANIMAL_PURCHASE, OTHER_EXPENSE) · amount · entry_date · entry_time ·
+**status (PAID, PENDING)** · payment_method · counterparty · contact_id · member_id + period_from / period_to (wages) ·
+advance / advance_deducted (wage advances) · alloc_kind (FARM, GROUP, ANIMAL) + group_id / animal_id · quantity · unit ·
+source_type (MILK_SALE, ITEM_TXN, HEALTH, BREEDING, ANIMAL) + source_id + source_part · description · auto · notes.
+UNIQUE (farm_id, source_type, source_id, source_part). Automatic entries are rewritten from their source
+(`FinanceSql`) in the same transaction as every change to it; manual entries (incl. wages) are edited directly.
+
+## 17. `attendance` (built in V6)
+member_id · work_date · status (PRESENT, HALF, ABSENT) · hours. UNIQUE (member_id, work_date).
+
+## 18. `procurement_note` (built in V6)
+item_id (optional) · title · quantity · unit · expected_price · needed_by · supplier_contact_id · status (PLANNED,
+ORDERED, RECEIVED, CANCELLED) · ordered_on · received_on · paid_amount · purchase_txn_id · finance_entry_id ·
+source (MANUAL, LOW_STOCK, FEED_NEED) · notes. Equipment is `item` EQUIPMENT (details: brand, model,
+serviceEveryDays, serviceTask, reminderDays, purchaseDate, purchaseCost); a service is `item_txn` SERVICE with
+V6 columns work_done, mechanic_name, next_service_date.
 
 ## 12. `alert` — every to-do in one list
 source (RULE, MANUAL, CHECKLIST, HEAT_SIGN, PROCUREMENT) · config_id (rule or checklist template) ·
