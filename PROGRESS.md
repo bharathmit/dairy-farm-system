@@ -1,11 +1,11 @@
 # Progress
 
-Status: **Backend Modules 1–4 done** (Spring Boot 4.1, `backend/`). **UI: all 6 canvases drafted (73 screens) — owner reviewing.** Index: docs/ui-design/README.md. Next: connect the React app to the API.
+Status: **First release built — all 6 modules (backend + UI) on `main`, deployed (Cloudflare + Render + Supabase).** Now: testing, bug fixing and user acceptance (docs/uat.md). Next release: docs/backlog.md.
 UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile screens); snapshot in docs/ui-design/module-1/. Tables and backend come after the UI is final.
 
 - [x] Module 1 UI design reviewed (owner comments applied: email-only login + Google, create account, update password, logo + footer on all pages, milk rate page, member DOB/sex/password, team filter)
 - [x] Module 1 UI app → `frontend/` (React 18 + Vite + TS + Tailwind), all 24 screens, in-memory store
-- [ ] Deploy UI to Cloudflare Pages (steps in docs/deploy.md — owner connects the repo)
+- [x] Deployed: frontend on Cloudflare Workers, backend on Render, database/auth/storage on Supabase (docs/deploy.md)
 - [x] Module 1 table design (tables 1–5, schema v4.2) and Spring Boot backend for Modules 1–4
 
 - [x] Reference site 1 (Farmleo) mapped → docs/reference/farmleo/pages.md, incl. all popups
@@ -28,19 +28,16 @@ UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile s
 - [x] Breeding & calves backend (Canvas 3): Flyway V4 (`breeding_record`, `item`, `item_txn`, `animal.lactation_number`, `farm.breeding_settings`); breeding settings; status per female (open/served/pregnant/overdue, days open, missed heats, failed services, spend, keep-or-sell suggestion); overview + 14-day calendar; heat watch; breeding history by lactation; heats; services with AI technician/bull fees and semen straws from stock; pregnancy checks; calving (creates calves, starts the new lactation, retained placenta → health follow-up); colostrum; semen stock; calves list, feeding (one calf or group sheet); family tree, mate check, next free tag. Contract: docs/api-breeding.md. 82 backend tests pass.
 - [x] Feed & ration backend (Canvas 4): Flyway V5 (`feed_formula`, `feed_formula_line`, `ration_rule`, feed columns on `item_txn`); feed items with nutrients, max inclusion, exclusion, reorder level, lead time and supplier; stock by purchase, harvest and adjustment; feeding sheet per session for the farm, a group or an animal (plan vs actual, warnings); concentrate formulas (cost/kg, nutrients vs target, excluded blocked, over-max warned), batch preview and preparation (ingredients out, mix in, mix cost); ration per animal (body weight source, milk yesterday, lactation stage limits, concentrate cap, nutrient check), ration summary, farm feed need with shortfalls; ration rules with effective dates. Breeding: pregnancy check at least `pdMinDays` (28) after service. Contract: docs/api-feed.md. 88 backend tests pass.
 - [x] Feed purchases posted to Finance (Canvas 5)
-- [ ] Feed later: procurement alerts from shortfalls (Alerts module)
+- [x] Procurement notes from feed shortfalls (Canvas 5) and procurement alerts (Canvas 6)
 - [x] Money & team backend (Canvas 5): Flyway V6 (`finance_entry`, `attendance`, `procurement_note`, service columns on `item_txn`) and V6.1 backfill; automatic finance entries kept in step with milk sales, purchases (feed, semen, procurement), health costs, breeding fees and pregnancy checks, animal purchase/sale prices and equipment services; finance summary (margin, pending, categories), manual entries, P&L for the farm and per animal (head-day feed split); workers, weekly attendance, wages due (daily/monthly, leave allowance, advances) and payments; equipment with service schedule; procurement notes with low-stock suggestions, order, receive and plan-from-feed-need. All owner only. Contract: docs/api-money.md. 95 backend tests pass.
 - [x] Home, alerts & reports backend (Canvas 6): Flyway V7 (`alert`, `health_schedule`, `checklist_task`, `checklist_tick`, `farm.alert_rules`, `animal.cull_keep_until`); alert engine with 23 rules (reproduction, calves, health incl. deworming/vaccination schedules, milk, feed, finance & operations), daily 05:00 job + refresh + lazy refresh, auto-close when resolved, worker visibility; reminders with repeat, done/dismiss/snooze; alert rules editor (shared numbers written to breeding settings, milk grading and farm settings); health schedules with defaults; home by role; daily checklist (auto ticks from milk, feeding and barn readings; custom tasks); barn readings with THI; reports summary + JSON/CSV (milk, cows, breeding, feed, health, P&L); cull advisor (score, verdict, keep 90 d, mark dry); compare cows. Contract: docs/api-home-alerts.md. 104 backend tests pass.
-- [ ] Later: growth targets per age, "at risk" health score, push notifications, workers marking their own attendance
-- [ ] Modules 5–15 (rest) — see PLAN.md
+- [ ] Next release items → docs/backlog.md
 
 ## Branches
-- `main` — design docs and UI/UX
-- `module/1-ui` — React UI application
-- `module/2-backend` — Spring Boot application (Modules 1–4)
+- `main` only (design docs, `frontend/`, `backend/`); pushes to `main` deploy both apps.
 
 ## Decisions
-- DB: Supabase Postgres; access only through Spring Boot; no RLS; roles in Spring Security.
+- DB: Supabase Postgres; access only through Spring Boot; RLS deferred (backlog); roles in Spring Security.
 - Auth: Supabase Auth JWT, validated by Spring as OAuth 2.0 resource server.
 - Roles per farm: OWNER, WORKER. Workers see health + feeding alerts only.
 - Multi-farm: farm_id on every business table; API under /farms/{farmId}.
@@ -55,9 +52,8 @@ UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile s
 - Reference sites are functional references only (text notes, no screenshots); UI is our own design.
 - All records are saved online immediately; no offline mode or later sync.
 - Team members: owners set member passwords manually; no invites.
-- Frontend hosting: Cloudflare Pages free plan. Backend hosting (later, to decide): Render free (sleeps after 15 min, 512 MB) or Google Cloud Run free tier (card needed); OpenShift remains the long-term target.
+- Hosting: frontend on Cloudflare Workers (static assets, free); backend on Render free (sleeps after 15 min, 512 MB); OpenShift remains the long-term target.
 
 ## Notes / blockers
-- Module 1 UI is a clickable React app on sample data (`module/1-ui`); it is not wired to the API yet.
 - Before first deploy: create the private `animal-photos` bucket and keep email confirmation on (see backend/README.md).
 - Tests use Testcontainers in CI; locally they can use an existing Postgres via `TEST_DATABASE_URL`.
