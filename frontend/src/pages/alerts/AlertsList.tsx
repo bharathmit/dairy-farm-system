@@ -2,7 +2,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { BottomNav, Footer, Screen } from '../../components/ui'
 import { Icon } from '../../components/icons'
 import { LoadState } from '../../components/records'
-import { AlertCard, refreshAlertCount, useAlerts } from '../../components/alerts'
+import { AlertCard, alertDetail, refreshAlertCount, useAlerts } from '../../components/alerts'
 import { useStore } from '../../data/store'
 import {
   CATEGORY_LABEL, dueText, SEVERITY_DOT, SEVERITY_LABEL, type Alert, type AlertCategory, type AlertsPage, type Severity,
@@ -56,7 +56,7 @@ export default function AlertsList() {
         {list.map((a, i) => (
           <Link key={a.id} to={`/alerts/${a.id}`} className={`flex min-h-14 items-center gap-2.5 text-ink no-underline hover:text-ink ${i ? 'border-t border-line-faint' : ''}`}>
             <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: SEVERITY_DOT[a.severity] }} />
-            <span className="flex-1 py-1.5"><b>{a.title}</b>{a.animal ? ` · ${a.animal.tag}${a.animal.name ? ` ${a.animal.name}` : ''}` : ''}<br /><span className="text-[13px] text-ink-3">{CATEGORY_LABEL[a.category]}{a.detail ? ` · ${a.detail}` : ''}</span></span>
+            <span className="flex-1 py-1.5"><b>{a.title}</b>{a.animal ? ` · ${a.animal.tag}${a.animal.name ? ` ${a.animal.name}` : ''}` : ''}<br /><span className="text-[13px] text-ink-3">{CATEGORY_LABEL[a.category]}{alertDetail(a.detail, a.animal) ? ` · ${alertDetail(a.detail, a.animal)}` : ''}</span></span>
             <span className="text-[13px] text-ink-3">{dueText(a, today)}</span>
           </Link>
         ))}

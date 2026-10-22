@@ -4,7 +4,7 @@ import { BottomNav, Footer, LogoMark, Screen } from '../components/ui'
 import { Icon } from '../components/icons'
 import AccountButton from '../components/AccountButton'
 import { LoadState } from '../components/records'
-import { Badge, BarnCard, BarnSheet, ProgressRing, useAlertCount, useAlerts } from '../components/alerts'
+import { alertDetail, Badge, BarnCard, BarnSheet, ProgressRing, useAlertCount, useAlerts } from '../components/alerts'
 import { useStore } from '../data/store'
 import { dayLabel, L, shortDate, todayIso, useLoad } from '../data/records'
 import { changePct } from '../data/money'
@@ -80,7 +80,7 @@ export default function Home() {
             <div className="grid grid-cols-2 gap-2.5">
               <Link to="/milk" className={tile}>
                 <div className="text-xs font-semibold text-ink-3">Today's milk</div><div className="mt-0.5 text-[22px] font-bold">{L(h.tiles.milkToday)} L</div>
-                {h.tiles.milkChangePct != null && <div className={`mt-0.5 text-xs font-semibold ${h.tiles.milkChangePct < 0 ? 'text-danger' : 'text-brand'}`}>{changePct(h.tiles.milkChangePct)} vs yesterday{h.tiles.milkCompareNote ? ` (${h.tiles.milkCompareNote})` : ''}</div>}
+                {h.tiles.milkChangePct != null && <div className={`mt-0.5 text-xs font-semibold ${h.tiles.milkChangePct < 0 ? 'text-danger' : 'text-brand'}`}>{changePct(h.tiles.milkChangePct)} {h.tiles.milkCompareNote || 'vs yesterday'}</div>}
               </Link>
               <Link to="/animals" className={tile}>
                 <div className="text-xs font-semibold text-ink-3">Milking cows</div><div className="mt-0.5 text-[22px] font-bold">{h.tiles.milkingCows}</div>
@@ -147,7 +147,7 @@ export default function Home() {
               {!h.healthReminders?.length ? <div className="py-3 text-sm text-ink-3">No health reminders today.</div> : h.healthReminders.map((a, i) => (
                 <Link key={a.id} to={`/alerts/${a.id}`} className={`flex min-h-[52px] items-center gap-3 py-1.5 text-ink no-underline hover:text-ink ${i ? 'border-t border-line-faint' : ''}`}>
                   <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: SEVERITY_DOT[a.severity] }} />
-                  <span className="flex-1 text-[15px]"><b>{a.title}</b>{a.animal ? ` · ${a.animal.tag}${a.animal.name ? ` ${a.animal.name}` : ''}` : ''}{a.detail ? <><br /><span className="text-[13px] text-ink-3">{a.detail}</span></> : null}</span>
+                  <span className="flex-1 text-[15px]"><b>{a.title}</b>{a.animal ? ` · ${a.animal.tag}${a.animal.name ? ` ${a.animal.name}` : ''}` : ''}{alertDetail(a.detail, a.animal) ? <><br /><span className="text-[13px] text-ink-3">{alertDetail(a.detail, a.animal)}</span></> : null}</span>
                   {(a.overdueDays ?? 0) > 0 ? <Badge className="bg-danger-soft text-danger-text">{a.overdueDays} d late</Badge> : <Badge className="bg-warn-soft text-warn-ink">Today</Badge>}
                 </Link>
               ))}
@@ -156,7 +156,7 @@ export default function Home() {
             <SectionHead title="Feeding reminders" />
             <div className="rounded-[14px] bg-white px-3.5 py-1">
               {h.tasks.filter((t) => t.key === 'FEED_AM' || t.key === 'FEED_PM').map((t, i) => <TaskRow key={t.key} t={t} first={i === 0} />)}
-              {(h.feedingReminders ?? []).map((f, i) => (
+              {(h.feedingReminders ?? []).filter((f) => !/^feed(ing)? (am|pm)\b/i.test(f.title)).map((f, i) => (
                 <div key={i} className="flex min-h-12 items-center gap-3 border-t border-line-faint py-1.5">
                   <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: DOT[f.status] }} />
                   <span className="flex-1 text-[15px]"><b>{f.title}</b>{f.detail ? <><br /><span className="text-[13px] text-ink-3">{f.detail}</span></> : null}</span>

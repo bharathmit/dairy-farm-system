@@ -33,6 +33,16 @@ export function refreshAlertCount(farmId: string) {
   void loadAlertCount(farmId, true)
 }
 
+/** Alert detail without the animal's tag/name at the start (the card already shows them). */
+export function alertDetail(detail?: string | null, animal?: { tag: string; name?: string | null } | null) {
+  if (!detail) return ''
+  if (!animal) return detail
+  for (const lead of [`${animal.tag} ${animal.name ?? ''}`.trim(), animal.tag]) {
+    if (detail.startsWith(lead)) return detail.slice(lead.length).replace(/^\s*·\s*/, '').trim()
+  }
+  return detail
+}
+
 export function Badge({ className, children }: { className: string; children: React.ReactNode }) {
   return <span className={`whitespace-nowrap rounded-md px-2 py-0.5 text-xs font-semibold ${className}`}>{children}</span>
 }
@@ -158,7 +168,7 @@ export function AlertCard({ a, onChanged, today = todayIso() }: { a: Alert; onCh
       {(a.animal || a.detail) && (
         <div className="mt-0.5 text-[13px] text-ink-3">
           {a.animal && <b className="text-ink">{a.animal.tag}{a.animal.name ? ` ${a.animal.name}` : ''}</b>}
-          {a.animal && a.detail ? ' · ' : ''}{a.detail}
+          {a.animal && alertDetail(a.detail, a.animal) ? ' · ' : ''}{alertDetail(a.detail, a.animal)}
         </div>
       )}
       <div className="mt-2.5 grid grid-cols-[1.6fr_1fr_1fr] gap-2">
