@@ -107,7 +107,7 @@ public class MeasurementService {
         e.setWeightKg(req.weightKg());
         e.setHeightCm(req.heightCm());
         e.setBcs(req.bcs());
-        e.setDetails(new Details(null, null, null, null, null, null, null, req.heartGirthCm()));
+        e.setDetails(Details.measurement(req.heartGirthCm()));
         e.setNotes(req.notes() == null || req.notes().isBlank() ? null : req.notes().trim());
     }
 

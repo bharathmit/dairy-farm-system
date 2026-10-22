@@ -106,6 +106,10 @@ public class Animal extends FarmScoped {
     @Column(name = "current_weight_kg")
     private BigDecimal currentWeightKg;
 
+    /** Calvings so far (opening value from the animal form, +1 on each recorded calving). */
+    @Column(name = "lactation_number", nullable = false)
+    private int lactationNumber;
+
     private String notes;
 
     protected Animal() {
@@ -165,6 +169,8 @@ public class Animal extends FarmScoped {
     public void setPhotoPaths(List<String> photoPaths) { this.photoPaths = new ArrayList<>(photoPaths); }
     public LocalDate getLastCalvingDate() { return lastCalvingDate; }
     public void setLastCalvingDate(LocalDate lastCalvingDate) { this.lastCalvingDate = lastCalvingDate; }
+    public int getLactationNumber() { return lactationNumber; }
+    public void setLactationNumber(int lactationNumber) { this.lactationNumber = lactationNumber; }
     public BigDecimal getCurrentWeightKg() { return currentWeightKg; }
     public void setCurrentWeightKg(BigDecimal currentWeightKg) { this.currentWeightKg = currentWeightKg; }
     public String getNotes() { return notes; }

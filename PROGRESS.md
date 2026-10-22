@@ -25,6 +25,8 @@ UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile s
 - [x] Frontend: in-memory store replaced with API calls + Supabase sign-in (checked end to end in a browser)
 - [ ] Open: Google sign-in (needs Google OAuth in Supabase); milk/flags/days-in-milk fields wait for later modules
 - [x] Daily records backend (Canvas 2): Flyway V3 (`contact`, `production_record`, `farm_event`, `farm.milk_grading`); contacts; milk day/trend/grades/herd sheet/one cow/sales with withdrawal check; expected yield by lactation day and A–D grade rules; weight/height/BCS with gain per day; health records, batch, follow-ups, withdrawals. Contract: docs/api-daily-records.md. 69 backend tests pass.
+- [x] Breeding & calves backend (Canvas 3): Flyway V4 (`breeding_record`, `item`, `item_txn`, `animal.lactation_number`, `farm.breeding_settings`); breeding settings; status per female (open/served/pregnant/overdue, days open, missed heats, failed services, spend, keep-or-sell suggestion); overview + 14-day calendar; heat watch; breeding history by lactation; heats; services with AI technician/bull fees and semen straws from stock; pregnancy checks; calving (creates calves, starts the new lactation, retained placenta → health follow-up); colostrum; semen stock; calves list, feeding (one calf or group sheet); family tree, mate check, next free tag. Contract: docs/api-breeding.md. 82 backend tests pass.
+- [ ] Breeding later: fees/semen/PD costs posted to Finance (Canvas 6), heat-to-service reminders and breeding alerts, deworm schedules and growth targets for calves
 - [ ] Daily records later: health schedules (due by schedule), growth targets, "at risk" score, finance entries from sales/health cost, alerts
 - [ ] Modules 5–15 (rest) — see PLAN.md
 

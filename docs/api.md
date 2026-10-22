@@ -3,7 +3,11 @@
 **Built (Modules 1–4):** Me, Farms, Settings, Members, Animals, Groups — see `/swagger-ui` on the running
 backend for request and response shapes.
 **Built (daily records, Canvas 2):** Contacts, Milk (grade rules, day, trend, grades, sheet, one cow, sales),
-Measurements, Health — full shapes in `docs/api-daily-records.md`. Everything else below is still a draft.
+Measurements, Health — full shapes in `docs/api-daily-records.md`.
+**Built (breeding & calves, Canvas 3):** Breeding settings, overview, heat watch, cow history, heats, services
+(semen straws from stock), pregnancy checks, calvings, colostrum, semen stock, calves and feeding (one calf or a
+group), family tree, mate check, next free tag — full shapes in `docs/api-breeding.md`. Everything else below is
+still a draft.
 
 Base path `/api/v1`. JSON. Auth: `Authorization: Bearer <Supabase JWT>`.
 Spring Boot validates the JWT (OAuth 2.0 resource server, Supabase JWKS).

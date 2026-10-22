@@ -224,8 +224,8 @@ public class HealthService {
         if (dateChanged || req.nextActionDate() == null) {
             e.setNextActionDone(false);
         }
-        e.setDetails(new Details(blank(req.symptoms()), blank(req.diagnosis()), blank(req.medicine()), blank(req.dose()),
-                blank(req.route()), req.milkWithdrawalDays(), req.meatWithdrawalDays(), null));
+        e.setDetails(Details.health(blank(req.symptoms()), blank(req.diagnosis()), blank(req.medicine()), blank(req.dose()),
+                blank(req.route()), req.milkWithdrawalDays(), req.meatWithdrawalDays()));
         e.setNotes(blank(req.notes()));
     }
 

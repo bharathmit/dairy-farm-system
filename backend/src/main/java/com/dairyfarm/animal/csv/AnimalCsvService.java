@@ -248,7 +248,7 @@ public class AnimalCsvService {
                 nullIfEmpty(get(r, "color")), number(r, "birth_weight"), category, groupId,
                 null, nullIfEmpty(get(r, "dam_tag")), null, nullIfEmpty(get(r, "sire_tag")),
                 acquisition, date(r, "acquisition_date"), number(r, "purchase_price"), null, null,
-                nullIfEmpty(get(r, "notes")));
+                nullIfEmpty(get(r, "notes")), null);
         return new Row(req, status, exitDate);
     }
 

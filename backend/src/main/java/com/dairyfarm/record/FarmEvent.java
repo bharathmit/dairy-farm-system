@@ -26,8 +26,32 @@ public class FarmEvent extends FarmScoped {
 
     /** Free-form parts of the record, kept as JSONB. Unused values stay null. */
     public record Details(String symptoms, String diagnosis, String medicine, String dose, String route,
-                          Integer milkWithdrawalDays, Integer meatWithdrawalDays, BigDecimal heartGirthCm) {
-        public static final Details EMPTY = new Details(null, null, null, null, null, null, null, null);
+                          Integer milkWithdrawalDays, Integer meatWithdrawalDays, BigDecimal heartGirthCm,
+                          java.util.List<String> signs,
+                          BigDecimal milkAm, BigDecimal milkPm, BigDecimal starterKg, BigDecimal waterL,
+                          BigDecimal colostrumLitres, String colostrumAt) {
+        public static final Details EMPTY = new Details(null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null);
+
+        public static Details health(String symptoms, String diagnosis, String medicine, String dose, String route,
+                                     Integer milkWithdrawalDays, Integer meatWithdrawalDays) {
+            return new Details(symptoms, diagnosis, medicine, dose, route, milkWithdrawalDays, meatWithdrawalDays,
+                    null, null, null, null, null, null, null, null);
+        }
+
+        public static Details measurement(BigDecimal heartGirthCm) {
+            return new Details(null, null, null, null, null, null, null, heartGirthCm, null, null, null, null, null, null, null);
+        }
+
+        public static Details heat(java.util.List<String> signs) {
+            return new Details(null, null, null, null, null, null, null, null, signs, null, null, null, null, null, null);
+        }
+
+        public static Details calfFeeding(BigDecimal milkAm, BigDecimal milkPm, BigDecimal starterKg, BigDecimal waterL,
+                                          BigDecimal colostrumLitres, String colostrumAt) {
+            return new Details(null, null, null, null, null, null, null, null, null,
+                    milkAm, milkPm, starterKg, waterL, colostrumLitres, colostrumAt);
+        }
     }
 
     @Column(name = "animal_id")

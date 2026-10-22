@@ -266,6 +266,12 @@ public class AnimalService {
         a.setLastCalvingDate(req.lastCalvingDate());
         a.setCurrentWeightKg(req.currentWeightKg());
         a.setNotes(blankToNull(req.notes()));
+        if (req.lactationNumber() != null) {
+            if (req.lactationNumber() > 0 && req.sex() != Sex.FEMALE) {
+                throw ApiException.badRequest("Only female animals have lactations.");
+            }
+            a.setLactationNumber(req.lactationNumber());
+        }
 
         if (req.groupId() != null) {
             checkGroup(a.getFarmId(), a, req.groupId());
@@ -356,7 +362,7 @@ public class AnimalService {
                 parent(a.getDamId(), a.getDamTag(), parents), parent(a.getSireId(), a.getSireTag(), parents),
                 a.getAcquisitionType(), a.getAcquisitionDate(), showMoney ? a.getPurchasePrice() : null,
                 a.getExitDate(), a.getExitReason(), showMoney ? a.getExitPrice() : null, a.getExitParty(),
-                a.getLastCalvingDate(), a.getCurrentWeightKg(), a.getNotes(), photoList,
+                a.getLastCalvingDate(), a.getLactationNumber(), a.getCurrentWeightKg(), a.getNotes(), photoList,
                 a.getCreatedAt(), a.getUpdatedAt());
     }
 

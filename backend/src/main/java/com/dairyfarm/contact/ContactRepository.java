@@ -23,6 +23,10 @@ public interface ContactRepository extends JpaRepository<Contact, Long> {
     /** How many milk sales and farm events point at the contact. */
     @Query(value = """
             select (select count(*) from production_record where buyer_contact_id = :id)
-                 + (select count(*) from farm_event where contact_id = :id)""", nativeQuery = true)
+                 + (select count(*) from farm_event where contact_id = :id)
+                 + (select count(*) from breeding_record where :id in (technician_contact_id, bull_owner_contact_id,
+                        preg_checked_by_contact_id))
+                 + (select count(*) from item where supplier_contact_id = :id)
+                 + (select count(*) from item_txn where supplier_contact_id = :id)""", nativeQuery = true)
     long countUses(@Param("id") Long id);
 }

@@ -32,7 +32,7 @@ public final class AnimalViews {
             Long groupId, String groupName, ParentRef dam, ParentRef sire,
             Acquisition acquisitionType, LocalDate acquisitionDate, BigDecimal purchasePrice,
             LocalDate exitDate, String exitReason, BigDecimal exitPrice, String exitParty,
-            LocalDate lastCalvingDate, BigDecimal currentWeightKg, String notes,
+            LocalDate lastCalvingDate, int lactationNumber, BigDecimal currentWeightKg, String notes,
             List<Photo> photos, Instant createdAt, Instant updatedAt) {
     }
 

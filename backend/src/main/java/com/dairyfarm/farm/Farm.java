@@ -34,6 +34,10 @@ public class Farm extends Auditable {
     @Column(name = "milk_grading", columnDefinition = "jsonb")
     private MilkGradingRules milkGrading;
 
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "breeding_settings", columnDefinition = "jsonb")
+    private com.dairyfarm.breeding.BreedingSettings breedingSettings;
+
     protected Farm() {
     }
 
@@ -111,5 +115,13 @@ public class Farm extends Auditable {
 
     public void setMilkGrading(MilkGradingRules milkGrading) {
         this.milkGrading = milkGrading;
+    }
+
+    public com.dairyfarm.breeding.BreedingSettings getBreedingSettings() {
+        return breedingSettings == null ? com.dairyfarm.breeding.BreedingSettings.DEFAULTS.resolved() : breedingSettings.resolved();
+    }
+
+    public void setBreedingSettings(com.dairyfarm.breeding.BreedingSettings breedingSettings) {
+        this.breedingSettings = breedingSettings;
     }
 }

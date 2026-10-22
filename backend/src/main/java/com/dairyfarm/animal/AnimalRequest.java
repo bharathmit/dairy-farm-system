@@ -44,5 +44,7 @@ public record AnimalRequest(
         @DecimalMin(value = "0", message = "Price can't be negative") BigDecimal purchasePrice,
         @PastOrPresent(message = "Calving date can't be in the future") LocalDate lastCalvingDate,
         @DecimalMin(value = "0.1", message = "Enter a weight above 0") @DecimalMax("2000") BigDecimal currentWeightKg,
-        @Size(max = 2000) String notes) {
+        @Size(max = 2000) String notes,
+        @jakarta.validation.constraints.Min(value = 0, message = "Use 0 to 30")
+        @jakarta.validation.constraints.Max(value = 30, message = "Use 0 to 30") Integer lactationNumber) {
 }

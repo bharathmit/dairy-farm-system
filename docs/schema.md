@@ -98,20 +98,27 @@ and `member_id` come with the stock and labour modules.
 | milk_withdrawal_until, meat_withdrawal_until | "do not sell" check |
 | details JSONB | HEAT: signs[], served · HEALTH: symptoms, diagnosis, medicine, dose, vet_name, schedule_code · CALF_FEEDING: milk_litres, starter_kg, colostrum · BARN_READING: temperature_c, humidity_pct, thi · ATTENDANCE: present, hours |
 | notes | |
+HEAT and CALF_FEEDING rows are used from V4 (one CALF_FEEDING row per calf per day, unique).
 Indexes: (farm_id, animal_id, event_type, event_date); partial indexes on open next_action_date and
 active withdrawal dates.
 
-## 7. `breeding_record` — one row per service → pregnancy → calving cycle
-dam_id · heat_event_id (→ `farm_event` HEAT) · service_date · method (NATURAL, AI, ET) ·
-sire_id / sire_tag · semen_item_id (→ `item` SEMEN) · ai_technician · bull_exposure_start/end ·
-pregnancy_status (UNKNOWN, PREGNANT, NOT_PREGNANT) · preg_check_date / method (ULTRASOUND, PALPATION,
-BLOOD) / result · expected_due_date (auto from gestation days, editable) · dry_off_date ·
-calving_date, calving_time · calving_outcome (LIVE, STILLBORN, ABORTED, UNKNOWN) · calving_ease
-(UNASSISTED, ASSISTED, DIFFICULT, CESAREAN) · calf_sex · calf_birth_weight_kg · calf_id (→ `animal`) ·
-colostrum_given_at · notes.
+## 7. `breeding_record` — one row per service → pregnancy → calving cycle (built in V4)
+dam_id · lactation_number (the dam's lactation when served) · heat_event_id (→ `farm_event` HEAT) ·
+service_date, service_time · method (NATURAL, AI, ET, UNKNOWN = calving with no recorded service) ·
+semen_item_id (→ `item` SEMEN), straws · sire_id / sire_tag · bull_exposure_start/end ·
+**costs:** technician_contact_id + technician_fee, bull_owner_contact_id + bull_fee, semen_cost (straws × cost per
+straw), fee_paid — kept for Finance (Canvas 6) · expected_due_date (service + gestation days, editable) ·
+pregnancy_status (UNKNOWN, PREGNANT, NOT_PREGNANT) · preg_check_date / method (ULTRASOUND, PALPATION, BLOOD) /
+cost / checked-by contact · calving_date, calving_time · calving_outcome (LIVE, STILLBORN, ABORTED) ·
+calving_ease (EASY, ASSISTED, HARD, VET) · calves JSONB `[{animalId, sex, birthWeightKg}]` (twins) ·
+colostrum_given_at, colostrum_litres · retained_placenta · notes.
+PD due and dry-off dates are calculated from settings, not stored. Breeding status (open, served, pregnant,
+overdue), days open, missed heats and failed services are calculated (BreedingStatusCalc).
 Kept separate because one row is updated over ~10 months and many alerts read its dates.
+`animal.lactation_number` (V4) counts calvings (opening value on the animal form, +1 per live/stillborn calving);
+`farm.breeding_settings` JSONB holds gestation, cycle, dry-off, keep-or-sell and calf-rearing rules.
 
-## 8. `item` — anything stocked or owned
+## 8. `item` — anything stocked or owned (built in V4; used for SEMEN so far)
 | Column | Notes |
 |---|---|
 | item_type | FEED, SEMEN, MEDICINE, EQUIPMENT, OTHER |
@@ -124,7 +131,7 @@ Kept separate because one row is updated over ~10 months and many alerts read it
 | details JSONB | FEED: **nutrients per kg** (dm_pct, cp_pct, tdn_pct, ca_pct, p_pct), max_inclusion_pct, excluded (e.g. cottonseed cake), is_mix (true for a prepared concentrate mix) · SEMEN: bull name/code, breed · MEDICINE: default milk/meat withdrawal days · EQUIPMENT: purchase date/cost |
 | active | |
 
-## 9. `item_txn` — stock movements
+## 9. `item_txn` — stock movements (built in V4)
 item_id · txn_type (PURCHASE, USAGE, ADJUSTMENT, SERVICE, **PRODUCE**) · txn_date · txn_time · quantity · cost ·
 supplier · allocation: species / group_id / animal_id (all optional = whole farm) ·
 source_type / source_id (e.g. the breeding record that used a straw) · notes.
