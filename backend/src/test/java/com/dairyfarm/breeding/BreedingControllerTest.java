@@ -154,6 +154,12 @@ class BreedingControllerTest extends IntegrationTest {
         call(post(base() + "/breeding/heats"), owner, "{\"animalId\":" + malar + ",\"date\":\"" + today.minusDays(109)
                 + "\",\"intensity\":\"MODERATE\"}", 201);
         long s2 = service(malar, today.minusDays(109), bull, "").get("id").asLong();
+        // Too early: a pregnancy check needs 28 days after service
+        JsonNode early = call(post(base() + "/breeding/services/" + s2 + "/pregnancy-check"), owner,
+                "{\"date\":\"" + today.minusDays(100) + "\",\"method\":\"BLOOD\",\"result\":\"NOT_PREGNANT\"}", 400);
+        assertThat(early.get("detail").asString()).contains("at least 28 days after service")
+                .contains(today.minusDays(81).format(java.time.format.DateTimeFormatter.ofPattern("d MMM yyyy", java.util.Locale.ENGLISH)));
+        assertThat(call(get(base() + "/breeding/settings"), worker, null, 200).get("pdMinDays").asInt()).isEqualTo(28);
         call(post(base() + "/breeding/services/" + s2 + "/pregnancy-check"), owner,
                 "{\"date\":\"" + today.minusDays(70) + "\",\"method\":\"BLOOD\",\"result\":\"NOT_PREGNANT\",\"cost\":350}", 200);
 

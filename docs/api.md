@@ -6,8 +6,12 @@ backend for request and response shapes.
 Measurements, Health — full shapes in `docs/api-daily-records.md`.
 **Built (breeding & calves, Canvas 3):** Breeding settings, overview, heat watch, cow history, heats, services
 (semen straws from stock), pregnancy checks, calvings, colostrum, semen stock, calves and feeding (one calf or a
-group), family tree, mate check, next free tag — full shapes in `docs/api-breeding.md`. Everything else below is
-still a draft.
+group), family tree, mate check, next free tag — full shapes in `docs/api-breeding.md`.
+**Built (feed & ration, Canvas 4):** Feed overview, feed items (nutrients, limits, reorder, supplier), stock
+(harvest/adjust) and moves, purchases, feeding sheet (farm/group/animal, AM/PM), concentrate formulas, batch
+preview and preparing a batch, ration per animal, ration summary, farm feed need and shortfalls, ration rules with
+effective dates — full shapes in `docs/api-feed.md`. The draft feed rows below are replaced by it. Everything else
+below is still a draft.
 
 Base path `/api/v1`. JSON. Auth: `Authorization: Bearer <Supabase JWT>`.
 Spring Boot validates the JWT (OAuth 2.0 resource server, Supabase JWKS).

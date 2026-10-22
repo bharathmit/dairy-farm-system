@@ -33,7 +33,8 @@ public record BreedingSettings(
         @DecimalMin(value = "0.1", message = "Use 0.1 to 5 kg") @DecimalMax(value = "5", message = "Use 0.1 to 5 kg") BigDecimal weanStarterKg,
         @Min(value = 1, message = "Use 1 to 14 days") @Max(value = 14, message = "Use 1 to 14 days") Integer weanStarterDays,
         @Min(value = 0, message = "Use 0 to 365 days") @Max(value = 365, message = "Use 0 to 365 days") Integer maleSellFromDay,
-        @Min(value = 1, message = "Use 1 to 365 days") @Max(value = 365, message = "Use 1 to 365 days") Integer maleSellToDay) {
+        @Min(value = 1, message = "Use 1 to 365 days") @Max(value = 365, message = "Use 1 to 365 days") Integer maleSellToDay,
+        @Min(value = 14, message = "Use 14 to 90 days") @Max(value = 90, message = "Use 14 to 90 days") Integer pdMinDays) {
 
     /** Milk and starter for calves of an age range (days, inclusive). */
     public record TaperStep(
@@ -48,7 +49,7 @@ public record BreedingSettings(
             21, 45, 45, 60, 90, 150, 3, 14, new BigDecimal("250"), 2,
             List.of(step(0, 14, "3.0", "—"), step(15, 30, "3.0", "offer free"), step(31, 60, "3.5", "0.3–0.6 kg"),
                     step(61, 80, "2.0", "0.7–1.0 kg"), step(81, 90, "1.0", "≥ 1 kg")),
-            90, new BigDecimal("1.0"), 3, 30, 90);
+            90, new BigDecimal("1.0"), 3, 30, 90, 28);
 
     private static Map<String, Integer> gestation() {
         Map<String, Integer> m = new LinkedHashMap<>();
@@ -80,7 +81,7 @@ public record BreedingSettings(
                 or(heiferFirstServiceKg, d.heiferFirstServiceKg), or(colostrumHours, d.colostrumHours),
                 calfTaper == null || calfTaper.isEmpty() ? d.calfTaper : calfTaper, or(weanMinDays, d.weanMinDays),
                 or(weanStarterKg, d.weanStarterKg), or(weanStarterDays, d.weanStarterDays),
-                or(maleSellFromDay, d.maleSellFromDay), or(maleSellToDay, d.maleSellToDay));
+                or(maleSellFromDay, d.maleSellFromDay), or(maleSellToDay, d.maleSellToDay), or(pdMinDays, d.pdMinDays));
     }
 
     /** Gestation for a species (cow length when the species has none). */

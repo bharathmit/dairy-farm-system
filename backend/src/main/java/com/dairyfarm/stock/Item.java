@@ -7,6 +7,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import com.dairyfarm.common.FarmScoped;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,7 +15,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 
-/** Something stocked or owned. This round uses SEMEN batches (one row per bull batch). */
+/** Something stocked or owned: SEMEN batches (one row per bull batch) and FEED items. */
 @Entity
 @Table(name = "item")
 public class Item extends FarmScoped {
@@ -23,9 +24,23 @@ public class Item extends FarmScoped {
 
     public enum Unit { KG, L, STRAW, DOSE, NOS }
 
-    /** JSONB details; SEMEN uses bullCode, breed and sexed. */
-    public record Details(String bullCode, String breed, Boolean sexed) {
+    /**
+     * JSONB details. SEMEN: bullCode, breed, sexed. FEED: nutrients per kg as fed (dmPct, cpPct, tdnPct, caPct, pPct),
+     * maxInclusionPct in a concentrate, excluded + excludedReason.
+     */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record Details(String bullCode, String breed, Boolean sexed,
+                          BigDecimal dmPct, BigDecimal cpPct, BigDecimal tdnPct, BigDecimal caPct, BigDecimal pPct,
+                          BigDecimal maxInclusionPct, Boolean excluded, String excludedReason) {
         public static final Details EMPTY = new Details(null, null, null);
+
+        public Details(String bullCode, String breed, Boolean sexed) {
+            this(bullCode, breed, sexed, null, null, null, null, null, null, null, null);
+        }
+
+        public boolean isExcluded() {
+            return Boolean.TRUE.equals(excluded);
+        }
     }
 
     @Enumerated(EnumType.STRING)
@@ -46,6 +61,12 @@ public class Item extends FarmScoped {
 
     @Column(name = "supplier_contact_id")
     private Long supplierContactId;
+
+    @Column(name = "reorder_level")
+    private BigDecimal reorderLevel;
+
+    @Column(name = "lead_time_days")
+    private Integer leadTimeDays;
 
     @Column(name = "batch_no")
     private String batchNo;
@@ -81,6 +102,10 @@ public class Item extends FarmScoped {
     public void setCostPerUnit(BigDecimal costPerUnit) { this.costPerUnit = costPerUnit; }
     public Long getSupplierContactId() { return supplierContactId; }
     public void setSupplierContactId(Long supplierContactId) { this.supplierContactId = supplierContactId; }
+    public BigDecimal getReorderLevel() { return reorderLevel; }
+    public void setReorderLevel(BigDecimal reorderLevel) { this.reorderLevel = reorderLevel; }
+    public Integer getLeadTimeDays() { return leadTimeDays; }
+    public void setLeadTimeDays(Integer leadTimeDays) { this.leadTimeDays = leadTimeDays; }
     public String getBatchNo() { return batchNo; }
     public void setBatchNo(String batchNo) { this.batchNo = batchNo; }
     public LocalDate getExpiryDate() { return expiryDate; }

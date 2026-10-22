@@ -255,8 +255,11 @@ public class BreedingService {
             throw ApiException.badRequest("She has already calved from this service.");
         }
         DailyDates.notFuture(req.date());
-        if (req.date().isBefore(r.getServiceDate())) {
-            throw ApiException.badRequest("The check can't be before the service date.");
+        int minDays = settings(farmId).resolved().pdMinDays();
+        java.time.LocalDate earliest = r.getServiceDate().plusDays(minDays);
+        if (req.date().isBefore(earliest)) {
+            throw ApiException.badRequest("A pregnancy check needs at least " + minDays + " days after service — earliest "
+                    + earliest.format(java.time.format.DateTimeFormatter.ofPattern("d MMM yyyy", java.util.Locale.ENGLISH)) + ".");
         }
         Contact by = technician(farmId, req.checkedByContactId());
         r.setPregCheckDate(req.date());

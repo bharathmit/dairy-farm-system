@@ -118,27 +118,29 @@ Kept separate because one row is updated over ~10 months and many alerts read it
 `animal.lactation_number` (V4) counts calvings (opening value on the animal form, +1 per live/stillborn calving);
 `farm.breeding_settings` JSONB holds gestation, cycle, dry-off, keep-or-sell and calf-rearing rules.
 
-## 8. `item` — anything stocked or owned (built in V4; used for SEMEN so far)
+## 8. `item` — anything stocked or owned (built in V4; SEMEN batches and, since V5, FEED items)
 | Column | Notes |
 |---|---|
 | item_type | FEED, SEMEN, MEDICINE, EQUIPMENT, OTHER |
-| name, category | FEED: CONCENTRATE, GREEN_FODDER, DRY_FODDER, SILAGE, MINERAL · MEDICINE: VACCINE, DEWORMER, ANTIBIOTIC … |
+| name, category | FEED: CONCENTRATE_INGREDIENT, GREEN_FODDER, DRY_FODDER, SILAGE, MINERAL, MIX (V5 check; feed names unique per farm) · MEDICINE: VACCINE, DEWORMER, ANTIBIOTIC … |
 | unit | KG, L, STRAW, DOSE, NOS |
 | cost_per_unit, reorder_level, lead_time_days | low-stock alert |
 | supplier, supplier_contact | |
 | batch_no, expiry_date | semen and medicine expiry |
 | service_every_days, next_service_date | equipment maintenance |
-| details JSONB | FEED: **nutrients per kg** (dm_pct, cp_pct, tdn_pct, ca_pct, p_pct), max_inclusion_pct, excluded (e.g. cottonseed cake), is_mix (true for a prepared concentrate mix) · SEMEN: bull name/code, breed · MEDICINE: default milk/meat withdrawal days · EQUIPMENT: purchase date/cost |
+| details JSONB | FEED: **nutrients per kg** (dmPct, cpPct, tdnPct, caPct, pPct), maxInclusionPct, excluded + excludedReason (e.g. cottonseed cake); a prepared concentrate is category MIX · SEMEN: bull name/code, breed · MEDICINE: default milk/meat withdrawal days · EQUIPMENT: purchase date/cost |
 | active | |
 
-## 9. `item_txn` — stock movements (built in V4)
+## 9. `item_txn` — stock movements (built in V4; V5 adds payment_method, paid, session, batch_id)
 item_id · txn_type (PURCHASE, USAGE, ADJUSTMENT, SERVICE, **PRODUCE**) · txn_date · txn_time · quantity · cost ·
+payment_method · paid · session (AM/PM feeding) · batch_id (rows saved together) · created_by ·
 supplier · allocation: species / group_id / animal_id (all optional = whole farm) ·
 source_type / source_id (e.g. the breeding record that used a straw) · notes.
 Stock = purchases + produced + adjustments − usage. A PURCHASE or SERVICE with a cost creates a finance entry.
 **Concentrate batch preparation** = one USAGE row per ingredient + one PRODUCE row for the mix item,
 all sharing source_type FORMULA_BATCH; the mix's cost per kg is the ingredient cost ÷ batch kg.
-Feeding at 6 AM / 6 PM = USAGE rows (txn_time) per group or animal.
+Feeding at 6 AM / 6 PM = USAGE rows (source_type FEEDING, session, txn_time) for the whole farm, a group or an animal;
+saving a session again replaces its rows. Own fodder cut on the farm = PRODUCE with source_type HARVEST.
 
 ## 10. `production_record` — milk and other produce (built in V3)
 As built: product MILK/MANURE/OTHER; per-cow rows are AM/PM only (unique per cow, date, session);
@@ -188,7 +190,17 @@ name (unique per farm, ignoring case) · roles TEXT[] (BUYER, VET, AI_TECH, SUPP
 village · milk_rate (buyer's usual ₹/L) · pay_every (DELIVERY, WEEK, TEN_DAYS, FORTNIGHT, MONTH) · notes ·
 active. Used by milk sales (Sold to) and health records (Vet); a used contact can only be made inactive.
 
-## Ration planning (uses tables 6, 8, 9, 10, 13 — no extra table)
+## 15. `feed_formula` + `feed_formula_line` — concentrate recipes (built in V5)
+feed_formula: name (unique per farm) · mix_item_id (→ `item` MIX) · batch_kg · targets JSONB (dmPct, cpPct, tdnPct,
+caPct, pPct, costMin, costMax) · notes · active. feed_formula_line: formula_id · item_id · kg · sort_order.
+The latest active formula of a mix splits ration concentrate into ingredient need.
+
+## 16. `ration_rule` — ration rule per category, versioned (built in V5)
+category (CALF, HEIFER, MILKING, DRY, BULL) · effective_from · params JSONB (bwPct, concBaseKg, concPerLitreKg,
+maxConcKg, concItemId, greenSharePct, green[], dry[], limits[], dmIntakePct, cpPct, tdnPct, caPct, pPct).
+UNIQUE (farm_id, category, effective_from). No row = defaults in code.
+
+## Ration planning (as built in V5: formulas and rules got their own tables 15–16 instead of `config`)
 1. **Ingredients** are `item` FEED rows with nutrient values and cost per kg (updated from purchases).
 2. **Concentrate formula** (e.g. your 100 kg Villupuram batch) is a `config` FEED_FORMULA. The planner
    shows ingredient kg, cost per kg of mix, and nutrient totals vs targets; excluded or over-limit
