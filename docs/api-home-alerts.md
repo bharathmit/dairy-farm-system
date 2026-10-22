@@ -133,3 +133,10 @@ CowCard = { animal, breed, status, daysInMilk, stage, litres7d:[number|null], av
   Tasks: PENDING before the session time, DUE for 3 hours after, then LATE. `barn` is the latest reading from today or
   yesterday. Snoozed alerts are left out of counts and lists until the snooze ends.
 - Null fields are left out of JSON responses (as elsewhere in the API).
+
+### After the browser test (fixes)
+- Any successful POST/PUT/PATCH/DELETE under `/farms/{farmId}/…` marks that farm's alerts out of date, so the next
+  `GET /alerts` or `/home` runs the rules again (≈0.1 s). Logging a pregnancy check, weight, heat, etc. therefore closes
+  its alert straight away instead of within the hour.
+- Finance & ops rules (SEMEN_LOW, EQUIPMENT_SERVICE, REPLACEMENT_AGE, PROCUREMENT_DUE, LOW_MARGIN) default to owner-only;
+  the owner can still tick "Workers see" for any of them except LOW_MARGIN.

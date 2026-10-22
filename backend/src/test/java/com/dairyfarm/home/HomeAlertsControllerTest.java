@@ -92,10 +92,13 @@ class HomeAlertsControllerTest extends IntegrationTest {
         // a worker can't dismiss a rule alert, only mark it done
         call(post(base() + "/alerts/" + pd.get(0).get("id").asLong() + "/dismiss"), worker, null, 403);
 
+        // 4 straws left: the owner sees "semen stock low", workers don't (finance & ops rules are owner-only by default)
+        assertThat(withCode(alerts(owner, ""), "SEMEN_LOW")).hasSize(1);
+        assertThat(withCode(alerts(worker, ""), "SEMEN_LOW")).isEmpty();
+
+        // No manual refresh: saving the check marks the alerts out of date, and the next read closes it.
         call(post(base() + "/breeding/services/" + svc + "/pregnancy-check"), owner,
                 "{\"date\":\"" + today + "\",\"method\":\"BLOOD\",\"result\":\"PREGNANT\"}", 200);
-        JsonNode refreshed = call(post(base() + "/alerts/refresh"), owner, null, 200);
-        assertThat(refreshed.get("closed").asInt()).isGreaterThanOrEqualTo(1);
         assertThat(withCode(alerts(owner, ""), "PD_DUE")).isEmpty();
         List<JsonNode> done = withCode(alerts(owner, "?status=DONE"), "PD_DUE");
         assertThat(done).hasSize(1);

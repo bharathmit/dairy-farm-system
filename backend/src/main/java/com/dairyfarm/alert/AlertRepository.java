@@ -193,6 +193,12 @@ public class AlertRepository {
                 }).single().orElse(null);
     }
 
+    /** Something changed on the farm: the next read of alerts or home runs the rules again. */
+    public void markStale(Long farmId) {
+        jdbc.sql("update farm set alerts_refreshed_at = null where id = :f and alerts_refreshed_at is not null")
+                .param("f", farmId).update();
+    }
+
     public void markRefreshed(Long farmId) {
         jdbc.sql("update farm set alerts_refreshed_at = now() where id = :f").param("f", farmId).update();
     }

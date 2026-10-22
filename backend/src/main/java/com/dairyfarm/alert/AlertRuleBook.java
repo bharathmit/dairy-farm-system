@@ -83,13 +83,15 @@ public class AlertRuleBook {
             def("DRY_OFF_DUE", AlertCategory.MILK, Severity.MEDIUM, "Dry-off due", "… days before calving",
                     p("dryOffDaysBeforeDue", "60", "0", "120", Link.BREEDING)),
             def("FEED_REORDER", AlertCategory.FEED, Severity.MEDIUM, "Feed reorder", "stock below reorder level or lead time"),
-            def("SEMEN_LOW", AlertCategory.FINANCE_OPS, Severity.MEDIUM, "Semen stock low", "fewer than … straws",
-                    p("minStraws", "5", "1", "100", Link.OWN)),
+            // Finance & ops rules are for the owner unless they choose to show them to workers.
+            new Def("SEMEN_LOW", AlertCategory.FINANCE_OPS, Severity.MEDIUM, "Semen stock low", "fewer than … straws",
+                    List.of(p("minStraws", "5", "1", "100", Link.OWN)), false, false, false),
             new Def("REPLACEMENT_AGE", AlertCategory.FINANCE_OPS, Severity.INFO, "Cow replacement due", "at age … years",
                     List.of(p("ageYears", "8", "3", "20", Link.OWN)), false, false, false),
             new Def("LOW_MARGIN", AlertCategory.FINANCE_OPS, Severity.HIGH, "Low margin", "weekly margin below … %",
                     List.of(p("marginAlertPct", "30", "0", "100", Link.FARM)), false, true, false),
-            def("EQUIPMENT_SERVICE", AlertCategory.FINANCE_OPS, Severity.MEDIUM, "Equipment maintenance", "per equipment schedule"),
+            new Def("EQUIPMENT_SERVICE", AlertCategory.FINANCE_OPS, Severity.MEDIUM, "Equipment maintenance",
+                    "per equipment schedule", List.of(), false, false, false),
             new Def("PROCUREMENT_DUE", AlertCategory.FINANCE_OPS, Severity.INFO, "Procurement needed soon",
                     "planned or ordered items needed within 2 days", List.of(), false, false, false));
 
