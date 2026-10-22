@@ -57,6 +57,8 @@ interface Store {
   deleteGroup: (id: string) => Promise<boolean>
 
   saveMember: (m: Member, password?: string) => Promise<boolean>
+  /** Reload animals and groups (after a server-side change such as a calving). */
+  refreshHerd: () => Promise<void>
   setMemberActive: (id: string, active: boolean) => Promise<boolean>
 }
 
@@ -218,6 +220,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
     return {
       ready, loading, user, farm, farms, animals, groups, members, settings, toast, notify,
+      refreshHerd,
 
       // ----- sign-in -----
       signIn: async (email, password) => {

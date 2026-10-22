@@ -35,7 +35,16 @@ export default function SettingsHome() {
         <Row to="/settings/team" icon="team" title="Team" sub={`${owners} owner${owners === 1 ? '' : 's'} · ${workers} worker${workers === 1 ? '' : 's'}`} />
         <Row to="/settings/milk-rate" icon="drop" title="Milk rate & margins" sub={`₹${settings.milkRate.toFixed(2)} / L · alert below ${settings.marginAlertPct} % margin`} />
         <Row to="/settings/milk-grading" icon="check" title="Milk grade rules" sub={farm?.role === 'Owner' ? 'Expected yield by lactation day, A–D grades' : 'See how grades are worked out'} />
-        <Row to="/settings/contacts" icon="team" title="Contacts" sub="Milk buyers, vets, suppliers" />
+        <Row to="/settings/contacts" icon="team" title="Contacts" sub="Milk buyers, vets, AI technicians, suppliers" />
+      </div>
+
+      <div className="sec">Records</div>
+      <div className="grp">
+        <Row to="/milk" icon="drop" title="Milk" sub="Today, sheets, sales" />
+        <Row to="/health" icon="health" title="Health" sub="Treatments, withdrawals, follow-ups" />
+        <Row to="/breeding" icon="heart" title="Breeding" sub="Heat, services, pregnancy, calving" />
+        <Row to="/calves" icon="leaf" title="Calves" sub="Rearing and feeding" />
+        <Row to="/breeding/semen" icon="drop" title="Semen stock" sub="Straws, expiry" />
       </div>
 
       <div className="sec">App</div>

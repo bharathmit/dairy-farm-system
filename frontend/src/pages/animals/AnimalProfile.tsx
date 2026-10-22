@@ -165,6 +165,7 @@ export default function AnimalProfile() {
             if (q.label === 'Milk') nav(`/milk/cow?animal=${a.id}`)
             else if (q.label === 'Health') nav(`/health/new?animal=${a.id}&back=/animals/${a.id}`)
             else if (q.label === 'Weight') nav(`/weight/new?animal=${a.id}`)
+            else if (q.label === 'Breeding' && a.sex === 'Female') nav(`/breeding/animals/${a.id}`)
             else later()
           }} className="flex flex-col items-center gap-1.5 border-0 bg-transparent text-xs font-semibold text-ink">
             <span className="flex h-[52px] w-[52px] items-center justify-center rounded-2xl bg-white"><Icon name={q.icon} color={q.color} /></span>{q.label}
@@ -176,6 +177,8 @@ export default function AnimalProfile() {
         {TABS.map((t) => (
           <button key={t} type="button" role="tab" aria-selected={tab === t} onClick={() => {
             if (t === 'Weight') nav(`/animals/${a.id}/growth`)
+            else if (t === 'Family') nav(`/animals/${a.id}/family`)
+            else if (t === 'Breeding' && a.sex === 'Female') nav(`/breeding/animals/${a.id}`)
             else if (t === 'Overview' || t === 'Health' || (t === 'Milk' && a.sex === 'Female')) setTab(t)
             else later()
           }} className={`flex h-11 shrink-0 items-center whitespace-nowrap border-0 border-b-2 bg-transparent px-1 text-sm font-semibold ${tab === t ? 'border-brand text-ink' : 'border-transparent text-ink-3'}`}>{t}</button>

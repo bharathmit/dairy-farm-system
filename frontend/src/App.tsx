@@ -36,6 +36,18 @@ import HealthBatch from './pages/health/HealthBatch'
 import WithdrawalList from './pages/health/WithdrawalList'
 import Contacts from './pages/contacts/Contacts'
 import ContactForm from './pages/contacts/ContactForm'
+import BreedingHome from './pages/breeding/BreedingHome'
+import HeatWatch from './pages/breeding/HeatWatch'
+import HeatForm from './pages/breeding/HeatForm'
+import ServiceForm from './pages/breeding/ServiceForm'
+import PregnancyCheck from './pages/breeding/PregnancyCheck'
+import BreedingHistory from './pages/breeding/BreedingHistory'
+import Calving from './pages/breeding/Calving'
+import SemenStock from './pages/breeding/SemenStock'
+import FamilyTree from './pages/breeding/FamilyTree'
+import CalfList from './pages/calves/CalfList'
+import CalfFeeding from './pages/calves/CalfFeeding'
+import CalfFeedingGroup from './pages/calves/CalfFeedingGroup'
 
 function Loading() {
   return (
@@ -86,6 +98,19 @@ export default function App() {
               <Route path="/animals/:id" element={<AnimalProfile />} />
               <Route path="/animals/:id/edit" element={<AnimalForm />} />
               <Route path="/animals/:id/growth" element={<WeightTrend />} />
+              <Route path="/animals/:id/family" element={<FamilyTree />} />
+              <Route path="/breeding" element={<BreedingHome />} />
+              <Route path="/breeding/heat-watch" element={<HeatWatch />} />
+              <Route path="/breeding/heat/new" element={<HeatForm />} />
+              <Route path="/breeding/service/new" element={<ServiceForm />} />
+              <Route path="/breeding/service/:id" element={<ServiceForm />} />
+              <Route path="/breeding/pregnancy-check" element={<PregnancyCheck />} />
+              <Route path="/breeding/calving" element={<Calving />} />
+              <Route path="/breeding/semen" element={<SemenStock />} />
+              <Route path="/breeding/animals/:id" element={<BreedingHistory />} />
+              <Route path="/calves" element={<CalfList />} />
+              <Route path="/calves/feeding" element={<CalfFeeding />} />
+              <Route path="/calves/feeding/group" element={<CalfFeedingGroup />} />
               <Route path="/milk" element={<MilkHome />} />
               <Route path="/milk/sheet" element={<MilkSheet />} />
               <Route path="/milk/cow" element={<MilkSingle />} />
