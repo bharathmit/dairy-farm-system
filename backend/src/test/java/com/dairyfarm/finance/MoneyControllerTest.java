@@ -246,6 +246,10 @@ class MoneyControllerTest extends IntegrationTest {
         String period = "from=" + mon + "&to=" + mon.plusDays(6);
         JsonNode due = call(get(base() + "/labour/workers/" + murugan + "/due?" + period), owner, null, 200);
         assertThat(due.get("gross").asDouble()).isEqualTo(1250);
+        // Added to the app today, but days marked before that are still due.
+        JsonNode firstDue = call(get(base() + "/labour/workers/" + murugan + "/due"), owner, null, 200);
+        assertThat(firstDue.get("from").asString()).isEqualTo(mon.toString());
+        assertThat(firstDue.get("gross").asDouble()).isEqualTo(1250);
         call(post(base() + "/labour/payments"), owner, "{\"memberId\":" + murugan + ",\"amount\":300,\"advance\":true,\"paymentMethod\":\"CASH\"}", 201);
         due = call(get(base() + "/labour/workers/" + murugan + "/due?" + period), owner, null, 200);
         assertThat(due.get("advances").asDouble()).isEqualTo(300);

@@ -261,12 +261,17 @@ public class LabourService {
         }
         LocalDate firstMark = jdbc.sql("select min(work_date) from attendance where member_id = :m")
                 .param("m", m.getId()).query(LocalDate.class).optional().orElse(null);
-        LocalDate start = m.getJoinedOn() != null ? m.getJoinedOn() : firstMark;
+        // Days marked before the "joined on" date are still work to pay (e.g. a worker added to the app late).
+        LocalDate start = m.getJoinedOn();
+        if (firstMark != null && (start == null || firstMark.isBefore(start))) {
+            start = firstMark;
+        }
         if (m.getWageType() == WageType.MONTHLY) {
             LocalDate monthStart = today.withDayOfMonth(1);
             return start == null || start.isBefore(monthStart) ? monthStart : start;
         }
-        if (firstMark != null && (start == null || firstMark.isAfter(start))) {
+        // Daily wages: start at the first marked day, not before.
+        if (firstMark != null) {
             start = firstMark;
         }
         return start == null ? today.withDayOfMonth(1) : start;
