@@ -126,7 +126,10 @@ public class LabourService {
         LocalDate first = null;
         for (AttendanceEntry e : req.entries()) {
             FarmMember m = member(farmId, e.memberId());
-            DailyDates.notFuture(e.date());
+            // The week screen sends every day; a blank future day is simply nothing to save.
+            if (e.status() != null) {
+                DailyDates.notFuture(e.date());
+            }
             if (e.status() == null) {
                 jdbc.sql("delete from attendance where member_id = :m and work_date = :d")
                         .param("m", m.getId()).param("d", e.date()).update();

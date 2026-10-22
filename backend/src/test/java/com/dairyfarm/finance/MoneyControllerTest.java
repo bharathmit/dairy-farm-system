@@ -232,7 +232,11 @@ class MoneyControllerTest extends IntegrationTest {
         call(put(base() + "/labour/attendance"), owner, "{\"entries\":["
                 + "{\"memberId\":" + murugan + ",\"date\":\"" + mon + "\",\"status\":\"PRESENT\",\"hours\":8},"
                 + "{\"memberId\":" + murugan + ",\"date\":\"" + mon.plusDays(1) + "\",\"status\":\"PRESENT\",\"hours\":8},"
-                + "{\"memberId\":" + murugan + ",\"date\":\"" + mon.plusDays(2) + "\",\"status\":\"HALF\",\"hours\":4}]}", 200);
+                + "{\"memberId\":" + murugan + ",\"date\":\"" + mon.plusDays(2) + "\",\"status\":\"HALF\",\"hours\":4},"
+                // The week screen also sends blank days, future ones included: nothing to save, no error.
+                + "{\"memberId\":" + murugan + ",\"date\":\"" + today.plusDays(3) + "\",\"status\":null,\"hours\":null}]}", 200);
+        call(put(base() + "/labour/attendance"), owner, "{\"entries\":[{\"memberId\":" + murugan + ",\"date\":\""
+                + today.plusDays(1) + "\",\"status\":\"PRESENT\",\"hours\":8}]}", 400);
         JsonNode week = call(get(base() + "/labour/attendance?weekOf=" + mon.plusDays(3)), owner, null, 200);
         JsonNode row = week.get("rows").get(0).get("member").get("id").asLong() == murugan ? week.get("rows").get(0) : week.get("rows").get(1);
         assertThat(row.get("presentDays").asDouble()).isEqualTo(2.5);
