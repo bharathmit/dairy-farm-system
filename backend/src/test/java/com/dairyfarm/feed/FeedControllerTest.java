@@ -171,10 +171,15 @@ class FeedControllerTest extends IntegrationTest {
         assertThat(r.get("bodyWeightKg").asDouble()).isEqualTo(450.0);
         assertThat(r.get("weightSource").asString()).isEqualTo("ANIMAL");
         assertThat(r.get("milkYesterday").asDouble()).isEqualTo(18.5);
-        assertThat(r.get("totals").get("totalKg").asDouble()).isEqualTo(45.0);
+        // TMR: DMI 450 × 3.75 % = 16.875 kg DM; concentrate 1.5 + 18.5 × 0.4 = 8.9 kg (× 80 % = 7.12 kg DM);
+        // forage DM 9.755 split 45 : 15 → green 7.316 ÷ 30 % = 24.39 kg, dry 2.439 ÷ 90 % = 2.71 kg (no DM % on items)
+        assertThat(r.get("totals").get("targetKg").asDouble()).isEqualTo(16.88);
+        assertThat(r.get("totals").get("dmiPct").asDouble()).isEqualTo(3.75);
+        assertThat(r.get("totals").get("waterL").asDouble()).isEqualTo(104.0);
         assertThat(r.get("totals").get("concentrateKg").asDouble()).isEqualTo(8.9);
-        assertThat(r.get("totals").get("greenKg").asDouble()).isEqualTo(25.27);
-        assertThat(r.get("totals").get("dryKg").asDouble()).isEqualTo(10.83);
+        assertThat(r.get("totals").get("greenKg").asDouble()).isEqualTo(24.39);
+        assertThat(r.get("totals").get("dryKg").asDouble()).isEqualTo(2.71);
+        assertThat(r.get("totals").get("totalKg").asDouble()).isEqualTo(36.0);
         assertThat(r.get("daysInMilk").asInt()).isEqualTo(84);
         assertThat(r.get("stage").asString()).isEqualTo("EARLY");
         assertThat(r.get("explain").asString()).contains("18.5 L × 0.4");
@@ -187,21 +192,21 @@ class FeedControllerTest extends IntegrationTest {
         call(put(base() + "/feed/ration-rules/MILKING"), worker, rule, 403);
         call(put(base() + "/feed/ration-rules/MILKING"), owner, rule.replace("\"sharePct\":60", "\"sharePct\":50"), 400);
         call(put(base() + "/feed/ration-rules/MILKING"), owner, rule, 200);
-        // A rule from tomorrow: 12 % of body weight
+        // A rule from tomorrow: early-lactation DMI 4 % of body weight
         call(put(base() + "/feed/ration-rules/MILKING"), owner, "{\"effectiveFrom\":\"" + today.plusDays(1)
-                + "\",\"params\":{\"bwPct\":12}}", 200);
+                + "\",\"params\":{\"dmiEarlyPct\":4}}", 200);
         JsonNode rules = call(get(base() + "/feed/ration-rules"), worker, null, 200);
         JsonNode milking = rules.get(0);
         assertThat(milking.get("category").asString()).isEqualTo("MILKING");
         assertThat(milking.get("current").get("effectiveFrom").asString()).isEqualTo(today.toString());
-        assertThat(milking.get("current").get("params").get("bwPct").asDouble()).isEqualTo(10.0);
+        assertThat(milking.get("current").get("params").get("dmiEarlyPct").asDouble()).isEqualTo(3.75);
         assertThat(milking.get("upcoming").size()).isEqualTo(1);
         assertThat(call(get(base() + "/feed/ration?animalId=" + cow + "&date=" + today.plusDays(1)), owner, null, 200)
-                .get("totals").get("targetKg").asDouble()).isEqualTo(54.0);
+                .get("totals").get("targetKg").asDouble()).isEqualTo(18.0);
 
         r = call(get(base() + "/feed/ration?animalId=" + cow), owner, null, 200);
         assertThat(r.get("lines").toString()).contains("Velimasal", "CO5 Napier", "Paddy straw", "Concentrate mix");
-        assertThat(r.get("lines").get(0).get("kg").asDouble()).isEqualTo(10.11);  // 25.27 × 40 %
+        assertThat(r.get("lines").get(0).get("kg").asDouble()).isEqualTo(9.76);  // green DM 7.316 × 40 % ÷ 30 %
 
         // Feeding sheet for the whole farm, morning: half the day plan
         JsonNode sheet = call(get(base() + "/feed/feeding-sheet?date=" + today + "&session=AM"), worker, null, 200);
@@ -215,7 +220,7 @@ class FeedControllerTest extends IntegrationTest {
                 velPlanned = l.get("plannedKg").asDouble();
             }
         }
-        assertThat(velPlanned).isEqualTo(5.1);
+        assertThat(velPlanned).isEqualTo(4.9);
         call(get(base() + "/feed/feeding-sheet?target=GROUP"), worker, null, 400);
 
         call(post(base() + "/feed/items/" + velimasal + "/stock"), owner, "{\"type\":\"HARVEST\",\"date\":\"" + today
@@ -225,7 +230,7 @@ class FeedControllerTest extends IntegrationTest {
         JsonNode saved = call(put(base() + "/feed/feeding-sheet"), worker, save, 200);
         assertThat(saved.get("saved").asBoolean()).isTrue();
         assertThat(saved.get("actualKg").asDouble()).isEqualTo(10.6);
-        assertThat(saved.get("warnings").toString()).contains("Velimasal 2.1 kg under plan");
+        assertThat(saved.get("warnings").toString()).contains("Velimasal 1.9 kg under plan");
         // Saving again replaces the session (stock used once); lines left out are removed
         call(put(base() + "/feed/feeding-sheet"), worker, save.replace(",{\"itemId\":" + napier + ",\"kg\":7.6}", ""), 200);
         assertThat(call(get(base() + "/feed/items/" + velimasal), owner, null, 200).get("stock").get("stock").asDouble()).isEqualTo(17.0);
@@ -238,7 +243,7 @@ class FeedControllerTest extends IntegrationTest {
         assertThat(ov.get("sessions").get("AM").get("time").asString()).isEqualTo("06:10");
         assertThat(ov.get("sessions").get("AM").get("by").asString()).isEqualTo("Murugan");
         assertThat(ov.get("sessions").get("PM").get("logged").asBoolean()).isFalse();
-        assertThat(ov.get("needPerDay").get("concentrate").asDouble()).isEqualTo(10.4);   // 8.9 + dry cow 1.5
+        assertThat(ov.get("needPerDay").get("concentrate").asDouble()).isEqualTo(11.9);   // 8.9 + dry cow 420 × 2 % × 30 % ÷ 80 % = 3.15, capped at 3
         assertThat(ov.get("plannedCostPerDay")).isNull();
         JsonNode vel = null;
         for (JsonNode s : ov.get("items")) {
@@ -246,7 +251,7 @@ class FeedControllerTest extends IntegrationTest {
                 vel = s;
             }
         }
-        assertThat(vel.get("needPerDay").asDouble()).isEqualTo(10.11);
+        assertThat(vel.get("needPerDay").asDouble()).isEqualTo(9.76);
         assertThat(vel.get("daysLeft").asDouble()).isEqualTo(1.7);
         assertThat(vel.get("status").asString()).isEqualTo("REORDER");
         assertThat(ov.get("reorderCount").asInt()).isGreaterThanOrEqualTo(1);

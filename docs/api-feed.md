@@ -20,20 +20,31 @@ Quantities in kg (unit from the item). `ItemRef` = `{id, name, category, unit}`.
   no row = the defaults below.
 - Purchases are stored for the Finance module (Canvas 6) to post as FEED expenses; no finance rows yet.
 
-## Ration rule (per category)
+## Ration rule (per category) — TMR, dry-matter based
 ```
-RationParams = { bwPct: 10,                       // total fresh feed/day = body weight × bwPct %
-  concBaseKg: 1.5, concPerLitreKg: 0.4, maxConcKg: 10,   // concentrate = base + milk yesterday × perLitre, capped
-  concItemId,                                      // usually the MIX item; null = first MIX item
-  greenSharePct: 70,                               // of (total − concentrate); the rest is dry fodder
-  green: [{itemId, sharePct}], dry: [{itemId, sharePct}],   // split of the green / dry totals (sum 100)
-  limits: [{itemId, maxKgPerDay, stage: ANY|EARLY|MID|LATE}],   // EARLY ≤ 100 DIM, MID ≤ 200, LATE after
-  dmIntakePct: 3.0, cpPct: 14, tdnPct: 65, caPct: 0.6, pPct: 0.4 }   // nutrient need: DM = BW × dmIntakePct %; CP/TDN/Ca/P = % of DM
+RationParams = {
+  dmiEarlyPct: 3.75, dmiMidPct: 3.25, dmiLatePct: 2.75,         // DMI % of BW for milking cows by stage (EARLY ≤ 100 DIM, MID ≤ 200, LATE after)
+  dmiAge3to6Pct: 3.00, dmiAge6to12Pct: 2.75, dmiAge12to24Pct: 2.50,  // HEIFER / CALF by age from date_of_birth (12+ months uses the last)
+  dmIntakePct: 3.25,                                             // base DMI %: other categories, no calving date, calves < 3 months, no birth date
+  greenDmPct: 45, dryDmPct: 15, concDmPct: 40,                   // TMR shares of DMI (guide: green 35–45, dry 15–25, concentrate 25–40; sum 100)
+  concMode: MILK|DMI,                                            // MILK: concentrate = base + milk yesterday × perLitre; DMI: = DMI × concDmPct ÷ its DM %
+  concBaseKg: 1.5, concPerLitreKg: 0.4, maxConcKg: 10,           // cap applies in both modes
+  concItemId,                                                    // usually the MIX item; null = first MIX item
+  green: [{itemId, sharePct, fixedKg?}], dry: [{itemId, sharePct, fixedKg?}],  // sharePct = % of that part's DM (non-fixed rows sum 100)
+  limits: [{itemId, maxKgPerDay, stage: ANY|EARLY|MID|LATE}],
+  waterBaseL: 30, waterPerLitreL: 4,                             // water L/day = base + milk × perLitre
+  cpPct: 14, tdnPct: 65, caPct: 0.6, pPct: 0.4 }                 // nutrient need as % of DMI
 ```
-Defaults: MILKING as above · DRY {concBaseKg 1.5, concPerLitreKg 0, maxConcKg 3, cpPct 12, tdnPct 60} ·
-HEIFER {concBaseKg 1.0, perLitre 0, maxConcKg 2, dmIntakePct 2.5, cpPct 14, tdnPct 62} ·
-CALF {concBaseKg 0.5, perLitre 0, maxConcKg 1.5, dmIntakePct 2.5, cpPct 18, tdnPct 70} ·
-BULL {bwPct 8, concBaseKg 2, perLitre 0, maxConcKg 3, cpPct 10, tdnPct 58}; others as MILKING. Default green/dry lists are
+Calculation: DMI = BW × DMI %. Concentrate fresh kg by `concMode`, capped; its DM = kg × the mix's DM % (from the
+formula when the item has none). DM left = DMI − concentrate DM, split green : dry by greenDmPct : dryDmPct. In each part,
+`fixedKg` rows (optional feeds such as hydroponic fodder 7 kg, azolla 1 kg) are fed first and their DM comes off the part;
+they are skipped when the item is inactive or excluded. The DM left is split by share and each item's fresh kg = DM ÷ the
+item's DM %. Items without a DM % use green 30 %, dry 90 %, concentrate 80 %. Old keys `bwPct`, `greenSharePct` are ignored.
+
+Defaults: MILKING {MILK, conc 1.5 + 0.4/L max 10, 45/15/40, base DMI 3.25, water 30 + 4/L, CP 14, TDN 65} ·
+DRY {DMI, max 3, 45/25/30, DMI 2.00, CP 12, TDN 60} · HEIFER {DMI, base 1.0 max 2, 45/25/30, DMI 2.50, water 20, CP 14, TDN 62} ·
+CALF {DMI, base 0.5 max 1.5, 40/20/40, DMI 3.00, water 10, CP 18, TDN 70} · BULL {DMI, base 2 max 3, 45/25/30, DMI 2.00, CP 10, TDN 58}.
+Stage and age bands default to 3.75/3.25/2.75 and 3.00/2.75/2.50 in every category. Default green/dry lists are
 empty: totals still show; item lines appear once the owner picks items.
 Body weight = latest weight record, else animal current weight, else estimate (CALF 60, HEIFER 250, MILKING 400,
 DRY 420, BULL 500) with `weightSource: MEASURED|ANIMAL|ESTIMATE`. Milk yesterday = cow's AM+PM day total.
@@ -78,7 +89,8 @@ Formula = { id, name, mixItem: ItemRef, batchKg, totalKg, costPerKg, batchCost, 
 BatchPreview = { formulaId, batchKg, lines: [{item: ItemRef, needKg, stock, shortKg}], shortCount, batchCost, costPerKg,
   mixStockBefore, mixStockAfter, extraDays }
 AnimalRation = { animal: AnimalRef + {category, breed}, date, bodyWeightKg, weightSource, weighedOn, milkYesterday, daysInMilk, stage,
-  totals: {greenKg, dryKg, concentrateKg, totalKg, targetKg}, explain: string,   // "body weight × 10 % = 45 kg · concentrate = 1.5 + 18.5 L × 0.4"
+  totals: {greenKg, dryKg, concentrateKg, totalKg, targetKg, dmiPct, waterL}, explain: string,   // fresh kg; targetKg = DMI kg DM
+                                   // "DMI 450 kg × 3.75 % (early lactation) = 16.9 kg DM · concentrate 1.5 + 18 L × 0.4 = 8.7 kg · DM split …"
   capped, lines: [{section, item: ItemRef|null, kg, timing}], ingredients: [{item: ItemRef, kgPerDay, limitKg, over}],
   costPerDay, nutrients: [{name, ration, need, unit: kg|g, status}], rule: {category, effectiveFrom} }
 Totals = { greenKg, dryKg, concentrateKg, costPerDay }

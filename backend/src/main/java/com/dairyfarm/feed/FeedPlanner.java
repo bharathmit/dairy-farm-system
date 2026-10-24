@@ -141,7 +141,7 @@ public class FeedPlanner {
             source = "ESTIMATE";
         }
         return new AnimalInput(a.id(), a.tag(), a.name(), cat, a.breed(), bw, source,
-                "MEASURED".equals(source) ? a.weighedOn() : null, a.milkYesterday(), a.lastCalvingDate());
+                "MEASURED".equals(source) ? a.weighedOn() : null, a.milkYesterday(), a.lastCalvingDate(), a.dateOfBirth());
     }
 
     public Herd herd(Long farmId, Catalog c, LocalDate date, Long groupId, Long animalId) {

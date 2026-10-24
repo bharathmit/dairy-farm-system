@@ -55,7 +55,8 @@ export interface AnimalRation {
   animal: AnimalRef & { category: string; breed?: string | null }; date: string
   bodyWeightKg: number; weightSource: 'MEASURED' | 'ANIMAL' | 'ESTIMATE'; weighedOn?: string | null
   milkYesterday?: number | null; daysInMilk?: number | null; stage?: string | null
-  totals: { greenKg: number; dryKg: number; concentrateKg: number; totalKg: number; targetKg: number }; explain: string
+  /** Fresh kg; targetKg = dry matter intake (kg DM/day), dmiPct = % of body weight; waterL = litres/day */
+  totals: { greenKg: number; dryKg: number; concentrateKg: number; totalKg: number; targetKg: number; dmiPct: number; waterL: number }; explain: string
   capped: boolean; lines: { section: Section; item: ItemRef | null; kg: number; timing?: string | null }[]
   ingredients: { item: ItemRef; kgPerDay: number; limitKg?: number | null; over: boolean }[]
   costPerDay?: number | null; nutrients: { name: string; ration?: number | null; need?: number | null; unit: 'kg' | 'g'; status: NutrientStatus }[]
@@ -68,12 +69,16 @@ export interface FeedNeed {
   rows: NeedRow[]; ingredientRows: NeedRow[]
   shortfalls: { item: ItemRef; quantityKg: number; neededBy?: string | null; expectedPrice?: number | null }[]
 }
-export interface ItemShare { itemId: number; sharePct: number }
+/** fixedKg: fed at that fresh kg (e.g. hydroponic fodder, azolla); its DM comes off the part first */
+export interface ItemShare { itemId: number; sharePct: number; fixedKg?: number | null }
 export interface Limit { itemId: number; maxKgPerDay: number; stage: 'ANY' | 'EARLY' | 'MID' | 'LATE' }
 export interface RationParams {
-  bwPct: number; concBaseKg: number; concPerLitreKg: number; maxConcKg: number; concItemId?: number | null
-  greenSharePct: number; green: ItemShare[]; dry: ItemShare[]; limits: Limit[]
-  dmIntakePct: number; cpPct: number; tdnPct: number; caPct: number; pPct: number
+  /** MILK = base + milk × per litre; DMI = DMI × concentrate DM share ÷ its DM */
+  concMode: 'MILK' | 'DMI'; concBaseKg: number; concPerLitreKg: number; maxConcKg: number; concItemId?: number | null
+  greenDmPct: number; dryDmPct: number; concDmPct: number; green: ItemShare[]; dry: ItemShare[]; limits: Limit[]
+  dmIntakePct: number; dmiEarlyPct: number; dmiMidPct: number; dmiLatePct: number
+  dmiAge3to6Pct: number; dmiAge6to12Pct: number; dmiAge12to24Pct: number; waterBaseL: number; waterPerLitreL: number
+  cpPct: number; tdnPct: number; caPct: number; pPct: number
 }
 export interface RuleVersion { effectiveFrom: string; params: RationParams }
 export interface RationRule { category: RuleCategory; current: RuleVersion; upcoming: RuleVersion[]; history: RuleVersion[] }

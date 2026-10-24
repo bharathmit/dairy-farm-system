@@ -18,9 +18,11 @@ import com.dairyfarm.feed.RationParams.Share;
 import com.dairyfarm.feed.RationParams.Stage;
 
 /**
- * One animal's daily ration from its category rule (docs/api-feed.md, "Ration rule"). Pure calculation:
- * total = body weight × bwPct %; concentrate = base + milk × perLitre (capped); the rest split green / dry;
- * each part split over its items by share; a MIX concentrate is broken into ingredients by its formula.
+ * One animal's daily TMR ration from its category rule (docs/api-feed.md, "Ration rule"). Pure calculation:
+ * DMI = body weight × DMI % (by lactation stage, age band or the rule's base %); concentrate = base + milk × perLitre
+ * (MILK mode) or DMI × concentrate DM share ÷ its DM (DMI mode), capped; the DM left is split green / dry by their
+ * shares; each item's fresh kg = its DM ÷ the item's DM %. Fixed-kg items (hydroponic fodder, azolla) come off
+ * their part's DM first. A MIX concentrate is broken into ingredients by its formula.
  */
 public final class RationCalc {
 
@@ -35,7 +37,7 @@ public final class RationCalc {
 
     public record AnimalInput(Long id, String tag, String name, RationCategory category, String breed,
                               BigDecimal bodyWeightKg, String weightSource, LocalDate weighedOn,
-                              BigDecimal milkYesterday, LocalDate lastCalvingDate) {
+                              BigDecimal milkYesterday, LocalDate lastCalvingDate, LocalDate dateOfBirth) {
     }
 
     /** A line of the plan; item null = a part with no item picked in the rule yet. */
@@ -48,13 +50,18 @@ public final class RationCalc {
     public record NutrientLine(String name, BigDecimal ration, BigDecimal need, String unit, String status) {
     }
 
-    public record Plan(AnimalInput animal, Integer daysInMilk, Stage stage, BigDecimal greenKg, BigDecimal dryKg,
-                       BigDecimal concKg, BigDecimal totalKg, BigDecimal targetKg, boolean capped, String explain,
-                       List<Line> lines, List<Ingredient> ingredients, BigDecimal costPerDay, BigDecimal concCostPerDay,
-                       List<NutrientLine> nutrients, Map<Long, BigDecimal> kgByItem, Map<Long, BigDecimal> ingredientKg) {
+    /** targetKg = dry matter intake (kg DM/day); green/dry/conc/total are fresh (as-fed) kg. */
+    public record Plan(AnimalInput animal, Integer daysInMilk, Stage stage, Integer ageMonths, BigDecimal dmiPct,
+                       BigDecimal greenKg, BigDecimal dryKg, BigDecimal concKg, BigDecimal totalKg, BigDecimal targetKg,
+                       BigDecimal waterL, boolean capped, String explain, List<Line> lines, List<Ingredient> ingredients,
+                       BigDecimal costPerDay, BigDecimal concCostPerDay, List<NutrientLine> nutrients,
+                       Map<Long, BigDecimal> kgByItem, Map<Long, BigDecimal> ingredientKg) {
     }
 
     private static final BigDecimal HUNDRED = BigDecimal.valueOf(100);
+
+    /** DM % used when an item has none recorded: silage / green, straw / dry, concentrate. */
+    static final double GREEN_DM = 30, DRY_DM = 90, CONC_DM = 80;
 
     /**
      * @param items         feed items by id
@@ -66,15 +73,6 @@ public final class RationCalc {
         RationParams p = rule.resolved(a.category());
         double bw = num(a.bodyWeightKg());
         double milk = a.category() == RationCategory.MILKING ? num(a.milkYesterday()) : 0;
-        double target = bw * num(p.bwPct()) / 100.0;
-        double conc = num(p.concBaseKg()) + milk * num(p.concPerLitreKg());
-        boolean capped = conc > num(p.maxConcKg());
-        if (capped) {
-            conc = num(p.maxConcKg());
-        }
-        double forage = Math.max(0, target - conc);
-        double green = forage * num(p.greenSharePct()) / 100.0;
-        double dry = forage - green;
 
         Integer dim = null;
         Stage stage = Stage.ANY;
@@ -82,12 +80,49 @@ public final class RationCalc {
             dim = (int) ChronoUnit.DAYS.between(a.lastCalvingDate(), date) + 1;
             stage = dim <= 100 ? Stage.EARLY : dim <= 200 ? Stage.MID : Stage.LATE;
         }
+        Integer age = a.dateOfBirth() == null || date.isBefore(a.dateOfBirth()) ? null
+                : (int) ChronoUnit.MONTHS.between(a.dateOfBirth(), date);
+
+        // Dry matter intake
+        double dmiPct;
+        String basis;
+        if (stage != Stage.ANY) {
+            dmiPct = num(stage == Stage.EARLY ? p.dmiEarlyPct() : stage == Stage.MID ? p.dmiMidPct() : p.dmiLatePct());
+            basis = stage.name().toLowerCase() + " lactation";
+        } else if ((a.category() == RationCategory.HEIFER || a.category() == RationCategory.CALF) && age != null && age >= 3) {
+            dmiPct = num(age < 6 ? p.dmiAge3to6Pct() : age < 12 ? p.dmiAge6to12Pct() : p.dmiAge12to24Pct());
+            basis = age + " months old";
+        } else {
+            dmiPct = num(p.dmIntakePct());
+            basis = a.category().name().toLowerCase();
+        }
+        double dmi = bw * dmiPct / 100.0;
+
+        // DM shares (normalised, so they need not add to exactly 100)
+        double gPct = num(p.greenDmPct());
+        double dPct = num(p.dryDmPct());
+        double cPct = num(p.concDmPct());
+        double sharesSum = gPct + dPct + cPct;
+
+        Long concId = p.concItemId() != null && items.containsKey(p.concItemId()) ? p.concItemId() : defaultConcId;
+        double concDm = dmPct(concId == null ? null : items.get(concId), CONC_DM, items, formulaShares);
+        boolean byMilk = p.concMode() == RationParams.ConcMode.MILK;
+        double conc = byMilk ? num(p.concBaseKg()) + milk * num(p.concPerLitreKg())
+                : sharesSum > 0 ? dmi * cPct / sharesSum / (concDm / 100.0) : 0;
+        double concUncapped = conc;
+        boolean capped = conc > num(p.maxConcKg());
+        if (capped) {
+            conc = num(p.maxConcKg());
+        }
+        double forageDm = Math.max(0, dmi - conc * concDm / 100.0);
+        double greenDm = gPct + dPct > 0 ? forageDm * gPct / (gPct + dPct) : 0;
+        double dryDm = forageDm - greenDm;
 
         List<Line> lines = new ArrayList<>();
         Map<Long, BigDecimal> kgByItem = new LinkedHashMap<>();
-        split(Section.GREEN, green, p.green(), "6 AM, before milking", items, lines, kgByItem);
-        split(Section.DRY, dry, p.dry(), "after milking", items, lines, kgByItem);
-        Long concId = p.concItemId() != null && items.containsKey(p.concItemId()) ? p.concItemId() : defaultConcId;
+        double green = split(Section.GREEN, greenDm, p.green(), GREEN_DM, "6 AM, before milking", items, formulaShares,
+                lines, kgByItem);
+        double dry = split(Section.DRY, dryDm, p.dry(), DRY_DM, "after milking", items, formulaShares, lines, kgByItem);
         if (conc > 0) {
             lines.add(new Line(Section.CONCENTRATE, concId, kg(conc), "after milking · AM + PM"));
             if (concId != null) {
@@ -139,34 +174,80 @@ public final class RationCalc {
             }
         }
 
-        List<NutrientLine> nutrients = nutrients(p, bw, lines, items, formulaShares);
+        List<NutrientLine> nutrients = nutrients(p, dmi, lines, items, formulaShares);
+        double water = num(p.waterBaseL()) + milk * num(p.waterPerLitreL());
 
-        String explain = "body weight " + fmt(bw) + " kg × " + fmt(num(p.bwPct())) + " % = " + fmt(target) + " kg · concentrate = "
-                + fmt(num(p.concBaseKg()))
-                + (num(p.concPerLitreKg()) > 0 ? " + " + fmt(milk) + " L × " + fmt(num(p.concPerLitreKg())) : "")
-                + (capped ? " (capped at " + fmt(num(p.maxConcKg())) + " kg)" : "");
+        String concText = byMilk
+                ? fmt(num(p.concBaseKg())) + (num(p.concPerLitreKg()) > 0 ? " + " + fmt(milk) + " L × " + fmt(num(p.concPerLitreKg())) : "")
+                        + " = " + fmt(concUncapped) + " kg"
+                : fmt(dmi) + " × " + fmt(sharesSum > 0 ? cPct * 100 / sharesSum : 0) + " % ÷ " + fmt(concDm) + " % DM = "
+                        + fmt(concUncapped) + " kg";
+        double concDmShare = dmi > 0 ? conc * concDm / 100.0 / dmi * 100 : 0;
+        String explain = "DMI " + fmt(bw) + " kg × " + BigDecimal.valueOf(dmiPct).setScale(2, RoundingMode.HALF_UP)
+                .stripTrailingZeros().toPlainString() + " % (" + basis + ") = " + fmt(dmi) + " kg DM · concentrate "
+                + concText + (capped ? " (capped at " + fmt(num(p.maxConcKg())) + " kg)" : "")
+                + " · DM split green " + fmt(dmi > 0 ? greenDm / dmi * 100 : 0) + " % / dry " + fmt(dmi > 0 ? dryDm / dmi * 100 : 0)
+                + " % / concentrate " + fmt(concDmShare) + " %";
 
-        return new Plan(a, dim, stage, kg(green), kg(dry), kg(conc), kg(green + dry + conc), kg(target), capped, explain,
-                lines, ingredients, costKnown ? money(cost) : null, money(concCost), nutrients, kgByItem,
-                ingredientKg);
+        return new Plan(a, dim, stage, age, BigDecimal.valueOf(dmiPct).setScale(2, RoundingMode.HALF_UP), kg(green), kg(dry),
+                kg(conc), kg(green + dry + conc), kg(dmi), kg(water), capped, explain, lines, ingredients,
+                costKnown ? money(cost) : null, money(concCost), nutrients, kgByItem, ingredientKg);
     }
 
-    private static void split(Section section, double total, List<Share> shares, String timing, Map<Long, ItemInfo> items,
-                              List<Line> lines, Map<Long, BigDecimal> kgByItem) {
-        if (total <= 0) {
-            return;
+    /**
+     * Splits a part's DM over its items and returns the fresh kg fed. Fixed-kg items first (skipped when inactive or
+     * excluded), then the DM left by share; fresh kg = DM ÷ the item's DM %.
+     */
+    private static double split(Section section, double dm, List<Share> shares, double fallbackDm, String timing,
+                                Map<Long, ItemInfo> items, Map<Long, Map<Long, BigDecimal>> formulaShares,
+                                List<Line> lines, Map<Long, BigDecimal> kgByItem) {
+        if (dm <= 0) {
+            return 0;
         }
-        List<Share> usable = shares.stream().filter(s -> items.containsKey(s.itemId()) && s.sharePct().signum() > 0).toList();
-        double sum = usable.stream().mapToDouble(s -> s.sharePct().doubleValue()).sum();
-        if (usable.isEmpty() || sum <= 0) {
-            lines.add(new Line(section, null, kg(total), timing));
-            return;
+        double fresh = 0;
+        double left = dm;
+        List<Share> byShare = new ArrayList<>();
+        for (Share s : shares) {
+            ItemInfo it = items.get(s.itemId());
+            if (it == null) {
+                continue;
+            }
+            if (s.fixedKg() != null && s.fixedKg().signum() > 0) {
+                if (!it.active() || it.excluded()) {
+                    continue;
+                }
+                BigDecimal k = kg(s.fixedKg().doubleValue());
+                lines.add(new Line(section, s.itemId(), k, timing));
+                kgByItem.merge(s.itemId(), k, BigDecimal::add);
+                fresh += k.doubleValue();
+                left -= k.doubleValue() * dmPct(it, fallbackDm, items, formulaShares) / 100.0;
+            } else if (s.sharePct() != null && s.sharePct().signum() > 0) {
+                byShare.add(s);
+            }
         }
-        for (Share s : usable) {
-            BigDecimal k = kg(total * s.sharePct().doubleValue() / sum);
+        if (left <= 0) {
+            return fresh;
+        }
+        double sum = byShare.stream().mapToDouble(s -> s.sharePct().doubleValue()).sum();
+        if (byShare.isEmpty() || sum <= 0) {
+            BigDecimal k = kg(left / (fallbackDm / 100.0));
+            lines.add(new Line(section, null, k, timing));
+            return fresh + k.doubleValue();
+        }
+        for (Share s : byShare) {
+            double partDm = left * s.sharePct().doubleValue() / sum;
+            BigDecimal k = kg(partDm / (dmPct(items.get(s.itemId()), fallbackDm, items, formulaShares) / 100.0));
             lines.add(new Line(section, s.itemId(), k, timing));
             kgByItem.merge(s.itemId(), k, BigDecimal::add);
+            fresh += k.doubleValue();
         }
+        return fresh;
+    }
+
+    /** An item's DM % (a MIX from its formula when it has none), or the fallback when unknown. */
+    static double dmPct(ItemInfo it, double fallback, Map<Long, ItemInfo> items, Map<Long, Map<Long, BigDecimal>> formulaShares) {
+        BigDecimal v = it == null ? null : perKg(it, items, formulaShares)[0];
+        return v == null || v.signum() <= 0 ? fallback : v.doubleValue();
     }
 
     /** Nutrient values per kg of an item; a MIX without its own values is worked out from its formula. */
@@ -199,7 +280,7 @@ public final class RationCalc {
         return out;
     }
 
-    private static List<NutrientLine> nutrients(RationParams p, double bw, List<Line> lines, Map<Long, ItemInfo> items,
+    private static List<NutrientLine> nutrients(RationParams p, double dmNeed, List<Line> lines, Map<Long, ItemInfo> items,
                                                 Map<Long, Map<Long, BigDecimal>> formulaShares) {
         String[] names = {"DM", "CP", "TDN", "Ca", "P"};
         double[] sums = new double[5];
@@ -218,7 +299,6 @@ public final class RationCalc {
                 }
             }
         }
-        double dmNeed = bw * num(p.dmIntakePct()) / 100.0;
         double[] need = {dmNeed, dmNeed * num(p.cpPct()) / 100, dmNeed * num(p.tdnPct()) / 100,
                 dmNeed * num(p.caPct()) / 100 * 1000, dmNeed * num(p.pPct()) / 100 * 1000};
         List<NutrientLine> out = new ArrayList<>();

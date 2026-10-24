@@ -391,7 +391,7 @@ public class FeedService {
         return new AnimalRation(new RationAnimal(a.id(), a.tag(), a.name(), a.category().name(), a.breed()), d,
                 a.bodyWeightKg(), a.weightSource(), a.weighedOn(), a.milkYesterday(), p.daysInMilk(),
                 p.daysInMilk() == null ? null : p.stage().name(),
-                new RationTotals(p.greenKg(), p.dryKg(), p.concKg(), p.totalKg(), p.targetKg()), p.explain(), p.capped(),
+                new RationTotals(p.greenKg(), p.dryKg(), p.concKg(), p.totalKg(), p.targetKg(), p.dmiPct(), p.waterL()), p.explain(), p.capped(),
                 lines, ingr, showMoney ? p.costPerDay() : null, nut,
                 new RuleRef(a.category(), FeedPlanner.ruleFrom(c, a.category(), d)));
     }

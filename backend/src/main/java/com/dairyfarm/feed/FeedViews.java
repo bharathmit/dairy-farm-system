@@ -200,8 +200,9 @@ public final class FeedViews {
 
     // ---- ration ------------------------------------------------------------------------------------------------
 
+    /** Fresh (as-fed) kg; targetKg = dry matter intake in kg DM (body weight × dmiPct %); waterL = litres/day. */
     public record RationTotals(BigDecimal greenKg, BigDecimal dryKg, BigDecimal concentrateKg, BigDecimal totalKg,
-                               BigDecimal targetKg) {
+                               BigDecimal targetKg, BigDecimal dmiPct, BigDecimal waterL) {
     }
 
     public record RationLine(Section section, ItemRef item, BigDecimal kg, String timing) {

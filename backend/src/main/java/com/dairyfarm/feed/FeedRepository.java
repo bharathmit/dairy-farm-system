@@ -44,7 +44,7 @@ public class FeedRepository {
 
     public record AnimalRow(Long id, String tag, String name, String category, String breed, Long groupId,
                             LocalDate lastCalvingDate, BigDecimal currentWeightKg, BigDecimal measuredKg,
-                            LocalDate weighedOn, BigDecimal milkYesterday) {
+                            LocalDate weighedOn, BigDecimal milkYesterday, LocalDate dateOfBirth) {
     }
 
     public record FormulaRow(Long id, String name, Long mixItemId, BigDecimal batchKg, Targets targets, String notes,
@@ -196,7 +196,7 @@ public class FeedRepository {
     /** Active dairy animals (cows and buffalo) with what the ration needs, optionally one group or one animal. */
     public List<AnimalRow> animals(Long farmId, LocalDate date, Long groupId, Long animalId) {
         return jdbc.sql("""
-                select a.id, a.tag, a.name, a.category, a.breed, a.group_id, a.last_calving_date, a.current_weight_kg,
+                select a.id, a.tag, a.name, a.category, a.breed, a.group_id, a.last_calving_date, a.current_weight_kg, a.date_of_birth,
                        w.weight_kg, w.event_date,
                        (select sum(p.quantity) from production_record p
                          where p.animal_id = a.id and p.record_date = cast(:date as date) - 1) as milk
@@ -213,7 +213,8 @@ public class FeedRepository {
                 .query((rs, n) -> new AnimalRow(rs.getLong("id"), rs.getString("tag"), rs.getString("name"),
                         rs.getString("category"), rs.getString("breed"), (Long) rs.getObject("group_id"),
                         rs.getObject("last_calving_date", LocalDate.class), rs.getBigDecimal("current_weight_kg"),
-                        rs.getBigDecimal("weight_kg"), rs.getObject("event_date", LocalDate.class), rs.getBigDecimal("milk")))
+                        rs.getBigDecimal("weight_kg"), rs.getObject("event_date", LocalDate.class), rs.getBigDecimal("milk"),
+                        rs.getObject("date_of_birth", LocalDate.class)))
                 .list();
     }
 

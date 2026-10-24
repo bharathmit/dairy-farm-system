@@ -34,7 +34,7 @@ function CowRation({ r, showMoney }: { r: AnimalRation; showMoney: boolean }) {
       <div className="grid grid-cols-3 gap-2.5">
         <Tile k="Green" v={`${kg(r.totals.greenKg)} kg`} /><Tile k="Dry" v={`${kg(r.totals.dryKg)} kg`} /><Tile k="Concentrate" v={`${kg(r.totals.concentrateKg)} kg`} />
       </div>
-      <div className="-mt-1 text-[13px] text-ink-3">Total {kg(r.totals.totalKg)} kg vs {r.explain}</div>
+      <div className="-mt-1 text-[13px] text-ink-3">Total {kg(r.totals.totalKg)} kg fresh · DMI {kg(r.totals.targetKg)} kg DM · water ~{kg(r.totals.waterL, 0)} L/day<div>{r.explain}</div></div>
       <div className="overflow-hidden rounded-[14px] bg-white">
         {sections.map((s) => {
           const ls = r.lines.filter((l) => l.section === s)
