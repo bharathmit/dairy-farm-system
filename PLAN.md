@@ -16,7 +16,7 @@ PROGRESS.md checklist — every session reads it first
 
 Rules for every session
 1. Read `PROGRESS.md`, then do the **first unchecked module only**.
-2. Work on a branch `module/<n>-<name>`, open a PR, never push to `main` directly.
+2. Work on `main` only (pushes deploy both apps); see CLAUDE.md for the Claude Code workflow.
 3. Small, targeted changes; backend tests (JUnit + Testcontainers Postgres) must pass.
 4. Update `PROGRESS.md` (tick items, add notes/blockers) in the same PR.
 5. Stop and ask the owner before anything not in this plan.
