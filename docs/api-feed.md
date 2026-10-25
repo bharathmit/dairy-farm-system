@@ -7,8 +7,10 @@ Quantities in kg (unit from the item). `ItemRef` = `{id, name, category, unit}`.
 
 ## Storage (Flyway V5)
 - Feed items reuse `item` (item_type FEED). `category`: CONCENTRATE_INGREDIENT | GREEN_FODDER | DRY_FODDER | SILAGE |
-  MINERAL | MIX. `details` JSONB: `dmPct, cpPct, tdnPct, caPct, pPct` (as-fed, per kg), `maxInclusionPct`,
-  `excluded`, `excludedReason`.
+  MINERAL | MIX. `details` JSONB: `dmPct, cpPct, tdnPct, caPct, pPct` (as-fed, per kg), BIS quality values
+  `fatPct, fibrePct, aiaPct` (acid insoluble ash) and `aflatoxinPpb` (as fed), `maxInclusionPct`, `excludedReason`.
+  **Max inclusion 0 % = excluded** (blocked in every formula and ration). The older `excluded` flag is still honoured on
+  read; a request with `excluded: true` is saved as max inclusion 0. Responses give `maxInclusionPct: 0` for excluded items.
 - Stock moves reuse `item_txn`: PURCHASE (cost, supplier), USAGE (feeding; animal/group allocation), PRODUCE
   (own fodder harvest, or a concentrate batch), ADJUSTMENT (±). V5 adds `item_txn.payment_method`
   (CASH|UPI|BANK_TRANSFER|CARD|CHEQUE|OTHER), `item_txn.paid BOOLEAN`, `item_txn.session` (AM|PM),
@@ -50,6 +52,21 @@ Body weight = latest weight record, else animal current weight, else estimate (C
 DRY 420, BULL 500) with `weightSource: MEASURED|ANIMAL|ESTIMATE`. Milk yesterday = cow's AM+PM day total.
 Cost/day = Σ kg × item cost per kg. Concentrate ingredient kg/day = concentrate kg × formula line share.
 
+## BIS grade (IS 2052:2023, `feed/BisGrade`)
+`targets.bisGrade` (TYPE_I | TYPE_II | null) checks the mix against Table 1. Type III was removed (Amendment 4, 2021).
+| Parameter | Type I | Type II |
+|---|---|---|
+| Moisture, max (as fed = 100 − mix DM) | 11 % | 11 % |
+| Crude protein, min | 22 % | 20 % |
+| Crude fat, min | 4.0 % | 3.0 % |
+| Crude fibre, max | 10 % | 12 % |
+| Acid insoluble ash, max | 2.5 % | 3.0 % |
+| Calcium / total phosphorus, min | 0.8 / 0.5 % | 0.8 / 0.5 % |
+| Aflatoxin B1, max | 20 ppb | 20 ppb |
+All limits except moisture are **dry basis**: mix value = kg-weighted as-fed average ÷ mix DM × 100. A parameter is
+UNKNOWN when any ingredient lacks that value (or DM); overall INCOMPLETE when nothing fails but something is unknown.
+The editor computes the same check live (`bisCheck` in `src/data/feed.ts`).
+
 ## Endpoints
 | Method | Path | Returns / notes |
 |---|---|---|
@@ -72,8 +89,8 @@ Cost/day = Σ kg × item cost per kg. Concentrate ingredient kg/day = concentrat
 | PUT | `/feed/ration-rules/{category}` | owner; `{effectiveFrom, params}` → saves a version (same date replaces it) |
 
 ```
-FeedItem = { id, name, category, unit, costPerUnit, dmPct, cpPct, tdnPct, caPct, pPct, maxInclusionPct,
-  excluded, excludedReason, reorderLevel, leadTimeDays, supplier: ContactRef|null, notes, active }
+FeedItem = { id, name, category, unit, costPerUnit, dmPct, cpPct, tdnPct, caPct, pPct, fatPct, fibrePct, aiaPct, aflatoxinPpb,
+  maxInclusionPct, excluded, excludedReason, reorderLevel, leadTimeDays, supplier: ContactRef|null, notes, active }
 StockItem = { item: ItemRef, stock, needPerDay, daysLeft, status: OK|LOW|REORDER|PREPARE|EXCLUDED|UNUSED, barPct, lastPrice, lastPurchaseDate }
   // REORDER: daysLeft ≤ leadTimeDays or stock < reorderLevel; LOW: daysLeft ≤ leadTimeDays + 4; PREPARE: a MIX that is REORDER/LOW; barPct = min(100, daysLeft/30×100)
 Session = { logged, kg, plannedKg, time, by }       // by = member name who saved
@@ -82,9 +99,11 @@ Move = { id, date, time, type, quantity, cost, costPerUnit, supplier: ContactRef
 FeedingSheet = { date, session, target, label, animals, lines: [{item: ItemRef, section: GREEN|DRY|CONCENTRATE|OTHER,
   plannedKg, actualKg, stock}], plannedKg, actualKg, saved, warnings: [string] }
   // planned = half of the day plan for the target's animals; actualKg = saved value or null; warnings e.g. "Sorghum green 8 kg under plan", "Stock left 25 kg"
-Formula = { id, name, mixItem: ItemRef, batchKg, totalKg, costPerKg, batchCost, targets: {dmPct, cpPct, tdnPct, caPct, pPct, costMin, costMax},
+Formula = { id, name, mixItem: ItemRef, batchKg, totalKg, costPerKg, batchCost, targets: {dmPct, cpPct, tdnPct, caPct, pPct, costMin, costMax, bisGrade},
   lines: [{item: ItemRef, kg, pct, cost, overMax, maxInclusionPct}],
   nutrients: [{name: DM|CP|TDN|Ca|P, mixPct, targetPct, status: OK|LOW|HIGH|UNKNOWN}],   // ±10 % of target = OK
+  bis: null | {grade: TYPE_I|TYPE_II, label, status: PASS|FAIL|INCOMPLETE,
+        params: [{name, value, limit, kind: MIN|MAX, unit: %|ppb, status: PASS|FAIL|UNKNOWN}]},
   warnings: [string], notes }
 BatchPreview = { formulaId, batchKg, lines: [{item: ItemRef, needKg, stock, shortKg}], shortCount, batchCost, costPerKg,
   mixStockBefore, mixStockAfter, extraDays }

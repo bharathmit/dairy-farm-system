@@ -119,7 +119,7 @@ public class FeedService {
         FeedItem v = view(i, suppliers(farmId, List.of(i)), showMoney);
         StockItem st = stockItemOf(farmId, i, showMoney);
         return new FeedItem(v.id(), v.name(), v.category(), v.unit(), v.costPerUnit(), v.dmPct(), v.cpPct(), v.tdnPct(),
-                v.caPct(), v.pPct(), v.maxInclusionPct(), v.excluded(), v.excludedReason(), v.reorderLevel(), v.leadTimeDays(),
+                v.caPct(), v.pPct(), v.fatPct(), v.fibrePct(), v.aiaPct(), v.aflatoxinPpb(), v.maxInclusionPct(), v.excluded(), v.excludedReason(), v.reorderLevel(), v.leadTimeDays(),
                 v.supplier(), v.notes(), v.active(), st);
     }
 
@@ -180,9 +180,11 @@ public class FeedService {
         if (req.costPerUnit() != null) {
             i.setCostPerUnit(req.costPerUnit());
         }
-        boolean excluded = Boolean.TRUE.equals(req.excluded());
-        i.setDetails(new Item.Details(null, null, null, req.dmPct(), req.cpPct(), req.tdnPct(), req.caPct(), req.pPct(),
-                req.maxInclusionPct(), excluded ? Boolean.TRUE : null, excluded ? blank(req.excludedReason()) : null));
+        // Max inclusion 0 % = excluded (blocked in every formula and ration); the older excluded flag maps to 0 %.
+        BigDecimal max = Boolean.TRUE.equals(req.excluded()) ? BigDecimal.ZERO : req.maxInclusionPct();
+        boolean excluded = max != null && max.signum() == 0;
+        i.setDetails(Item.Details.feed(req.dmPct(), req.cpPct(), req.tdnPct(), req.caPct(), req.pPct(), req.fatPct(),
+                req.fibrePct(), req.aiaPct(), req.aflatoxinPpb(), max, excluded ? blank(req.excludedReason()) : null));
         i.setReorderLevel(req.reorderLevel());
         i.setLeadTimeDays(req.leadTimeDays());
         i.setSupplierContactId(s == null ? null : s.getId());
@@ -216,7 +218,8 @@ public class FeedService {
         Contact s = i.getSupplierContactId() == null ? null : sup.get(i.getSupplierContactId());
         return new FeedItem(i.getId(), i.getName(), i.getCategory() == null ? null : Category.valueOf(i.getCategory()),
                 i.getUnit().name(), showMoney ? i.getCostPerUnit() : null, d.dmPct(), d.cpPct(), d.tdnPct(), d.caPct(),
-                d.pPct(), d.maxInclusionPct(), d.isExcluded(), d.excludedReason(), i.getReorderLevel(), i.getLeadTimeDays(),
+                d.pPct(), d.fatPct(), d.fibrePct(), d.aiaPct(), d.aflatoxinPpb(),
+                d.isExcluded() ? BigDecimal.ZERO : d.maxInclusionPct(), d.isExcluded(), d.excludedReason(), i.getReorderLevel(), i.getLeadTimeDays(),
                 Ref.of(s), i.getNotes(), i.isActive(), null);
     }
 

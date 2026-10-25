@@ -6,11 +6,17 @@ import { FeedItemSelect, useFeed } from '../../components/feed'
 import { useStore } from '../../data/store'
 import { decimal, numText, toNum, useLoad } from '../../data/records'
 import { inr0 } from '../../data/breeding'
-import { inr2, kg, NUTRIENT_TONE, type FeedItem, type Formula, type NutrientStatus } from '../../data/feed'
+import { BIS_GRADES, bisCheck, inr2, kg, NUTRIENT_TONE, type BisGrade, type BisStatus, type FeedItem, type Formula, type NutrientStatus } from '../../data/feed'
 import { errorMessage } from '../../lib/api'
 
 interface Line { key: number; itemId: string; kg: string }
 const NUTS = [['DM', 'dmPct'], ['CP', 'cpPct'], ['TDN', 'tdnPct'], ['Ca', 'caPct'], ['P', 'pPct']] as const
+/** Ingredient fields the BIS check needs, with the label used when an ingredient is missing one. */
+const BIS_KEYS = [['dm', 'dmPct', 'DM'], ['cp', 'cpPct', 'CP'], ['fat', 'fatPct', 'fat'], ['fibre', 'fibrePct', 'fibre'], ['aia', 'aiaPct', 'acid insol. ash'],
+  ['ca', 'caPct', 'Ca'], ['p', 'pPct', 'P'], ['aflatoxin', 'aflatoxinPpb', 'aflatoxin']] as const
+const BIS_TONE: Record<BisStatus, { text: string; cls: string }> = {
+  PASS: { text: 'Pass', cls: 'bg-brand-soft text-brand' }, FAIL: { text: 'Fail', cls: 'bg-danger-soft text-danger-text' }, UNKNOWN: { text: '—', cls: 'bg-ground text-ink-3' },
+}
 let seq = 1
 
 export default function FormulaEditor() {
@@ -25,6 +31,7 @@ export default function FormulaEditor() {
   const [batchKg, setBatchKg] = useState('100')
   const [lines, setLines] = useState<Line[]>([])
   const [targets, setTargets] = useState<Record<string, string>>({})
+  const [grade, setGrade] = useState<BisGrade | ''>('')
   const [notes, setNotes] = useState('')
   const [server, setServer] = useState<Formula | null>(null)
   const [busy, setBusy] = useState(false)
@@ -36,7 +43,8 @@ export default function FormulaEditor() {
     if (!f) return
     setServer(f); setName(f.name); setMixItem(String(f.mixItem.id)); setBatchKg(numText(f.batchKg)); setNotes(f.notes ?? '')
     setLines(f.lines.map((l) => ({ key: seq++, itemId: String(l.item.id), kg: numText(l.kg) })))
-    setTargets(Object.fromEntries(Object.entries(f.targets).map(([k, v]) => [k, numText(v as number | null)])))
+    setTargets(Object.fromEntries(Object.entries(f.targets).filter(([k]) => k !== 'bisGrade').map(([k, v]) => [k, numText(v as number | null)])))
+    setGrade(f.targets.bisGrade ?? '')
   }, [existing.data])
 
   const byId = useMemo(() => new Map((items.data ?? []).map((i) => [String(i.id), i])), [items.data])
@@ -54,8 +62,15 @@ export default function FormulaEditor() {
       return { label, mix, tgt, status }
     })
     const over = rows.filter((r) => r.it?.maxInclusionPct != null && total > 0 && (r.kg / total) * 100 > (r.it.maxInclusionPct ?? 100))
-    return { rows, total, cost, priced, nut, over }
-  }, [lines, byId, targets])
+    // BIS: as-fed weighted averages; an ingredient missing a value makes that parameter unknown
+    const used = rows.filter((r) => r.it && r.kg > 0)
+    const avg = (k: (typeof BIS_KEYS)[number][1]) => (total > 0 && used.length && used.every((r) => r.it![k] != null)
+      ? used.reduce((t, r) => t + r.kg * (r.it![k] as number), 0) / total : null)
+    const mix = Object.fromEntries(BIS_KEYS.map(([m, k]) => [m, avg(k)])) as Parameters<typeof bisCheck>[1]
+    const bis = grade && used.length ? bisCheck(grade, mix) : null
+    const missing = used.map((r) => ({ name: r.it!.name, what: BIS_KEYS.filter(([, k]) => r.it![k] == null).map(([, , l]) => l) })).filter((x) => x.what.length)
+    return { rows, total, cost, priced, nut, over, bis, missing }
+  }, [lines, byId, targets, grade])
   const batch = toNum(batchKg) ?? 0
   const costPerKg = calc.total > 0 ? calc.cost / calc.total : null
   const ro = !isOwner
@@ -63,12 +78,12 @@ export default function FormulaEditor() {
   const setLine = (key: number, p: Partial<Line>) => setLines((ls) => ls.map((l) => (l.key === key ? { ...l, ...p } : l)))
   const pickItem = (key: number, v: string) => {
     const it = byId.get(v)
-    if (it?.excluded) { setBlocked(`${it.name} can't be added. It is marked Excluded${it.excludedReason ? ` — ${it.excludedReason}` : ''}.`); return }
+    if (it?.excluded) { setBlocked(`${it.name} can't be added. Its max inclusion is 0 % (excluded)${it.excludedReason ? ` — ${it.excludedReason}` : ''}.`); return }
     setLine(key, { itemId: v })
   }
   const body = () => ({
     name: name.trim(), mixItemId: Number(mixItem), batchKg: batch,
-    targets: Object.fromEntries(Object.entries(targets).map(([k, v]) => [k, toNum(v) ?? null])),
+    targets: { ...Object.fromEntries(Object.entries(targets).map(([k, v]) => [k, toNum(v) ?? null])), bisGrade: grade || null },
     lines: lines.filter((l) => l.itemId && toNum(l.kg)).map((l, i) => ({ itemId: Number(l.itemId), kg: toNum(l.kg), sortOrder: i })), notes: notes.trim() || null,
   })
   const save = async (thenBatch: boolean) => {
@@ -157,6 +172,36 @@ export default function FormulaEditor() {
           ))}
         </div>
         <div className="-mt-1.5 text-xs text-ink-3">Values fill in once each ingredient's nutrients are entered on its feed item.</div>
+
+        <div className="overflow-hidden rounded-[14px] bg-white">
+          <div className="flex items-center justify-between px-3 pb-1.5 pt-3">
+            <b className="text-[15px]">BIS grade · IS 2052:2023</b>
+            {calc.bis && <span className={`badge ${calc.bis.status === 'PASS' ? BIS_TONE.PASS.cls : calc.bis.status === 'FAIL' ? BIS_TONE.FAIL.cls : BIS_TONE.UNKNOWN.cls}`}>{calc.bis.status === 'PASS' ? `Meets ${calc.bis.label}` : calc.bis.status === 'FAIL' ? `Below ${calc.bis.label}` : 'Incomplete'}</span>}
+          </div>
+          <div role="group" aria-label="BIS grade" className="flex flex-wrap gap-2 px-3 pb-3">
+            <button type="button" disabled={ro} aria-pressed={grade === ''} onClick={() => setGrade('')} className={`chip h-10 ${grade === '' ? 'chip-on' : ''}`}>No check</button>
+            {BIS_GRADES.map((g) => <button key={g.value} type="button" disabled={ro} aria-pressed={grade === g.value} onClick={() => setGrade(g.value)} className={`chip h-10 ${grade === g.value ? 'chip-on' : ''}`}>{g.label} · {g.hint}</button>)}
+          </div>
+          {calc.bis && (
+            <>
+              <div className="grid min-h-9 grid-cols-[1.4fr_.9fr_.9fr_.7fr] items-center border-t border-line-faint px-3 text-xs font-bold text-ink-3"><span>Parameter</span><span>Mix</span><span>BIS</span><span /></div>
+              {calc.bis.params.map((p) => (
+                <div key={p.name} className="grid min-h-[42px] grid-cols-[1.4fr_.9fr_.9fr_.7fr] items-center gap-2 border-t border-line-faint px-3 text-sm">
+                  <span>{p.name}</span>
+                  <span>{p.value != null ? `${kg(p.value, 2)} ${p.unit}` : '—'}</span>
+                  <span className="text-ink-3">{p.kind === 'MIN' ? '≥' : '≤'} {p.limit} {p.unit}</span>
+                  <span className={`badge justify-self-end ${BIS_TONE[p.status].cls}`}>{BIS_TONE[p.status].text}</span>
+                </div>
+              ))}
+            </>
+          )}
+        </div>
+        {calc.bis && <div className="-mt-1.5 text-xs text-ink-3">Mix values are on dry-matter basis, as the standard requires (moisture is as fed). Lab-test a batch to confirm.</div>}
+        {calc.bis && calc.missing.length > 0 && (
+          <div className="rounded-xl bg-warn-soft px-3.5 py-3 text-sm text-warn-text">
+            <b className="text-warn-ink">Missing on feed items:</b> {calc.missing.map((m) => `${m.name} (${m.what.join(', ')})`).join(' · ')}
+          </div>
+        )}
         {isOwner && (
           <div className="grid grid-cols-2 gap-3">
             <div><label className="lab" htmlFor="fe-cmin">Cost target min ₹/kg</label><input className="inp" id="fe-cmin" inputMode="decimal" value={targets.costMin ?? ''} onChange={(e) => setTargets((t) => ({ ...t, costMin: decimal(e.target.value) }))} /></div>

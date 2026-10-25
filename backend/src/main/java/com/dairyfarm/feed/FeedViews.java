@@ -67,8 +67,12 @@ public final class FeedViews {
             @DecimalMin(value = "0", message = "Use 0 to 100") @DecimalMax(value = "100", message = "Use 0 to 100") BigDecimal tdnPct,
             @DecimalMin(value = "0", message = "Use 0 to 100") @DecimalMax(value = "100", message = "Use 0 to 100") BigDecimal caPct,
             @DecimalMin(value = "0", message = "Use 0 to 100") @DecimalMax(value = "100", message = "Use 0 to 100") BigDecimal pPct,
+            @DecimalMin(value = "0", message = "Use 0 to 100") @DecimalMax(value = "100", message = "Use 0 to 100") BigDecimal fatPct,
+            @DecimalMin(value = "0", message = "Use 0 to 100") @DecimalMax(value = "100", message = "Use 0 to 100") BigDecimal fibrePct,
+            @DecimalMin(value = "0", message = "Use 0 to 100") @DecimalMax(value = "100", message = "Use 0 to 100") BigDecimal aiaPct,
+            @DecimalMin(value = "0", message = "Use 0 to 10000 ppb") @DecimalMax(value = "10000", message = "Use 0 to 10000 ppb") BigDecimal aflatoxinPpb,
             @DecimalMin(value = "0", message = "Use 0 to 100") @DecimalMax(value = "100", message = "Use 0 to 100") BigDecimal maxInclusionPct,
-            Boolean excluded,
+            Boolean excluded,   // older clients: true = max inclusion 0 %
             @Size(max = 160) String excludedReason,
             @DecimalMin(value = "0", message = "Can't be negative") BigDecimal reorderLevel,
             @Min(value = 0, message = "Use 0 to 90 days") @Max(value = 90, message = "Use 0 to 90 days") Integer leadTimeDays,
@@ -79,6 +83,7 @@ public final class FeedViews {
 
     public record FeedItem(Long id, String name, Category category, String unit, BigDecimal costPerUnit,
                            BigDecimal dmPct, BigDecimal cpPct, BigDecimal tdnPct, BigDecimal caPct, BigDecimal pPct,
+                           BigDecimal fatPct, BigDecimal fibrePct, BigDecimal aiaPct, BigDecimal aflatoxinPpb,
                            BigDecimal maxInclusionPct, boolean excluded, String excludedReason, BigDecimal reorderLevel,
                            Integer leadTimeDays, Ref supplier, String notes, boolean active, StockItem stock) {
     }
@@ -149,9 +154,10 @@ public final class FeedViews {
 
     // ---- formulas ----------------------------------------------------------------------------------------------
 
+    /** bisGrade: IS 2052:2023 grade the mix is checked against (null = no BIS check). */
     public record Targets(BigDecimal dmPct, BigDecimal cpPct, BigDecimal tdnPct, BigDecimal caPct, BigDecimal pPct,
-                          BigDecimal costMin, BigDecimal costMax) {
-        public static final Targets EMPTY = new Targets(null, null, null, null, null, null, null);
+                          BigDecimal costMin, BigDecimal costMax, BisGrade bisGrade) {
+        public static final Targets EMPTY = new Targets(null, null, null, null, null, null, null, null);
     }
 
     public record FormulaLineRequest(@NotNull(message = "Pick an ingredient") Long itemId,
@@ -178,7 +184,7 @@ public final class FeedViews {
 
     public record Formula(Long id, String name, ItemRef mixItem, BigDecimal batchKg, BigDecimal totalKg,
                           BigDecimal costPerKg, BigDecimal batchCost, Targets targets, List<FormulaLine> lines,
-                          List<Nutrient> nutrients, List<String> warnings, String notes, boolean active) {
+                          List<Nutrient> nutrients, BisGrade.Check bis, List<String> warnings, String notes, boolean active) {
     }
 
     public record PreviewLine(ItemRef item, BigDecimal needKg, BigDecimal stock, BigDecimal shortKg) {

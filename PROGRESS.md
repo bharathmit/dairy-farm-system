@@ -33,6 +33,7 @@ UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile s
 - [x] Home, alerts & reports backend (Canvas 6): Flyway V7 (`alert`, `health_schedule`, `checklist_task`, `checklist_tick`, `farm.alert_rules`, `animal.cull_keep_until`); alert engine with 23 rules (reproduction, calves, health incl. deworming/vaccination schedules, milk, feed, finance & operations), daily 05:00 job + refresh + lazy refresh, auto-close when resolved, worker visibility; reminders with repeat, done/dismiss/snooze; alert rules editor (shared numbers written to breeding settings, milk grading and farm settings); health schedules with defaults; home by role; daily checklist (auto ticks from milk, feeding and barn readings; custom tasks); barn readings with THI; reports summary + JSON/CSV (milk, cows, breeding, feed, health, P&L); cull advisor (score, verdict, keep 90 d, mark dry); compare cows. Contract: docs/api-home-alerts.md. 104 backend tests pass.
 - [x] Feed: ration switched to TMR (dry-matter based) — DMI by stage/age, DM shares per category, concentrate by milk or DMI, optional fixed-kg green items (hydroponic, azolla), water. 106 backend tests pass.
 - [x] Claude Code setup: CLAUDE.md, .claude/settings.json, slash commands /plan, /check, /wrap-up.
+- [x] Feed: BIS grade check for concentrate formulas (IS 2052:2023 Type I / II, dry-basis limits incl. moisture, Ca, P, aflatoxin B1); feed items gain fat, fibre, acid insoluble ash and aflatoxin; "Excluded" toggle replaced by max inclusion 0 %. Typical as-fed values filled for farm 1 ingredients (aflatoxin left blank — needs a lab or supplier figure). 109 backend tests pass.
 - [ ] Next release items → docs/backlog.md
 
 ## Branches
@@ -55,6 +56,7 @@ UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile s
 - All records are saved online immediately; no offline mode or later sync.
 - Team members: owners set member passwords manually; no invites.
 - Hosting: frontend on Cloudflare Workers (static assets, free); backend on Render free (sleeps after 15 min, 512 MB); OpenShift remains the long-term target.
+- Concentrate quality: IS 2052:2023 Type I and II only (Type III removed by BIS in 2021); a formula picks its grade. Max inclusion 0 % = excluded.
 
 ## Notes / blockers
 - Before first deploy: create the private `animal-photos` bucket and keep email confirmation on (see backend/README.md).

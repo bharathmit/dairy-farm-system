@@ -86,7 +86,7 @@ public class FormulaService {
             }
             if (i.getDetails().isExcluded()) {
                 String why = i.getDetails().excludedReason();
-                throw ApiException.badRequest(i.getName() + " can't be added. It is marked Excluded"
+                throw ApiException.badRequest(i.getName() + " can't be added. Its max inclusion is 0 % (excluded)"
                         + (why == null ? "." : " — " + why + "."));
             }
             if (!seen.add(i.getId())) {
@@ -206,6 +206,8 @@ public class FormulaService {
         boolean costKnown = !lines.isEmpty();
         double[] sums = new double[5];
         boolean[] known = {true, true, true, true, true};
+        double[] bisSums = new double[4];                 // fat, fibre, acid insoluble ash, aflatoxin B1
+        boolean[] bisKnown = {true, true, true, true};
         for (LineRow l : lines) {
             Item i = c.entities().get(l.itemId());
             var d = i.getDetails();
@@ -234,6 +236,14 @@ public class FormulaService {
                     sums[k] += l.kg().doubleValue() * v[k].doubleValue();
                 }
             }
+            BigDecimal[] b = {d.fatPct(), d.fibrePct(), d.aiaPct(), d.aflatoxinPpb()};
+            for (int k = 0; k < 4; k++) {
+                if (b[k] == null) {
+                    bisKnown[k] = false;
+                } else {
+                    bisSums[k] += l.kg().doubleValue() * b[k].doubleValue();
+                }
+            }
             out.add(new FormulaLine(c.ref(i.getId()), l.kg(), pct, showMoney ? lineCost : null, over, max));
         }
         if (total.compareTo(f.batchKg()) != 0) {
@@ -255,15 +265,27 @@ public class FormulaService {
             }
             nutrients.add(new Nutrient(NUTRIENTS[k], mixPct, targets[k], status));
         }
+        BisGrade.Check bis = null;
+        if (t.bisGrade() != null) {
+            double tot = total.doubleValue();
+            bis = t.bisGrade().check(new BisGrade.Mix(avg(known[0], sums[0], tot), avg(known[1], sums[1], tot),
+                    avg(bisKnown[0], bisSums[0], tot), avg(bisKnown[1], bisSums[1], tot), avg(bisKnown[2], bisSums[2], tot),
+                    avg(known[3], sums[3], tot), avg(known[4], sums[4], tot), avg(bisKnown[3], bisSums[3], tot)));
+        }
         BigDecimal batchCost = costKnown ? cost.setScale(2, RoundingMode.HALF_UP) : null;
         BigDecimal perKg = batchCost == null || total.signum() == 0 ? null : batchCost.divide(total, 2, RoundingMode.HALF_UP);
         if (perKg != null && showMoney && ((t.costMin() != null && perKg.compareTo(t.costMin()) < 0)
                 || (t.costMax() != null && perKg.compareTo(t.costMax()) > 0))) {
             warnings.add("Cost ₹" + perKg + "/kg is outside the target range.");
         }
-        Targets shown = showMoney ? t : new Targets(t.dmPct(), t.cpPct(), t.tdnPct(), t.caPct(), t.pPct(), null, null);
+        Targets shown = showMoney ? t : new Targets(t.dmPct(), t.cpPct(), t.tdnPct(), t.caPct(), t.pPct(), null, null, t.bisGrade());
         return new Formula(f.id(), f.name(), c.ref(f.mixItemId()), f.batchKg(), total.setScale(2, RoundingMode.HALF_UP),
-                showMoney ? perKg : null, showMoney ? batchCost : null, shown, out, nutrients, warnings, f.notes(), f.active());
+                showMoney ? perKg : null, showMoney ? batchCost : null, shown, out, nutrients, bis, warnings, f.notes(), f.active());
+    }
+
+    /** Weighted average per kg of mix, or null when an ingredient has no value (or the mix is empty). */
+    private static Double avg(boolean known, double sum, double totalKg) {
+        return known && totalKg > 0 ? sum / totalKg : null;
     }
 
     private FormulaRow load(Long farmId, Long id) {

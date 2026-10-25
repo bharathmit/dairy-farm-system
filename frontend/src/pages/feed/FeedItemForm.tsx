@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { Dialog, Screen, Segmented, Switch, TopBar } from '../../components/ui'
+import { Dialog, Screen, Segmented, TopBar } from '../../components/ui'
 import { ContactSelect, LoadState } from '../../components/records'
 import { useFeed } from '../../components/feed'
 import { useStore } from '../../data/store'
@@ -12,19 +12,23 @@ import { errorMessage } from '../../lib/api'
 interface Draft {
   name: string; category: FeedCategory | ''; unit: string; costPerUnit: string
   dmPct: string; cpPct: string; tdnPct: string; caPct: string; pPct: string
-  maxInclusionPct: string; excluded: boolean; excludedReason: string; reorderLevel: string; leadTimeDays: string; supplier: string; notes: string; active: boolean
+  fatPct: string; fibrePct: string; aiaPct: string; aflatoxinPpb: string
+  maxInclusionPct: string; excludedReason: string; reorderLevel: string; leadTimeDays: string; supplier: string; notes: string; active: boolean
 }
 const empty: Draft = {
   name: '', category: '', unit: 'KG', costPerUnit: '', dmPct: '', cpPct: '', tdnPct: '', caPct: '', pPct: '',
-  maxInclusionPct: '', excluded: false, excludedReason: '', reorderLevel: '', leadTimeDays: '', supplier: '', notes: '', active: true,
+  fatPct: '', fibrePct: '', aiaPct: '', aflatoxinPpb: '', maxInclusionPct: '', excludedReason: '', reorderLevel: '', leadTimeDays: '', supplier: '', notes: '', active: true,
 }
 const fromItem = (i: FeedItem): Draft => ({
   name: i.name, category: i.category, unit: i.unit || 'KG', costPerUnit: numText(i.costPerUnit),
   dmPct: numText(i.dmPct), cpPct: numText(i.cpPct), tdnPct: numText(i.tdnPct), caPct: numText(i.caPct), pPct: numText(i.pPct),
-  maxInclusionPct: numText(i.maxInclusionPct), excluded: i.excluded, excludedReason: i.excludedReason ?? '',
+  fatPct: numText(i.fatPct), fibrePct: numText(i.fibrePct), aiaPct: numText(i.aiaPct), aflatoxinPpb: numText(i.aflatoxinPpb),
+  maxInclusionPct: i.excluded ? '0' : numText(i.maxInclusionPct), excludedReason: i.excludedReason ?? '',
   reorderLevel: numText(i.reorderLevel), leadTimeDays: numText(i.leadTimeDays), supplier: i.supplier ? String(i.supplier.id) : '', notes: i.notes ?? '', active: i.active,
 })
 const NUTRIENTS = [['dmPct', 'DM %'], ['cpPct', 'CP %'], ['tdnPct', 'TDN %'], ['caPct', 'Ca %'], ['pPct', 'P %']] as const
+/** IS 2052 quality values, as fed; the formula converts them to dry basis for the BIS grade check. */
+const BIS_FIELDS = [['fatPct', 'Crude fat %'], ['fibrePct', 'Crude fibre %'], ['aiaPct', 'Acid insol. ash %'], ['aflatoxinPpb', 'Aflatoxin B1 ppb']] as const
 
 /** Record own fodder cut, or correct stock (+/−). */
 function StockBox({ id, unit, onDone }: { id: string; unit: string; onDone: () => void }) {
@@ -75,6 +79,8 @@ export default function FeedItemForm() {
   const ro = !isOwner
   const stock = overview.data?.items.find((s) => String(s.item.id) === id)
   const unit = (d.unit || 'KG').toLowerCase()
+  const excluded = d.maxInclusionPct.trim() !== '' && toNum(d.maxInclusionPct) === 0
+  const moisture = toNum(d.dmPct)
 
   const save = async () => {
     if (!d.name.trim()) { notify('Enter the name'); return }
@@ -84,7 +90,8 @@ export default function FeedItemForm() {
       const saved = await fd.saveItem({
         name: d.name.trim(), category: d.category, unit: d.unit || 'KG', costPerUnit: toNum(d.costPerUnit) ?? null,
         dmPct: toNum(d.dmPct) ?? null, cpPct: toNum(d.cpPct) ?? null, tdnPct: toNum(d.tdnPct) ?? null, caPct: toNum(d.caPct) ?? null, pPct: toNum(d.pPct) ?? null,
-        maxInclusionPct: toNum(d.maxInclusionPct) ?? null, excluded: d.excluded, excludedReason: d.excluded ? d.excludedReason.trim() || null : null,
+        fatPct: toNum(d.fatPct) ?? null, fibrePct: toNum(d.fibrePct) ?? null, aiaPct: toNum(d.aiaPct) ?? null, aflatoxinPpb: toNum(d.aflatoxinPpb) ?? null,
+        maxInclusionPct: toNum(d.maxInclusionPct) ?? null, excludedReason: excluded ? d.excludedReason.trim() || null : null,
         reorderLevel: toNum(d.reorderLevel) ?? null, leadTimeDays: toNum(d.leadTimeDays) ?? null,
         supplierContactId: d.supplier ? Number(d.supplier) : null, notes: d.notes.trim() || null, active: d.active,
       }, id)
@@ -132,16 +139,19 @@ export default function FeedItemForm() {
               {NUTRIENTS.map(([k, label]) => <div key={k}><label className="lab" htmlFor={`fi-${k}`}>{label}</label><input className="inp" id={`fi-${k}`} inputMode="decimal" value={d[k]} onChange={(e) => set({ [k]: decimal(e.target.value) } as Partial<Draft>)} /></div>)}
             </div>
             <div className="hint">Used for formula and ration nutrient checks.</div>
+            <div className="mt-3.5 flex items-center justify-between"><b className="text-[15px]">BIS quality (IS 2052)</b><span className="text-[13px] text-ink-3">Moisture {moisture != null ? `${kg(100 - moisture)} %` : '—'}</span></div>
+            <div className="mt-2 grid grid-cols-2 gap-2.5">
+              {BIS_FIELDS.map(([k, label]) => <div key={k}><label className="lab" htmlFor={`fi-${k}`}>{label}</label><input className="inp" id={`fi-${k}`} inputMode="decimal" value={d[k]} onChange={(e) => set({ [k]: decimal(e.target.value) } as Partial<Draft>)} /></div>)}
+            </div>
+            <div className="hint">As fed, like the nutrients above. Moisture = 100 − DM %. Used for the formula's BIS grade check.</div>
           </div>
 
           <div className="rounded-[14px] bg-white p-3.5">
             <b>Use limits</b>
-            <div className="mt-3"><label className="lab" htmlFor="fi-max">Max inclusion in a concentrate (%)</label><input className="inp" id="fi-max" inputMode="decimal" value={d.maxInclusionPct} onChange={(e) => set({ maxInclusionPct: decimal(e.target.value) })} /><div className="hint">Formula shows a warning above this.</div></div>
-            <div className="mt-3.5 flex items-center gap-3">
-              <div className="flex-1"><div className="font-semibold">Excluded</div><div className="text-[13px] text-ink-3">Block this item in every formula and ration</div></div>
-              <Switch checked={d.excluded} onChange={(v) => set({ excluded: v })} label="Excluded" />
-            </div>
-            {d.excluded && <div className="mt-3"><label className="lab" htmlFor="fi-why">Reason for exclusion</label><input className="inp" id="fi-why" placeholder="e.g. Gossypol (cottonseed cake)" value={d.excludedReason} onChange={(e) => set({ excludedReason: e.target.value })} /></div>}
+            <div className="mt-3"><label className="lab" htmlFor="fi-max">Max inclusion in a concentrate (%)</label><input className="inp" id="fi-max" inputMode="decimal" placeholder="No limit" value={d.maxInclusionPct} onChange={(e) => set({ maxInclusionPct: decimal(e.target.value) })} />
+              <div className="hint">Formula shows a warning above this. <b>0 % = excluded</b>: blocked in every formula and ration.</div></div>
+            {excluded && <span className="badge mt-2 inline-block bg-ground text-ink-2">Excluded</span>}
+            {excluded && <div className="mt-3"><label className="lab" htmlFor="fi-why">Reason for exclusion</label><input className="inp" id="fi-why" placeholder="e.g. Gossypol (cottonseed cake)" value={d.excludedReason} onChange={(e) => set({ excludedReason: e.target.value })} /></div>}
             <div className="mt-3.5 rounded-[10px] bg-warn-soft px-3 py-2.5 text-[13px] text-warn-text">Daily limits by lactation stage are set in the ration rules. <Link to="/feed/ration-rules" className="font-semibold text-warn-ink">Open ration rules</Link></div>
           </div>
 

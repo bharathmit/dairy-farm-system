@@ -26,36 +26,48 @@ public class Item extends FarmScoped {
 
     /**
      * JSONB details. SEMEN: bullCode, breed, sexed. FEED: nutrients per kg as fed (dmPct, cpPct, tdnPct, caPct, pPct),
-     * maxInclusionPct in a concentrate, excluded + excludedReason.
+     * maxInclusionPct in a concentrate (0 = excluded), excludedReason; BIS quality values fatPct, fibrePct,
+     * aiaPct (acid insoluble ash) and aflatoxinPpb, also as fed. {@code excluded} is the older flag, still honoured.
      */
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public record Details(String bullCode, String breed, Boolean sexed,
                           BigDecimal dmPct, BigDecimal cpPct, BigDecimal tdnPct, BigDecimal caPct, BigDecimal pPct,
                           BigDecimal maxInclusionPct, Boolean excluded, String excludedReason,
                           String brand, String model, Integer serviceEveryDays, String serviceTask,
-                          Integer reminderDays, LocalDate purchaseDate, BigDecimal purchaseCost) {
+                          Integer reminderDays, LocalDate purchaseDate, BigDecimal purchaseCost,
+                          BigDecimal fatPct, BigDecimal fibrePct, BigDecimal aiaPct, BigDecimal aflatoxinPpb) {
         public static final Details EMPTY = new Details(null, null, null);
 
         public Details(String bullCode, String breed, Boolean sexed,
                        BigDecimal dmPct, BigDecimal cpPct, BigDecimal tdnPct, BigDecimal caPct, BigDecimal pPct,
                        BigDecimal maxInclusionPct, Boolean excluded, String excludedReason) {
             this(bullCode, breed, sexed, dmPct, cpPct, tdnPct, caPct, pPct, maxInclusionPct, excluded, excludedReason,
-                    null, null, null, null, null, null, null);
+                    null, null, null, null, null, null, null, null, null, null, null);
+        }
+
+        /** FEED details. */
+        public static Details feed(BigDecimal dmPct, BigDecimal cpPct, BigDecimal tdnPct, BigDecimal caPct, BigDecimal pPct,
+                                   BigDecimal fatPct, BigDecimal fibrePct, BigDecimal aiaPct, BigDecimal aflatoxinPpb,
+                                   BigDecimal maxInclusionPct, String excludedReason) {
+            return new Details(null, null, null, dmPct, cpPct, tdnPct, caPct, pPct, maxInclusionPct, null, excludedReason,
+                    null, null, null, null, null, null, null, fatPct, fibrePct, aiaPct, aflatoxinPpb);
         }
 
         /** EQUIPMENT details. */
         public static Details equipment(String brand, String model, Integer serviceEveryDays, String serviceTask,
                                         Integer reminderDays, LocalDate purchaseDate, BigDecimal purchaseCost) {
             return new Details(null, null, null, null, null, null, null, null, null, null, null,
-                    brand, model, serviceEveryDays, serviceTask, reminderDays, purchaseDate, purchaseCost);
+                    brand, model, serviceEveryDays, serviceTask, reminderDays, purchaseDate, purchaseCost,
+                    null, null, null, null);
         }
 
         public Details(String bullCode, String breed, Boolean sexed) {
             this(bullCode, breed, sexed, null, null, null, null, null, null, null, null);
         }
 
+        /** Excluded = max inclusion 0 %, or the older excluded flag. */
         public boolean isExcluded() {
-            return Boolean.TRUE.equals(excluded);
+            return Boolean.TRUE.equals(excluded) || (maxInclusionPct != null && maxInclusionPct.signum() == 0);
         }
     }
 

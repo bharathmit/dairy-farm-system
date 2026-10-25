@@ -16,6 +16,9 @@ export interface ItemRef { id: number; name: string; category: FeedCategory; uni
 export interface FeedItem {
   id: number; name: string; category: FeedCategory; unit: string; costPerUnit?: number | null
   dmPct?: number | null; cpPct?: number | null; tdnPct?: number | null; caPct?: number | null; pPct?: number | null
+  /** BIS quality values, as fed: fat, fibre, acid insoluble ash (%), aflatoxin B1 (ppb) */
+  fatPct?: number | null; fibrePct?: number | null; aiaPct?: number | null; aflatoxinPpb?: number | null
+  /** 0 = excluded (blocked in every formula and ration) */
   maxInclusionPct?: number | null; excluded: boolean; excludedReason?: string | null
   reorderLevel?: number | null; leadTimeDays?: number | null; supplier?: ContactRef | null; notes?: string | null; active: boolean
 }
@@ -42,10 +45,17 @@ export interface FeedingSheet {
 }
 export interface FormulaLine { item: ItemRef; kg: number; pct?: number | null; cost?: number | null; overMax?: boolean; maxInclusionPct?: number | null }
 export interface Nutrient { name: string; mixPct?: number | null; targetPct?: number | null; status: NutrientStatus }
-export interface FormulaTargets { dmPct?: number | null; cpPct?: number | null; tdnPct?: number | null; caPct?: number | null; pPct?: number | null; costMin?: number | null; costMax?: number | null }
+export type BisGrade = 'TYPE_I' | 'TYPE_II'
+export type BisStatus = 'PASS' | 'FAIL' | 'UNKNOWN'
+export interface BisParam { name: string; value?: number | null; limit: number; kind: 'MIN' | 'MAX'; unit: '%' | 'ppb'; status: BisStatus }
+export interface BisCheck { grade: BisGrade; label: string; status: 'PASS' | 'FAIL' | 'INCOMPLETE'; params: BisParam[] }
+export interface FormulaTargets {
+  dmPct?: number | null; cpPct?: number | null; tdnPct?: number | null; caPct?: number | null; pPct?: number | null; costMin?: number | null; costMax?: number | null
+  bisGrade?: BisGrade | null
+}
 export interface Formula {
   id: number; name: string; mixItem: ItemRef; batchKg: number; totalKg: number; costPerKg?: number | null; batchCost?: number | null
-  targets: FormulaTargets; lines: FormulaLine[]; nutrients: Nutrient[]; warnings: string[]; notes?: string | null
+  targets: FormulaTargets; lines: FormulaLine[]; nutrients: Nutrient[]; bis?: BisCheck | null; warnings: string[]; notes?: string | null
 }
 export interface BatchPreview {
   formulaId: number; batchKg: number; lines: { item: ItemRef; needKg: number; stock: number; shortKg: number }[]
@@ -125,6 +135,36 @@ export const PAYMENT_METHODS: { value: PaymentMethod; label: string }[] = [
   { value: 'UPI', label: 'UPI' }, { value: 'CASH', label: 'Cash' }, { value: 'BANK_TRANSFER', label: 'Bank transfer' },
   { value: 'CARD', label: 'Card' }, { value: 'CHEQUE', label: 'Cheque' }, { value: 'OTHER', label: 'Other' },
 ]
+/**
+ * IS 2052:2023 compounded cattle feed, Table 1 (Type III was removed in 2021). All limits except moisture are on a
+ * moisture-free (dry matter) basis. Same rules as backend feed/BisGrade.
+ */
+export const BIS_GRADES: { value: BisGrade; label: string; hint: string; cpMin: number; fatMin: number; fibreMax: number; aiaMax: number }[] = [
+  { value: 'TYPE_I', label: 'Type I', hint: 'High yielders', cpMin: 22, fatMin: 4.0, fibreMax: 10, aiaMax: 2.5 },
+  { value: 'TYPE_II', label: 'Type II', hint: 'Low to medium yielders', cpMin: 20, fatMin: 3.0, fibreMax: 12, aiaMax: 3.0 },
+]
+/** As-fed mix values (null = some ingredient has no value) → the grade check, dry basis. */
+export function bisCheck(grade: BisGrade, m: { dm: number | null; cp: number | null; fat: number | null; fibre: number | null; aia: number | null; ca: number | null; p: number | null; aflatoxin: number | null }): BisCheck {
+  const g = BIS_GRADES.find((x) => x.value === grade)!
+  const dry = (v: number | null) => (v == null || m.dm == null || m.dm <= 0 ? null : (v * 100) / m.dm)
+  const param = (name: string, v: number | null, limit: number, kind: 'MIN' | 'MAX', unit: '%' | 'ppb' = '%'): BisParam => {
+    const value = v == null ? null : Math.round(v * 100) / 100
+    return { name, value, limit, kind, unit, status: value == null ? 'UNKNOWN' : (kind === 'MIN' ? value >= limit : value <= limit) ? 'PASS' : 'FAIL' }
+  }
+  const params = [
+    param('Moisture', m.dm == null ? null : 100 - m.dm, 11, 'MAX'),
+    param('Crude protein', dry(m.cp), g.cpMin, 'MIN'),
+    param('Crude fat', dry(m.fat), g.fatMin, 'MIN'),
+    param('Crude fibre', dry(m.fibre), g.fibreMax, 'MAX'),
+    param('Acid insoluble ash', dry(m.aia), g.aiaMax, 'MAX'),
+    param('Calcium', dry(m.ca), 0.8, 'MIN'),
+    param('Total phosphorus', dry(m.p), 0.5, 'MIN'),
+    param('Aflatoxin B1', dry(m.aflatoxin), 20, 'MAX', 'ppb'),
+  ]
+  const status = params.some((p) => p.status === 'FAIL') ? 'FAIL' : params.some((p) => p.status === 'UNKNOWN') ? 'INCOMPLETE' : 'PASS'
+  return { grade, label: g.label, status, params }
+}
+
 /** "262.5" without trailing zeros noise, or "—". */
 export const kg = (n?: number | null, digits = 1) => (n === null || n === undefined ? '—' : Number(n.toFixed(digits)).toLocaleString('en-IN'))
 export const days = (n?: number | null) => (n === null || n === undefined ? '—' : n >= 100 ? '99+ days' : `${n < 10 ? n.toFixed(1).replace(/\.0$/, '') : Math.round(n)} days`)

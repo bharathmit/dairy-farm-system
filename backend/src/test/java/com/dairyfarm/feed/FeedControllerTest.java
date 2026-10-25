@@ -109,7 +109,8 @@ class FeedControllerTest extends IntegrationTest {
     void formulaCostNutrientsAndPreparingABatch() throws Exception {
         long maize = item("Maize", "CONCENTRATE_INGREDIENT", "\"dmPct\":88,\"cpPct\":9");
         long gingelly = item("Gingelly cake", "CONCENTRATE_INGREDIENT", "\"dmPct\":90,\"cpPct\":35,\"maxInclusionPct\":5");
-        long cotton = item("Cottonseed cake", "CONCENTRATE_INGREDIENT", "\"excluded\":true,\"excludedReason\":\"gossypol\"");
+        long cotton = item("Cottonseed cake", "CONCENTRATE_INGREDIENT", "\"maxInclusionPct\":0,\"excludedReason\":\"gossypol\"");
+        assertThat(call(get(base() + "/feed/items/" + cotton), owner, null, 200).get("excluded").asBoolean()).isTrue();
         long mix = item("Concentrate mix", "MIX", "");
         buy(maize, "200", "20");
         buy(gingelly, "5", "50");
@@ -121,7 +122,7 @@ class FeedControllerTest extends IntegrationTest {
                 + maize + ",\"kg\":100}]}", 403);
 
         JsonNode f = call(post(base() + "/feed/formulas"), owner, "{\"name\":\"Villupuram 100 kg\",\"mixItemId\":" + mix
-                + ",\"batchKg\":100,\"targets\":{\"cpPct\":18,\"costMin\":21,\"costMax\":27},\"lines\":[{\"itemId\":" + gingelly
+                + ",\"batchKg\":100,\"targets\":{\"cpPct\":18,\"costMin\":21,\"costMax\":27,\"bisGrade\":\"TYPE_II\"},\"lines\":[{\"itemId\":" + gingelly
                 + ",\"kg\":7,\"sortOrder\":2},{\"itemId\":" + maize + ",\"kg\":93,\"sortOrder\":1}]}", 201);
         long fid = f.get("id").asLong();
         assertThat(f.get("lines").get(0).get("item").get("name").asString()).isEqualTo("Maize");
@@ -132,6 +133,11 @@ class FeedControllerTest extends IntegrationTest {
         assertThat(cp.get("name").asString()).isEqualTo("CP");
         assertThat(cp.get("mixPct").asDouble()).isEqualTo(10.82);       // (93×9 + 7×35) / 100
         assertThat(cp.get("status").asString()).isEqualTo("LOW");
+        JsonNode bis = f.get("bis");                                    // CP 10.82 as fed ÷ DM 88.14 % = 12.28 % dry basis
+        assertThat(bis.get("grade").asString()).isEqualTo("TYPE_II");
+        assertThat(bis.get("status").asString()).isEqualTo("FAIL");
+        assertThat(bis.get("params").get(1).get("value").asDouble()).isEqualTo(12.28);
+        assertThat(bis.get("params").get(2).get("status").asString()).isEqualTo("UNKNOWN");   // no fat % on items
         assertThat(call(get(base() + "/feed/formulas/" + fid), worker, null, 200).get("costPerKg")).isNull();
 
         // 200 kg needs 14 kg gingelly cake, only 5 in stock
