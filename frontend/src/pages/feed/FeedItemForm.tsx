@@ -34,7 +34,9 @@ const NUTRIENTS = [['dmPct', 'DM %'], ['cpPct', 'CP %'], ['tdnPct', 'TDN %'], ['
 function StockBox({ id, unit, isMix, onDone }: { id: string; unit: string; isMix: boolean; onDone: () => void }) {
   const { fd } = useFeed()
   const { notify } = useStore()
-  const [type, setType] = useState<'HARVEST' | 'ADJUSTMENT'>(isMix ? 'ADJUSTMENT' : 'HARVEST')
+  const [picked, setType] = useState<'HARVEST' | 'ADJUSTMENT'>('HARVEST')
+  /** A mix is never harvested: its box is always a correction. */
+  const type = isMix ? 'ADJUSTMENT' : picked
   const [qty, setQty] = useState('')
   const [date, setDate] = useState(todayIso())
   const [note, setNote] = useState('')
@@ -72,6 +74,7 @@ export default function FeedItemForm() {
   const existing = useLoad(id ? () => fd.item(id) : null, [fd, id])
   const overview = useLoad(id ? () => fd.overview() : null, [fd, id])
   const moves = useLoad(id ? () => fd.moves(id) : null, [fd, id])
+  const formulas = useLoad(id && existing.data?.category === 'MIX' ? () => fd.formulas() : null, [fd, id, existing.data?.category])
   const [d, setD] = useState<Draft>(empty)
   const [busy, setBusy] = useState(false)
   const [confirm, setConfirm] = useState(false)
@@ -83,6 +86,7 @@ export default function FeedItemForm() {
   const excluded = d.maxInclusionPct.trim() !== '' && toNum(d.maxInclusionPct) === 0
   /** Mix targets: a formula's target values; stock comes from batches, purchases and adjustments. */
   const isMix = d.category === 'MIX'
+  const mixFormula = formulas.data?.find((f) => String(f.mixItem.id) === id)
   const moisture = toNum(d.dmPct)
 
   const save = async () => {
@@ -119,7 +123,8 @@ export default function FeedItemForm() {
             <div className="rounded-xl bg-white p-3"><div className="text-xs font-semibold text-ink-3">Days left</div><div className="mt-0.5 text-lg font-bold">{stock.daysLeft != null ? kg(stock.daysLeft, 1) : '—'}</div></div>
           </div>
         )}
-        {id && <div className="grid grid-cols-2 gap-2"><Link to={`/feed/buy?item=${id}`} className="btn2 h-11 no-underline">Buy</Link><a href="#stock" className="btn2 h-11 no-underline">{isMix ? 'Adjust' : 'Harvest / adjust'}</a></div>}
+        {id && <div className={`grid gap-2 ${isMix ? 'grid-cols-3' : 'grid-cols-2'}`}><Link to={`/feed/buy?item=${id}`} className="btn2 h-11 no-underline">Buy</Link>
+          {isMix && <Link to={mixFormula ? `/feed/batch?formula=${mixFormula.id}` : '/feed/batch'} className="btn2 h-11 no-underline">Prepare batch</Link>}<a href="#stock" className="btn2 h-11 no-underline">{isMix ? 'Adjust' : 'Harvest / adjust'}</a></div>}
         {ro && !id && <div className="rounded-xl bg-warn-soft px-3.5 py-3 text-sm text-warn-text">Only farm owners can add feed items.</div>}
 
         <fieldset disabled={ro} className="m-0 flex flex-col gap-3.5 border-0 p-0">
