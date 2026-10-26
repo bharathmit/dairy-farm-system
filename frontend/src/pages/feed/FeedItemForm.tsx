@@ -34,7 +34,7 @@ const NUTRIENTS = [['dmPct', 'DM %'], ['cpPct', 'CP %'], ['tdnPct', 'TDN %'], ['
 function StockBox({ id, unit, isMix, onDone }: { id: string; unit: string; isMix: boolean; onDone: () => void }) {
   const { fd } = useFeed()
   const { notify } = useStore()
-  const [type, setType] = useState<'HARVEST' | 'ADJUSTMENT'>('HARVEST')
+  const [type, setType] = useState<'HARVEST' | 'ADJUSTMENT'>(isMix ? 'ADJUSTMENT' : 'HARVEST')
   const [qty, setQty] = useState('')
   const [date, setDate] = useState(todayIso())
   const [note, setNote] = useState('')
@@ -46,19 +46,20 @@ function StockBox({ id, unit, isMix, onDone }: { id: string; unit: string; isMix
     setBusy(true)
     try {
       await fd.stock(id, { type, date, quantity: q, notes: note.trim() || undefined })
-      notify(type === 'HARVEST' ? `${isMix ? 'Stock' : 'Harvest'} of ${q} ${unit} added` : 'Stock corrected'); setQty(''); setNote(''); onDone()
+      notify(type === 'HARVEST' ? `Harvest of ${q} ${unit} added` : 'Stock corrected'); setQty(''); setNote(''); onDone()
     } catch (e) { notify(errorMessage(e)) } finally { setBusy(false) }
   }
   return (
     <div className="flex flex-col gap-3 rounded-[14px] bg-white p-3.5">
-      <b className="text-[15px]">{isMix ? 'Add opening stock or correct stock' : 'Add own fodder or correct stock'}</b>
-      <Segmented label="Stock change" options={[{ value: 'HARVEST', label: isMix ? 'Add stock' : 'Harvest / cut' }, { value: 'ADJUSTMENT', label: 'Adjust ±' }]} value={type} onChange={setType} />
+      <b className="text-[15px]">{isMix ? 'Correct stock' : 'Add own fodder or correct stock'}</b>
+      {isMix ? <div className="hint -mt-1">To add stock, use Buy (ready-made feed) or Prepare batch.</div>
+        : <Segmented label="Stock change" options={[{ value: 'HARVEST', label: 'Harvest / cut' }, { value: 'ADJUSTMENT', label: 'Adjust ±' }]} value={type} onChange={setType} />}
       <div className="grid grid-cols-2 gap-3">
         <div><label className="lab" htmlFor="fi-q">{type === 'HARVEST' ? `Quantity (${unit})` : `+ / − ${unit}`}</label><input className="inp" id="fi-q" inputMode="decimal" placeholder={type === 'HARVEST' ? '200' : '-10'} value={qty} onChange={(e) => setQty(e.target.value.replace(/[^\d.+-]/g, ''))} /></div>
         <div><label className="lab" htmlFor="fi-qd">Date</label><input className="inp" id="fi-qd" type="date" max={todayIso()} value={date} onChange={(e) => e.target.value && setDate(e.target.value)} /></div>
       </div>
-      <div><label className="lab" htmlFor="fi-qn">Note</label><input className="inp" id="fi-qn" placeholder={type === 'HARVEST' ? (isMix ? 'e.g. opening stock' : 'e.g. cut from plot 2') : 'e.g. counted, spoilt'} value={note} onChange={(e) => setNote(e.target.value)} /></div>
-      <button type="button" className="btn2 h-11" disabled={busy} onClick={save}>{busy ? 'Saving…' : type === 'HARVEST' ? (isMix ? 'Add stock' : 'Add harvest') : 'Save correction'}</button>
+      <div><label className="lab" htmlFor="fi-qn">Note</label><input className="inp" id="fi-qn" placeholder={type === 'HARVEST' ? 'e.g. cut from plot 2' : 'e.g. counted, spoilt'} value={note} onChange={(e) => setNote(e.target.value)} /></div>
+      <button type="button" className="btn2 h-11" disabled={busy} onClick={save}>{busy ? 'Saving…' : type === 'HARVEST' ? 'Add harvest' : 'Save correction'}</button>
     </div>
   )
 }
@@ -118,7 +119,7 @@ export default function FeedItemForm() {
             <div className="rounded-xl bg-white p-3"><div className="text-xs font-semibold text-ink-3">Days left</div><div className="mt-0.5 text-lg font-bold">{stock.daysLeft != null ? kg(stock.daysLeft, 1) : '—'}</div></div>
           </div>
         )}
-        {id && <div className="grid grid-cols-2 gap-2"><Link to={`/feed/buy?item=${id}`} className="btn2 h-11 no-underline">Buy</Link><a href="#stock" className="btn2 h-11 no-underline">{isMix ? 'Add / adjust' : 'Harvest / adjust'}</a></div>}
+        {id && <div className="grid grid-cols-2 gap-2"><Link to={`/feed/buy?item=${id}`} className="btn2 h-11 no-underline">Buy</Link><a href="#stock" className="btn2 h-11 no-underline">{isMix ? 'Adjust' : 'Harvest / adjust'}</a></div>}
         {ro && !id && <div className="rounded-xl bg-warn-soft px-3.5 py-3 text-sm text-warn-text">Only farm owners can add feed items.</div>}
 
         <fieldset disabled={ro} className="m-0 flex flex-col gap-3.5 border-0 p-0">
