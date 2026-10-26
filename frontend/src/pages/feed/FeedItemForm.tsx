@@ -111,7 +111,7 @@ export default function FeedItemForm() {
       <TopBar title={id ? (existing.data?.name ?? 'Feed item') : 'Feed item'} close="/feed" />
       <div className="flex flex-col gap-3.5 px-4 pb-4">
         <LoadState loading={existing.loading} error={existing.error} onRetry={existing.reload} empty={Boolean(id) && !existing.data} />
-        {id && stock && (
+        {id && stock && !isMix && (
           <div className="grid grid-cols-3 gap-2.5">
             <div className="rounded-xl bg-white p-3"><div className="text-xs font-semibold text-ink-3">In stock</div><div className="mt-0.5 text-lg font-bold">{kg(stock.stock)} {unit}</div></div>
             <div className="rounded-xl bg-white p-3"><div className="text-xs font-semibold text-ink-3">Use / day</div><div className="mt-0.5 text-lg font-bold">{stock.needPerDay ? kg(stock.needPerDay) : '—'}</div></div>

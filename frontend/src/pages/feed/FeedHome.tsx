@@ -7,7 +7,14 @@ import { StockRow, Tile, useFeed } from '../../components/feed'
 import { useStore } from '../../data/store'
 import { dayLabel, todayIso, useLoad } from '../../data/records'
 import { inr0, time12 } from '../../data/breeding'
-import { kg, STOCK_FILTERS, type SessionInfo, type Ses } from '../../data/feed'
+import { kg, STOCK_FILTERS, type SessionInfo, type Ses, type StockItem } from '../../data/feed'
+
+/** Stock on hand chips: Reorder items first (instead of All), then the category groups. */
+const isReorder = (s: StockItem) => s.status === 'REORDER' || s.status === 'PREPARE'
+const HOME_FILTERS: { key: string; label: string; match: (s: StockItem) => boolean }[] = [
+  { key: 'REORDER', label: 'Reorder items', match: isReorder },
+  ...STOCK_FILTERS.filter((x) => x.key !== 'ALL').map((x) => ({ key: x.key, label: x.label, match: (s: StockItem) => x.match(s.item.category) })),
+]
 
 function SessionRow({ ses, info }: { ses: Ses; info?: SessionInfo }) {
   const label = ses === 'AM' ? '6 AM feeding' : '6 PM feeding'
@@ -33,11 +40,11 @@ export default function FeedHome() {
   const { farm } = useStore()
   const today = todayIso()
   const ov = useLoad(() => fd.overview(today), [fd, today])
-  const [filter, setFilter] = useState('ALL')
+  const [filter, setFilter] = useState('REORDER')
   const o = ov.data
   const items = o?.items ?? []
-  const f = STOCK_FILTERS.find((x) => x.key === filter) ?? STOCK_FILTERS[0]
-  const shown = items.filter((s) => f.match(s.item.category))
+  const f = HOME_FILTERS.find((x) => x.key === filter) ?? HOME_FILTERS[0]
+  const shown = items.filter(f.match)
 
   return (
     <Screen>
@@ -73,9 +80,9 @@ export default function FeedHome() {
           <>
             <div className="mt-1.5 flex items-center"><b className="flex-1 text-[15px]">Stock on hand</b>{o.reorderCount > 0 && <span className="badge bg-danger-soft text-danger-text">{o.reorderCount} to reorder</span>}</div>
             <div className="flex gap-2 overflow-x-auto pb-1">
-              {STOCK_FILTERS.map((x) => (
+              {HOME_FILTERS.map((x) => (
                 <button key={x.key} type="button" aria-pressed={filter === x.key} onClick={() => setFilter(x.key)} className={`chip ${filter === x.key ? 'chip-on' : ''}`}>
-                  {x.key === 'ALL' ? `All ${items.length}` : x.label}
+                  {x.label} {items.filter(x.match).length}
                 </button>
               ))}
             </div>
@@ -83,7 +90,7 @@ export default function FeedHome() {
               <div className="overflow-hidden rounded-[14px] bg-white">{shown.map((s, i) => <StockRow key={s.item.id} s={s} first={i === 0} />)}</div>
             ) : (
               <div className="rounded-[14px] bg-white px-4 py-5 text-center text-sm text-ink-3">
-                {items.length ? 'No items in this group.' : <>No feed items yet. {isOwner && <Link to="/feed/items/new" className="font-semibold">Add the first one</Link>}</>}
+                {items.length ? (filter === 'REORDER' ? 'Nothing to reorder right now.' : 'No items in this group.') : <>No feed items yet. {isOwner && <Link to="/feed/items/new" className="font-semibold">Add the first one</Link>}</>}
               </div>
             )}
             <div className="text-xs text-ink-3">Bar = days of stock left against the planned daily need (full = 30 days or more).</div>

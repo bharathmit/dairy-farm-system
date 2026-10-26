@@ -104,14 +104,14 @@ export const FEED_CATEGORIES: { value: FeedCategory; label: string; short: strin
   { value: 'MIX', label: 'Mix targets', short: 'Mix targets' },
 ]
 export const categoryLabel = (c?: string | null) => FEED_CATEGORIES.find((x) => x.value === c)?.short ?? c ?? ''
-/** Stock list filter chips: Green / Dry / Concentrate (ingredients) / Mix targets / Mineral. */
+/** Stock list filter chips: Green / Dry / Concentrate (ingredients) / Mineral / Mix targets. */
 export const STOCK_FILTERS: { key: string; label: string; match: (c: FeedCategory) => boolean }[] = [
   { key: 'ALL', label: 'All', match: () => true },
   { key: 'GREEN', label: 'Green', match: (c) => c === 'GREEN_FODDER' || c === 'SILAGE' },
   { key: 'DRY', label: 'Dry', match: (c) => c === 'DRY_FODDER' },
   { key: 'CONC', label: 'Concentrate', match: (c) => c === 'CONCENTRATE_INGREDIENT' },
-  { key: 'MIX', label: 'Mix targets', match: (c) => c === 'MIX' },
   { key: 'MINERAL', label: 'Mineral', match: (c) => c === 'MINERAL' },
+  { key: 'MIX', label: 'Mix targets', match: (c) => c === 'MIX' },
 ]
 export const SECTION_LABEL: Record<Section, string> = {
   GREEN: 'Before milking · green', DRY: 'After milking · dry', CONCENTRATE: 'After milking · concentrate', OTHER: 'Other',

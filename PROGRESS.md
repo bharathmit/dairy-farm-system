@@ -58,6 +58,7 @@ UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile s
 - Team members: owners set member passwords manually; no invites.
 - Hosting: frontend on Cloudflare Workers (static assets, free); backend on Render free (sleeps after 15 min, 512 MB); OpenShift remains the long-term target.
 - Concentrate quality: IS 2052:2023 Type I and II only (Type III removed by BIS in 2021); a formula picks its grade. Max inclusion 0 % = excluded.
+- Formula editor: ingredient lines are added as Concentrate or Mineral (dropdown limited to that category); "Custom mix" makes nutrient targets editable for comparison only (not saved). Stock on hand chips: Reorder items (default, replaces All), Green, Dry, Concentrate, Mineral, Mix targets — each with a count. Mix targets items hide In stock / Use per day / Days left.
 
 ## Notes / blockers
 - Before first deploy: create the private `animal-photos` bucket and keep email confirmation on (see backend/README.md).

@@ -9,7 +9,9 @@ import { inr0 } from '../../data/breeding'
 import { BIS_GRADES, bisCheck, inr2, kg, NUTRIENT_TONE, type BisGrade, type BisStatus, type FeedItem, type Formula, type NutrientStatus } from '../../data/feed'
 import { errorMessage } from '../../lib/api'
 
-interface Line { key: number; itemId: string; kg: string }
+type Kind = 'CONC' | 'MINERAL'
+interface Line { key: number; itemId: string; kg: string; kind: Kind }
+const KIND_CAT: Record<Kind, FeedItem['category']> = { CONC: 'CONCENTRATE_INGREDIENT', MINERAL: 'MINERAL' }
 /** Compared with the chosen Mix targets item (as fed); same ±10 % rule as the backend. */
 const NUTS = [['DM', 'dmPct', '%'], ['CP', 'cpPct', '%'], ['TDN', 'tdnPct', '%'], ['Ca', 'caPct', '%'], ['P', 'pPct', '%'],
   ['Crude fat', 'fatPct', '%'], ['Crude fibre', 'fibrePct', '%'], ['Acid insol. ash', 'aiaPct', '%'], ['Aflatoxin B1', 'aflatoxinPpb', 'ppb']] as const
@@ -33,6 +35,8 @@ export default function FormulaEditor() {
   const [batchKg, setBatchKg] = useState('100')
   const [lines, setLines] = useState<Line[]>([])
   const [targets, setTargets] = useState<Record<string, string>>({})
+  const [custom, setCustom] = useState(false)
+  const [customTgt, setCustomTgt] = useState<Record<string, string>>({})
   const [grade, setGrade] = useState<BisGrade | ''>('')
   const [notes, setNotes] = useState('')
   const [server, setServer] = useState<Formula | null>(null)
@@ -44,7 +48,7 @@ export default function FormulaEditor() {
     const f = existing.data
     if (!f) return
     setServer(f); setName(f.name); setMixItem(String(f.mixItem.id)); setBatchKg(numText(f.batchKg)); setNotes(f.notes ?? '')
-    setLines(f.lines.map((l) => ({ key: seq++, itemId: String(l.item.id), kg: numText(l.kg) })))
+    setLines(f.lines.map((l) => ({ key: seq++, itemId: String(l.item.id), kg: numText(l.kg), kind: l.item.category === 'MINERAL' ? 'MINERAL' : 'CONC' })))
     setTargets(Object.fromEntries(Object.entries(f.targets).filter(([k]) => k !== 'bisGrade').map(([k, v]) => [k, numText(v as number | null)])))
     setGrade(f.targets.bisGrade ?? '')
   }, [existing.data])
@@ -60,10 +64,10 @@ export default function FormulaEditor() {
       const known = rows.filter((r) => r.it && r.it[k] != null)
       const knownKg = known.reduce((t, r) => t + r.kg, 0)
       const mix = total > 0 && knownKg >= total * 0.999 ? known.reduce((t, r) => t + r.kg * ((r.it![k] as number) ?? 0), 0) / total : null
-      // the Mix targets item's value; older formulas fall back to their saved target
-      const tgt = mixTarget?.[k] ?? (k in targets ? toNum(targets[k] ?? '') ?? null : null)
+      // Custom: typed values (what-if); else the Mix targets item's value, older formulas fall back to their saved target
+      const tgt = custom ? toNum(customTgt[k] ?? '') ?? null : mixTarget?.[k] ?? (k in targets ? toNum(targets[k] ?? '') ?? null : null)
       const status: NutrientStatus = mix == null || tgt == null ? 'UNKNOWN' : tgt > 0 && mix < tgt * 0.9 ? 'LOW' : tgt > 0 && mix > tgt * 1.1 ? 'HIGH' : 'OK'
-      return { label, unit, mix, tgt, status }
+      return { label, key: k, unit, mix, tgt, status }
     })
     const over = rows.filter((r) => r.it?.maxInclusionPct != null && total > 0 && (r.kg / total) * 100 > (r.it.maxInclusionPct ?? 100))
     // BIS: as-fed weighted averages; an ingredient missing a value makes that parameter unknown
@@ -74,7 +78,7 @@ export default function FormulaEditor() {
     const bis = grade && used.length ? bisCheck(grade, mix) : null
     const missing = used.map((r) => ({ name: r.it!.name, what: BIS_KEYS.filter(([, k]) => r.it![k] == null).map(([, , l]) => l) })).filter((x) => x.what.length)
     return { rows, total, cost, priced, nut, over, bis, missing, mixTarget }
-  }, [lines, byId, targets, grade, mixItem])
+  }, [lines, byId, targets, grade, mixItem, custom, customTgt])
   const batch = toNum(batchKg) ?? 0
   const costPerKg = calc.total > 0 ? calc.cost / calc.total : null
   const ro = !isOwner
@@ -107,6 +111,12 @@ export default function FormulaEditor() {
     try { await fd.deleteFormula(Number(id)); notify('Formula deleted'); nav('/feed/formulas') } catch (e) { setConfirm(false); notify(errorMessage(e)) }
   }
   const mixes = (items.data ?? []).filter((i: FeedItem) => i.category === 'MIX')
+  /** Custom compare: start from the chosen Mix targets values, then edit freely (not saved). */
+  const toggleCustom = () => {
+    if (!custom) setCustomTgt(Object.fromEntries(NUTS.map(([, k]) => [k, numText((calc.mixTarget?.[k] as number | null | undefined) ?? null)])))
+    setCustom((c) => !c)
+  }
+  const addLine = (kind: Kind) => setLines((ls) => [...ls, { key: seq++, itemId: '', kg: '', kind }])
 
   return (
     <Screen>
@@ -141,7 +151,7 @@ export default function FormulaEditor() {
             return (
               <div key={l.key} className={`grid min-h-14 grid-cols-[1.8fr_.9fr_.8fr] items-center gap-2 border-t border-line-faint px-3 py-1.5 text-sm ${over ? 'bg-warn-soft' : ''}`}>
                 <div className="min-w-0">
-                  {ro ? <span>{it?.name ?? '—'}</span> : <FeedItemSelect id={`fe-i-${l.key}`} items={items.data} value={l.itemId} onChange={(v) => pickItem(l.key, v)} filter={(i) => i.category !== 'MIX'} placeholder="Ingredient" />}
+                  {ro ? <span>{it?.name ?? '—'}</span> : <FeedItemSelect id={`fe-i-${l.key}`} items={items.data} value={l.itemId} onChange={(v) => pickItem(l.key, v)} filter={(i) => i.category === KIND_CAT[l.kind]} placeholder="Choose" />}
                   {over && <span className="badge mt-1 inline-block bg-white text-warn-ink">Over max {it?.maxInclusionPct} %</span>}
                 </div>
                 <input className={`h-11 w-full rounded-[10px] border bg-white text-center text-base font-bold ${over ? 'border-[#C2410C]' : 'border-line'}`} inputMode="decimal" aria-label={`${it?.name ?? 'Ingredient'} kg`} disabled={ro}
@@ -155,7 +165,12 @@ export default function FormulaEditor() {
           })}
           <div className="grid min-h-12 grid-cols-[1.8fr_.9fr_.8fr] items-center gap-2 border-t border-line-faint bg-[#F7F7F3] px-3 text-sm font-bold"><span>Total</span><span className="text-center">{kg(calc.total)}</span><span className="text-right">{isOwner ? inr0(calc.cost) : '100 %'}</span></div>
         </div>
-        {!ro && <button type="button" onClick={() => setLines((ls) => [...ls, { key: seq++, itemId: '', kg: '' }])} className="h-11 rounded-[10px] border border-dashed border-line bg-transparent text-sm font-semibold text-brand">+ Add ingredient</button>}
+        {!ro && (
+          <div className="grid grid-cols-2 gap-2">
+            <button type="button" onClick={() => addLine('CONC')} className="h-11 rounded-[10px] border border-dashed border-line bg-transparent text-sm font-semibold text-brand">+ Add concentrate</button>
+            <button type="button" onClick={() => addLine('MINERAL')} className="h-11 rounded-[10px] border border-dashed border-line bg-transparent text-sm font-semibold text-brand">+ Add mineral</button>
+          </div>
+        )}
 
         {blocked && <div className="rounded-xl bg-danger-soft px-3.5 py-3 text-sm text-danger-text" role="alert">{blocked} <button type="button" className="ml-1 border-0 bg-transparent p-0 font-semibold text-danger-text underline" onClick={() => setBlocked(null)}>OK</button></div>}
         {calc.over.map((o) => (
@@ -164,18 +179,25 @@ export default function FormulaEditor() {
         {server?.warnings.filter((w) => !calc.over.some((o) => w.includes(o.it?.name ?? '§'))).map((w) => <div key={w} className="rounded-xl bg-warn-soft px-3.5 py-3 text-sm text-warn-text">{w}</div>)}
 
         <div className="overflow-hidden rounded-[14px] bg-white">
-          <div className="flex justify-between px-3 pb-1.5 pt-3"><b className="text-[15px]">Nutrients in mix vs target</b><span className="text-[13px] text-ink-3">per 100 kg · as fed</span></div>
-          <div className="grid min-h-9 grid-cols-[1.3fr_1fr_1fr_.7fr] items-center px-3 text-xs font-bold text-ink-3"><span>Nutrient</span><span>Mix</span><span>{calc.mixTarget ? calc.mixTarget.name : 'Target'}</span><span /></div>
+          <div className="flex items-center justify-between gap-2 px-3 pb-1.5 pt-3">
+            <div><b className="text-[15px]">Nutrients in mix vs target</b><div className="text-[13px] text-ink-3">per 100 kg · as fed</div></div>
+            <button type="button" aria-pressed={custom} onClick={toggleCustom} className={`chip h-9 ${custom ? 'chip-on' : ''}`}>Custom mix</button>
+          </div>
+          <div className="grid min-h-9 grid-cols-[1.3fr_1fr_1fr_.7fr] items-center px-3 text-xs font-bold text-ink-3"><span>Nutrient</span><span>Mix</span><span>{custom ? 'Custom' : calc.mixTarget ? calc.mixTarget.name : 'Target'}</span><span /></div>
           {calc.nut.map((n) => (
             <div key={n.label} className="grid min-h-[44px] grid-cols-[1.3fr_1fr_1fr_.7fr] items-center gap-2 border-t border-line-faint px-3 text-sm">
               <span>{n.label}</span><span>{n.mix != null ? `${kg(n.mix, 2)} ${n.unit}` : '—'}</span>
-              <span className="text-ink-2">{n.tgt != null ? `${kg(n.tgt, 2)} ${n.unit}` : '—'}</span>
+              {custom
+                ? <input className="h-9 w-full rounded-[8px] border border-line bg-white px-2 text-sm" inputMode="decimal" aria-label={`${n.label} target ${n.unit}`}
+                    value={customTgt[n.key] ?? ''} onChange={(e) => setCustomTgt((t) => ({ ...t, [n.key]: decimal(e.target.value) }))} />
+                : <span className="text-ink-2">{n.tgt != null ? `${kg(n.tgt, 2)} ${n.unit}` : '—'}</span>}
               <span className={`badge justify-self-end ${NUTRIENT_TONE[n.status].cls}`}>{NUTRIENT_TONE[n.status].text}</span>
             </div>
           ))}
         </div>
-        {!mixItem && <div className="-mt-1.5 text-xs text-ink-3">Pick the Mix targets above to compare.</div>}
-        {mixItem && isOwner && <div className="-mt-1.5 text-xs text-ink-3">Targets come from the Mix targets item; within ±10 % = OK. <Link to={`/feed/items/${mixItem}`} className="font-semibold">Edit targets</Link></div>}
+        {custom && <div className="-mt-1.5 text-xs text-ink-3">Custom targets are for comparing only — they aren't saved. Turn Custom mix off to go back to the Mix targets item.</div>}
+        {!custom && !mixItem && <div className="-mt-1.5 text-xs text-ink-3">Pick the Mix targets above, or tap Custom mix to type your own targets.</div>}
+        {!custom && mixItem && isOwner && <div className="-mt-1.5 text-xs text-ink-3">Targets come from the Mix targets item; within ±10 % = OK. <Link to={`/feed/items/${mixItem}`} className="font-semibold">Edit targets</Link></div>}
         <div className="-mt-1.5 text-xs text-ink-3">Values fill in once each ingredient's nutrients are entered on its feed item.</div>
 
         <div className="overflow-hidden rounded-[14px] bg-white">
