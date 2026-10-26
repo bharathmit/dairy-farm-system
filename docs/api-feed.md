@@ -20,6 +20,8 @@ Quantities in kg (unit from the item). `ItemRef` = `{id, name, category, unit}`.
 - New `ration_rule` (farm_id, category CALF|HEIFER|MILKING|DRY|BULL, effective_from DATE, params JSONB),
   UNIQUE (farm_id, category, effective_from). The rule in force on a date = latest effective_from ≤ date;
   no row = the defaults below.
+- Category MIX is shown as **"Mix targets"**: the item holds the nutrient targets (as fed) its formula is compared
+  against; only nutrients are edited in the UI. Its stock still comes from batches and is used by feeding.
 - Purchases are stored for the Finance module (Canvas 6) to post as FEED expenses; no finance rows yet.
 
 ## Ration rule (per category) — TMR, dry-matter based
@@ -101,7 +103,8 @@ FeedingSheet = { date, session, target, label, animals, lines: [{item: ItemRef, 
   // planned = half of the day plan for the target's animals; actualKg = saved value or null; warnings e.g. "Sorghum green 8 kg under plan", "Stock left 25 kg"
 Formula = { id, name, mixItem: ItemRef, batchKg, totalKg, costPerKg, batchCost, targets: {dmPct, cpPct, tdnPct, caPct, pPct, costMin, costMax, bisGrade},
   lines: [{item: ItemRef, kg, pct, cost, overMax, maxInclusionPct}],
-  nutrients: [{name: DM|CP|TDN|Ca|P, mixPct, targetPct, status: OK|LOW|HIGH|UNKNOWN}],   // ±10 % of target = OK
+  nutrients: [{name: DM|CP|TDN|Ca|P|Fat|Fibre|AIA|Aflatoxin, mixPct, targetPct, status: OK|LOW|HIGH|UNKNOWN}],   // ±10 % of target = OK
+  // targetPct = the Mix targets item's value (as fed; Aflatoxin in ppb); for DM–P a missing value falls back to targets.*
   bis: null | {grade: TYPE_I|TYPE_II, label, status: PASS|FAIL|INCOMPLETE,
         params: [{name, value, limit, kind: MIN|MAX, unit: %|ppb, status: PASS|FAIL|UNKNOWN}]},
   warnings: [string], notes }

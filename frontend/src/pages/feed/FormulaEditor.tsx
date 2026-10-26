@@ -10,7 +10,9 @@ import { BIS_GRADES, bisCheck, inr2, kg, NUTRIENT_TONE, type BisGrade, type BisS
 import { errorMessage } from '../../lib/api'
 
 interface Line { key: number; itemId: string; kg: string }
-const NUTS = [['DM', 'dmPct'], ['CP', 'cpPct'], ['TDN', 'tdnPct'], ['Ca', 'caPct'], ['P', 'pPct']] as const
+/** Compared with the chosen Mix targets item (as fed); same ±10 % rule as the backend. */
+const NUTS = [['DM', 'dmPct', '%'], ['CP', 'cpPct', '%'], ['TDN', 'tdnPct', '%'], ['Ca', 'caPct', '%'], ['P', 'pPct', '%'],
+  ['Crude fat', 'fatPct', '%'], ['Crude fibre', 'fibrePct', '%'], ['Acid insol. ash', 'aiaPct', '%'], ['Aflatoxin B1', 'aflatoxinPpb', 'ppb']] as const
 /** Ingredient fields the BIS check needs, with the label used when an ingredient is missing one. */
 const BIS_KEYS = [['dm', 'dmPct', 'DM'], ['cp', 'cpPct', 'CP'], ['fat', 'fatPct', 'fat'], ['fibre', 'fibrePct', 'fibre'], ['aia', 'aiaPct', 'acid insol. ash'],
   ['ca', 'caPct', 'Ca'], ['p', 'pPct', 'P'], ['aflatoxin', 'aflatoxinPpb', 'aflatoxin']] as const
@@ -53,13 +55,15 @@ export default function FormulaEditor() {
     const total = rows.reduce((t, r) => t + r.kg, 0)
     const cost = rows.reduce((t, r) => t + r.kg * (r.it?.costPerUnit ?? 0), 0)
     const priced = rows.every((r) => !r.it || r.it.costPerUnit != null)
-    const nut = NUTS.map(([label, k]) => {
+    const mixTarget = byId.get(mixItem)
+    const nut = NUTS.map(([label, k, unit]) => {
       const known = rows.filter((r) => r.it && r.it[k] != null)
       const knownKg = known.reduce((t, r) => t + r.kg, 0)
       const mix = total > 0 && knownKg >= total * 0.999 ? known.reduce((t, r) => t + r.kg * ((r.it![k] as number) ?? 0), 0) / total : null
-      const tgt = toNum(targets[k] ?? '')
-      const status: NutrientStatus = mix == null || tgt == null ? 'UNKNOWN' : mix < tgt * 0.9 ? 'LOW' : mix > tgt * 1.1 ? 'HIGH' : 'OK'
-      return { label, mix, tgt, status }
+      // the Mix targets item's value; older formulas fall back to their saved target
+      const tgt = mixTarget?.[k] ?? (k in targets ? toNum(targets[k] ?? '') ?? null : null)
+      const status: NutrientStatus = mix == null || tgt == null ? 'UNKNOWN' : tgt > 0 && mix < tgt * 0.9 ? 'LOW' : tgt > 0 && mix > tgt * 1.1 ? 'HIGH' : 'OK'
+      return { label, unit, mix, tgt, status }
     })
     const over = rows.filter((r) => r.it?.maxInclusionPct != null && total > 0 && (r.kg / total) * 100 > (r.it.maxInclusionPct ?? 100))
     // BIS: as-fed weighted averages; an ingredient missing a value makes that parameter unknown
@@ -69,8 +73,8 @@ export default function FormulaEditor() {
     const mix = Object.fromEntries(BIS_KEYS.map(([m, k]) => [m, avg(k)])) as Parameters<typeof bisCheck>[1]
     const bis = grade && used.length ? bisCheck(grade, mix) : null
     const missing = used.map((r) => ({ name: r.it!.name, what: BIS_KEYS.filter(([, k]) => r.it![k] == null).map(([, , l]) => l) })).filter((x) => x.what.length)
-    return { rows, total, cost, priced, nut, over, bis, missing }
-  }, [lines, byId, targets, grade])
+    return { rows, total, cost, priced, nut, over, bis, missing, mixTarget }
+  }, [lines, byId, targets, grade, mixItem])
   const batch = toNum(batchKg) ?? 0
   const costPerKg = calc.total > 0 ? calc.cost / calc.total : null
   const ro = !isOwner
@@ -112,11 +116,11 @@ export default function FormulaEditor() {
         <fieldset disabled={ro} className="m-0 flex flex-col gap-3.5 border-0 p-0">
           <div className="grid grid-cols-2 gap-3">
             <div><label className="lab" htmlFor="fe-name">Formula name</label><input className="inp" id="fe-name" placeholder="Villupuram 100 kg" value={name} onChange={(e) => setName(e.target.value)} /></div>
-            <div><label className="lab" htmlFor="fe-mix">Makes item</label>
+            <div><label className="lab" htmlFor="fe-mix">Mix targets</label>
               <select className="inp" id="fe-mix" value={mixItem} onChange={(e) => setMixItem(e.target.value)}>
-                <option value="">{mixes.length ? 'Choose' : 'No mix items'}</option>{mixes.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
+                <option value="">{mixes.length ? 'Choose' : 'No mix targets'}</option>{mixes.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
               </select>
-              {!mixes.length && isOwner && <Link to="/feed/items/new" className="mt-1.5 inline-block text-[13px] font-semibold">+ Add a Mix item</Link>}
+              {!mixes.length && isOwner && <Link to="/feed/items/new" className="mt-1.5 inline-block text-[13px] font-semibold">+ Add Mix targets</Link>}
             </div>
           </div>
           <div><label className="lab" htmlFor="fe-batch">Standard batch (kg)</label><input className="inp" id="fe-batch" inputMode="decimal" value={batchKg} onChange={(e) => setBatchKg(decimal(e.target.value))} /></div>
@@ -160,17 +164,18 @@ export default function FormulaEditor() {
         {server?.warnings.filter((w) => !calc.over.some((o) => w.includes(o.it?.name ?? '§'))).map((w) => <div key={w} className="rounded-xl bg-warn-soft px-3.5 py-3 text-sm text-warn-text">{w}</div>)}
 
         <div className="overflow-hidden rounded-[14px] bg-white">
-          <div className="flex justify-between px-3 pb-1.5 pt-3"><b className="text-[15px]">Nutrients in mix vs target</b><span className="text-[13px] text-ink-3">per kg</span></div>
-          <div className="grid min-h-9 grid-cols-[1fr_1fr_1fr_.8fr] items-center px-3 text-xs font-bold text-ink-3"><span>Nutrient</span><span>Mix</span><span>Target %</span><span /></div>
-          {calc.nut.map((n, i) => (
-            <div key={n.label} className="grid min-h-[46px] grid-cols-[1fr_1fr_1fr_.8fr] items-center gap-2 border-t border-line-faint px-3 text-sm">
-              <span>{n.label}</span><span>{n.mix != null ? `${kg(n.mix, 2)} %` : '—'}</span>
-              <input className="h-9 w-full rounded-lg border border-line text-center" inputMode="decimal" aria-label={`${n.label} target percent`} disabled={ro}
-                value={targets[NUTS[i][1]] ?? ''} onChange={(e) => setTargets((t) => ({ ...t, [NUTS[i][1]]: decimal(e.target.value) }))} />
+          <div className="flex justify-between px-3 pb-1.5 pt-3"><b className="text-[15px]">Nutrients in mix vs target</b><span className="text-[13px] text-ink-3">per 100 kg · as fed</span></div>
+          <div className="grid min-h-9 grid-cols-[1.3fr_1fr_1fr_.7fr] items-center px-3 text-xs font-bold text-ink-3"><span>Nutrient</span><span>Mix</span><span>{calc.mixTarget ? calc.mixTarget.name : 'Target'}</span><span /></div>
+          {calc.nut.map((n) => (
+            <div key={n.label} className="grid min-h-[44px] grid-cols-[1.3fr_1fr_1fr_.7fr] items-center gap-2 border-t border-line-faint px-3 text-sm">
+              <span>{n.label}</span><span>{n.mix != null ? `${kg(n.mix, 2)} ${n.unit}` : '—'}</span>
+              <span className="text-ink-2">{n.tgt != null ? `${kg(n.tgt, 2)} ${n.unit}` : '—'}</span>
               <span className={`badge justify-self-end ${NUTRIENT_TONE[n.status].cls}`}>{NUTRIENT_TONE[n.status].text}</span>
             </div>
           ))}
         </div>
+        {!mixItem && <div className="-mt-1.5 text-xs text-ink-3">Pick the Mix targets above to compare.</div>}
+        {mixItem && isOwner && <div className="-mt-1.5 text-xs text-ink-3">Targets come from the Mix targets item; within ±10 % = OK. <Link to={`/feed/items/${mixItem}`} className="font-semibold">Edit targets</Link></div>}
         <div className="-mt-1.5 text-xs text-ink-3">Values fill in once each ingredient's nutrients are entered on its feed item.</div>
 
         <div className="overflow-hidden rounded-[14px] bg-white">

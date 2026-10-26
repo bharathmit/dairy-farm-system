@@ -33,7 +33,7 @@ import com.dairyfarm.stock.Item;
 @Service
 public class FormulaService {
 
-    private static final String[] NUTRIENTS = {"DM", "CP", "TDN", "Ca", "P"};
+    private static final String[] NUTRIENTS = {"DM", "CP", "TDN", "Ca", "P", "Fat", "Fibre", "AIA", "Aflatoxin"};
 
     private final FeedRepository repo;
     private final FeedPlanner planner;
@@ -251,11 +251,17 @@ public class FormulaService {
                     + " kg batch.");
         }
         Targets t = f.targets() == null ? Targets.EMPTY : f.targets();
-        BigDecimal[] targets = {t.dmPct(), t.cpPct(), t.tdnPct(), t.caPct(), t.pPct()};
+        // Targets = the Mix targets item's values (as fed); a value it doesn't have falls back to the formula's saved target.
+        Item mixItem = c.entities().get(f.mixItemId());
+        var md = mixItem == null ? Item.Details.EMPTY : mixItem.getDetails();
+        BigDecimal[] targets = {or(md.dmPct(), t.dmPct()), or(md.cpPct(), t.cpPct()), or(md.tdnPct(), t.tdnPct()),
+                or(md.caPct(), t.caPct()), or(md.pPct(), t.pPct()), md.fatPct(), md.fibrePct(), md.aiaPct(), md.aflatoxinPpb()};
+        boolean[] allKnown = {known[0], known[1], known[2], known[3], known[4], bisKnown[0], bisKnown[1], bisKnown[2], bisKnown[3]};
+        double[] allSums = {sums[0], sums[1], sums[2], sums[3], sums[4], bisSums[0], bisSums[1], bisSums[2], bisSums[3]};
         List<Nutrient> nutrients = new ArrayList<>();
-        for (int k = 0; k < 5; k++) {
-            BigDecimal mixPct = known[k] && total.signum() > 0
-                    ? BigDecimal.valueOf(sums[k] / total.doubleValue()).setScale(2, RoundingMode.HALF_UP) : null;
+        for (int k = 0; k < NUTRIENTS.length; k++) {
+            BigDecimal mixPct = allKnown[k] && total.signum() > 0
+                    ? BigDecimal.valueOf(allSums[k] / total.doubleValue()).setScale(2, RoundingMode.HALF_UP) : null;
             String status = "UNKNOWN";
             if (mixPct != null && targets[k] != null && targets[k].signum() > 0) {
                 double r = mixPct.doubleValue() / targets[k].doubleValue();
@@ -281,6 +287,10 @@ public class FormulaService {
         Targets shown = showMoney ? t : new Targets(t.dmPct(), t.cpPct(), t.tdnPct(), t.caPct(), t.pPct(), null, null, t.bisGrade());
         return new Formula(f.id(), f.name(), c.ref(f.mixItemId()), f.batchKg(), total.setScale(2, RoundingMode.HALF_UP),
                 showMoney ? perKg : null, showMoney ? batchCost : null, shown, out, nutrients, bis, warnings, f.notes(), f.active());
+    }
+
+    private static BigDecimal or(BigDecimal a, BigDecimal b) {
+        return a != null ? a : b;
     }
 
     /** Weighted average per kg of mix, or null when an ingredient has no value (or the mix is empty). */

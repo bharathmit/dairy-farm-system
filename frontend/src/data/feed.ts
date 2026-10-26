@@ -101,15 +101,16 @@ export const FEED_CATEGORIES: { value: FeedCategory; label: string; short: strin
   { value: 'DRY_FODDER', label: 'Dry fodder', short: 'Dry fodder' },
   { value: 'SILAGE', label: 'Silage', short: 'Silage' },
   { value: 'MINERAL', label: 'Mineral', short: 'Mineral' },
-  { value: 'MIX', label: 'Mix', short: 'Mix' },
+  { value: 'MIX', label: 'Mix targets', short: 'Mix targets' },
 ]
 export const categoryLabel = (c?: string | null) => FEED_CATEGORIES.find((x) => x.value === c)?.short ?? c ?? ''
-/** Stock list filter chips: Green / Dry / Concentrate (ingredients + mixes) / Mineral. */
+/** Stock list filter chips: Green / Dry / Concentrate (ingredients) / Mix targets / Mineral. */
 export const STOCK_FILTERS: { key: string; label: string; match: (c: FeedCategory) => boolean }[] = [
   { key: 'ALL', label: 'All', match: () => true },
   { key: 'GREEN', label: 'Green', match: (c) => c === 'GREEN_FODDER' || c === 'SILAGE' },
   { key: 'DRY', label: 'Dry', match: (c) => c === 'DRY_FODDER' },
-  { key: 'CONC', label: 'Concentrate', match: (c) => c === 'CONCENTRATE_INGREDIENT' || c === 'MIX' },
+  { key: 'CONC', label: 'Concentrate', match: (c) => c === 'CONCENTRATE_INGREDIENT' },
+  { key: 'MIX', label: 'Mix targets', match: (c) => c === 'MIX' },
   { key: 'MINERAL', label: 'Mineral', match: (c) => c === 'MINERAL' },
 ]
 export const SECTION_LABEL: Record<Section, string> = {

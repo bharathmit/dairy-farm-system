@@ -132,7 +132,16 @@ class FeedControllerTest extends IntegrationTest {
         JsonNode cp = f.get("nutrients").get(1);
         assertThat(cp.get("name").asString()).isEqualTo("CP");
         assertThat(cp.get("mixPct").asDouble()).isEqualTo(10.82);       // (93×9 + 7×35) / 100
-        assertThat(cp.get("status").asString()).isEqualTo("LOW");
+        assertThat(cp.get("status").asString()).isEqualTo("LOW");     // no CP on the mix item → formula's saved target 18
+        assertThat(f.get("nutrients").size()).isEqualTo(9);
+        // Mix targets item values replace the formula's saved targets
+        long target = item("Mix target CP 10", "MIX", "\"cpPct\":10");
+        JsonNode ft = call(post(base() + "/feed/formulas"), owner, "{\"name\":\"Against mix target\",\"mixItemId\":" + target
+                + ",\"batchKg\":100,\"targets\":{\"cpPct\":18},\"lines\":[{\"itemId\":" + gingelly + ",\"kg\":7},{\"itemId\":"
+                + maize + ",\"kg\":93}]}", 201);
+        assertThat(ft.get("nutrients").get(1).get("targetPct").asDouble()).isEqualTo(10.0);
+        assertThat(ft.get("nutrients").get(1).get("status").asString()).isEqualTo("OK");   // 10.82 within ±10 % of 10
+        call(delete(base() + "/feed/formulas/" + ft.get("id").asLong()), owner, null, 204);
         JsonNode bis = f.get("bis");                                    // CP 10.82 as fed ÷ DM 88.14 % = 12.28 % dry basis
         assertThat(bis.get("grade").asString()).isEqualTo("TYPE_II");
         assertThat(bis.get("status").asString()).isEqualTo("FAIL");
