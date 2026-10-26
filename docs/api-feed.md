@@ -22,7 +22,8 @@ Quantities in kg (unit from the item). `ItemRef` = `{id, name, category, unit}`.
   UNIQUE (farm_id, category, effective_from). The rule in force on a date = latest effective_from ≤ date;
   no row = the defaults below.
 - Category MIX is shown as **"Mix targets"**: the item holds the nutrient targets (as fed) its formula is compared
-  against; only nutrients are edited in the UI. Its stock still comes from batches and is used by feeding.
+  against. Its stock comes from batches, purchases (ready-made feed) and harvest/adjustment moves, and is used by
+  feeding; the item page shows stock, Buy, Add / adjust, cost, use limits, reorder and supplier like other items.
 - Purchases are stored for the Finance module (Canvas 6) to post as FEED expenses; no finance rows yet.
 
 ## Feeding groups (V8, `feed/FeedGroups`)

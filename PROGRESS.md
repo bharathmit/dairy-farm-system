@@ -59,7 +59,7 @@ UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile s
 - Team members: owners set member passwords manually; no invites.
 - Hosting: frontend on Cloudflare Workers (static assets, free); backend on Render free (sleeps after 15 min, 512 MB); OpenShift remains the long-term target.
 - Concentrate quality: IS 2052:2023 Type I and II only (Type III removed by BIS in 2021); a formula picks its grade. Max inclusion 0 % = excluded.
-- Formula editor: ingredient lines are added as Concentrate or Mineral (dropdown limited to that category); "Custom mix" makes nutrient targets editable for comparison only (not saved). Stock on hand chips: Reorder items (default, replaces All), Green, Dry, Concentrate, Mineral, Mix targets — each with a count. Mix targets items hide In stock / Use per day / Days left.
+- Formula editor: ingredient lines are added as Concentrate or Mineral (dropdown limited to that category); "Custom mix" makes nutrient targets editable for comparison only (not saved). Stock on hand chips: Reorder items (default, replaces All), Green, Dry, Concentrate, Mineral, Mix targets — each with a count. Mix targets items now show everything like other items (stock tiles, Buy, Add / adjust, cost, use limits, reorder, supplier) and can be bought on Buy feed; stock = batches + purchases + adjustments − feeding (Oct 2026).
 - Feeding groups (Oct 2026): 10 groups — Fresh, Early, Mid, Late, Close-up, Steaming-up, Dry & mature heifers, Growing heifers, Calves, Bulls — calculated daily, one ration rule each (V8 copied MILKING/DRY rules). For shed identification and feed management; pens are grouped offline, no pen names or move list in the app. Heifer maturity uses the breeding settings (first service age/weight).
 
 ## Notes / blockers

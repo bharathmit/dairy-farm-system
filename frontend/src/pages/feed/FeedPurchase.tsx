@@ -59,7 +59,7 @@ export default function FeedPurchase() {
       <TopBar title="Buy feed" close="/feed" />
       <div className="flex flex-col gap-3.5 px-4 pb-4">
         <LoadState loading={items.loading} error={items.error} onRetry={items.reload} empty={!items.data} />
-        <div><label className="lab" htmlFor="fp-item">Item *</label><FeedItemSelect id="fp-item" items={items.data} value={itemId} onChange={setItemId} filter={(i) => i.category !== 'MIX'} />
+        <div><label className="lab" htmlFor="fp-item">Item *</label><FeedItemSelect id="fp-item" items={items.data} value={itemId} onChange={setItemId} />
           {stock && <div className="hint mt-1">{kg(stock.stock)} {unit} in stock{stock.daysLeft != null ? ` · ${kg(stock.daysLeft)} days` : ''}</div>}</div>
         <div className="grid grid-cols-2 gap-3">
           <div><label className="lab" htmlFor="fp-q">Quantity ({unit}) *</label><input className="inp" id="fp-q" inputMode="decimal" value={qty} onChange={(e) => setQty(decimal(e.target.value))} /></div>

@@ -31,7 +31,7 @@ const NUTRIENTS = [['dmPct', 'DM %'], ['cpPct', 'CP %'], ['tdnPct', 'TDN %'], ['
   ['fatPct', 'Crude fat %'], ['fibrePct', 'Crude fibre %'], ['aiaPct', 'Acid insol. ash %'], ['aflatoxinPpb', 'Aflatoxin B1 ppb']] as const
 
 /** Record own fodder cut, or correct stock (+/−). */
-function StockBox({ id, unit, onDone }: { id: string; unit: string; onDone: () => void }) {
+function StockBox({ id, unit, isMix, onDone }: { id: string; unit: string; isMix: boolean; onDone: () => void }) {
   const { fd } = useFeed()
   const { notify } = useStore()
   const [type, setType] = useState<'HARVEST' | 'ADJUSTMENT'>('HARVEST')
@@ -46,19 +46,19 @@ function StockBox({ id, unit, onDone }: { id: string; unit: string; onDone: () =
     setBusy(true)
     try {
       await fd.stock(id, { type, date, quantity: q, notes: note.trim() || undefined })
-      notify(type === 'HARVEST' ? `Harvest of ${q} ${unit} added` : 'Stock corrected'); setQty(''); setNote(''); onDone()
+      notify(type === 'HARVEST' ? `${isMix ? 'Stock' : 'Harvest'} of ${q} ${unit} added` : 'Stock corrected'); setQty(''); setNote(''); onDone()
     } catch (e) { notify(errorMessage(e)) } finally { setBusy(false) }
   }
   return (
     <div className="flex flex-col gap-3 rounded-[14px] bg-white p-3.5">
-      <b className="text-[15px]">Add own fodder or correct stock</b>
-      <Segmented label="Stock change" options={[{ value: 'HARVEST', label: 'Harvest / cut' }, { value: 'ADJUSTMENT', label: 'Adjust ±' }]} value={type} onChange={setType} />
+      <b className="text-[15px]">{isMix ? 'Add opening stock or correct stock' : 'Add own fodder or correct stock'}</b>
+      <Segmented label="Stock change" options={[{ value: 'HARVEST', label: isMix ? 'Add stock' : 'Harvest / cut' }, { value: 'ADJUSTMENT', label: 'Adjust ±' }]} value={type} onChange={setType} />
       <div className="grid grid-cols-2 gap-3">
         <div><label className="lab" htmlFor="fi-q">{type === 'HARVEST' ? `Quantity (${unit})` : `+ / − ${unit}`}</label><input className="inp" id="fi-q" inputMode="decimal" placeholder={type === 'HARVEST' ? '200' : '-10'} value={qty} onChange={(e) => setQty(e.target.value.replace(/[^\d.+-]/g, ''))} /></div>
         <div><label className="lab" htmlFor="fi-qd">Date</label><input className="inp" id="fi-qd" type="date" max={todayIso()} value={date} onChange={(e) => e.target.value && setDate(e.target.value)} /></div>
       </div>
-      <div><label className="lab" htmlFor="fi-qn">Note</label><input className="inp" id="fi-qn" placeholder={type === 'HARVEST' ? 'e.g. cut from plot 2' : 'e.g. counted, spoilt'} value={note} onChange={(e) => setNote(e.target.value)} /></div>
-      <button type="button" className="btn2 h-11" disabled={busy} onClick={save}>{busy ? 'Saving…' : type === 'HARVEST' ? 'Add harvest' : 'Save correction'}</button>
+      <div><label className="lab" htmlFor="fi-qn">Note</label><input className="inp" id="fi-qn" placeholder={type === 'HARVEST' ? (isMix ? 'e.g. opening stock' : 'e.g. cut from plot 2') : 'e.g. counted, spoilt'} value={note} onChange={(e) => setNote(e.target.value)} /></div>
+      <button type="button" className="btn2 h-11" disabled={busy} onClick={save}>{busy ? 'Saving…' : type === 'HARVEST' ? (isMix ? 'Add stock' : 'Add harvest') : 'Save correction'}</button>
     </div>
   )
 }
@@ -80,7 +80,7 @@ export default function FeedItemForm() {
   const stock = overview.data?.items.find((s) => String(s.item.id) === id)
   const unit = (d.unit || 'KG').toLowerCase()
   const excluded = d.maxInclusionPct.trim() !== '' && toNum(d.maxInclusionPct) === 0
-  /** Mix targets: a formula's target values — only nutrients are captured; stock still comes from batches. */
+  /** Mix targets: a formula's target values; stock comes from batches, purchases and adjustments. */
   const isMix = d.category === 'MIX'
   const moisture = toNum(d.dmPct)
 
@@ -111,14 +111,14 @@ export default function FeedItemForm() {
       <TopBar title={id ? (existing.data?.name ?? 'Feed item') : 'Feed item'} close="/feed" />
       <div className="flex flex-col gap-3.5 px-4 pb-4">
         <LoadState loading={existing.loading} error={existing.error} onRetry={existing.reload} empty={Boolean(id) && !existing.data} />
-        {id && stock && !isMix && (
+        {id && stock && (
           <div className="grid grid-cols-3 gap-2.5">
             <div className="rounded-xl bg-white p-3"><div className="text-xs font-semibold text-ink-3">In stock</div><div className="mt-0.5 text-lg font-bold">{kg(stock.stock)} {unit}</div></div>
             <div className="rounded-xl bg-white p-3"><div className="text-xs font-semibold text-ink-3">Use / day</div><div className="mt-0.5 text-lg font-bold">{stock.needPerDay ? kg(stock.needPerDay) : '—'}</div></div>
             <div className="rounded-xl bg-white p-3"><div className="text-xs font-semibold text-ink-3">Days left</div><div className="mt-0.5 text-lg font-bold">{stock.daysLeft != null ? kg(stock.daysLeft, 1) : '—'}</div></div>
           </div>
         )}
-        {id && !isMix && <div className="grid grid-cols-2 gap-2"><Link to={`/feed/buy?item=${id}`} className="btn2 h-11 no-underline">Buy</Link><a href="#stock" className="btn2 h-11 no-underline">Harvest / adjust</a></div>}
+        {id && <div className="grid grid-cols-2 gap-2"><Link to={`/feed/buy?item=${id}`} className="btn2 h-11 no-underline">Buy</Link><a href="#stock" className="btn2 h-11 no-underline">{isMix ? 'Add / adjust' : 'Harvest / adjust'}</a></div>}
         {ro && !id && <div className="rounded-xl bg-warn-soft px-3.5 py-3 text-sm text-warn-text">Only farm owners can add feed items.</div>}
 
         <fieldset disabled={ro} className="m-0 flex flex-col gap-3.5 border-0 p-0">
@@ -128,12 +128,12 @@ export default function FeedItemForm() {
             <div role="group" aria-label="Category" className="flex flex-wrap gap-2">
               {FEED_CATEGORIES.map((c) => <button key={c.value} type="button" aria-pressed={d.category === c.value} onClick={() => set({ category: c.value })} className={`chip h-10 ${d.category === c.value ? 'chip-on' : ''}`}>{c.label}</button>)}
             </div>
-            <div className="hint">"Mix targets" = the nutrient targets a concentrate formula is checked against; its stock comes from batches.</div>
+            <div className="hint">"Mix targets" = the nutrient targets a concentrate formula is checked against; its stock comes from batches, purchases and adjustments.</div>
           </div>
-          {!isMix && <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3">
             <div><label className="lab" htmlFor="fi-unit">Unit</label><select className="inp" id="fi-unit" value={d.unit} onChange={(e) => set({ unit: e.target.value })}><option value="KG">kg</option><option value="L">L</option><option value="NOS">pieces</option></select></div>
-            {isOwner && <div><label className="lab" htmlFor="fi-cost">Cost per {unit} (₹)</label><input className="inp" id="fi-cost" inputMode="decimal" value={d.costPerUnit} onChange={(e) => set({ costPerUnit: decimal(e.target.value) })} /><div className="hint mt-1">Updates from the latest purchase</div></div>}
-          </div>}
+            {isOwner && <div><label className="lab" htmlFor="fi-cost">Cost per {unit} (₹)</label><input className="inp" id="fi-cost" inputMode="decimal" value={d.costPerUnit} onChange={(e) => set({ costPerUnit: decimal(e.target.value) })} /><div className="hint mt-1">{isMix ? 'Updates from the latest batch or purchase' : 'Updates from the latest purchase'}</div></div>}
+          </div>
 
           <div className="rounded-[14px] bg-white p-3.5">
             <div className="flex items-center justify-between"><b>Nutrients per 100 kg</b><span className="text-[13px] text-ink-3">as fed · moisture {moisture != null ? `${kg(100 - moisture)} %` : '—'}</span></div>
@@ -143,7 +143,6 @@ export default function FeedItemForm() {
             <div className="hint">{isMix ? 'Targets for the formula that makes this mix (as fed, like the ingredients). The formula compares its mix against these.' : 'Used for formula and ration nutrient checks and the BIS (IS 2052) grade check. Moisture = 100 − DM %.'}</div>
           </div>
 
-          {!isMix && <>
           <div className="rounded-[14px] bg-white p-3.5">
             <b>Use limits</b>
             <div className="mt-3"><label className="lab" htmlFor="fi-max">Max inclusion in a concentrate (%)</label><input className="inp" id="fi-max" inputMode="decimal" placeholder="No limit" value={d.maxInclusionPct} onChange={(e) => set({ maxInclusionPct: decimal(e.target.value) })} />
@@ -166,13 +165,12 @@ export default function FeedItemForm() {
             <b>Supplier</b>
             <div className="mt-3"><label className="lab" htmlFor="fi-sup">Supplier</label><ContactSelect id="fi-sup" role="SUPPLIER" value={d.supplier} onChange={(v) => set({ supplier: v })} newLabel="New supplier" /></div>
           </div>
-          </>}
 
           <div><label className="lab" htmlFor="fi-notes">Notes</label><input className="inp" id="fi-notes" placeholder="Optional" value={d.notes} onChange={(e) => set({ notes: e.target.value })} /></div>
           {id && <label className="flex min-h-11 items-center gap-2.5 text-[15px]"><input type="checkbox" checked={d.active} onChange={(e) => set({ active: e.target.checked })} className="h-5 w-5 accent-brand" />Active (shows in lists and plans)</label>}
         </fieldset>
 
-        {id && !isMix && <div id="stock"><StockBox id={id} unit={unit} onDone={() => { void overview.reload(); void moves.reload() }} /></div>}
+        {id && <div id="stock"><StockBox id={id} unit={unit} isMix={isMix} onDone={() => { void overview.reload(); void moves.reload() }} /></div>}
 
         {id && moves.data && moves.data.length > 0 && (
           <div className="overflow-hidden rounded-[14px] bg-white">
@@ -180,7 +178,7 @@ export default function FeedItemForm() {
             {moves.data.slice(0, 12).map((m) => (
               <div key={m.id} className="flex items-center gap-2 border-t border-line-faint px-3.5 py-2.5 text-sm">
                 <span className="w-14 text-ink-3">{shortDate(m.date)}</span>
-                <span className="min-w-0 flex-1">{m.type === 'PURCHASE' ? 'Bought' : m.type === 'USAGE' ? 'Fed' : m.type === 'PRODUCE' ? (m.sourceType === 'FORMULA_BATCH' ? 'Batch made' : 'Harvest') : 'Adjusted'}
+                <span className="min-w-0 flex-1">{m.type === 'PURCHASE' ? 'Bought' : m.type === 'USAGE' ? 'Fed' : m.type === 'PRODUCE' ? (m.sourceType === 'FORMULA_BATCH' ? 'Batch made' : isMix ? 'Added' : 'Harvest') : 'Adjusted'}
                   {m.target?.label ? ` · ${m.target.label}` : ''}{m.supplier ? ` · ${m.supplier.name}` : ''}{isOwner && m.cost != null ? ` · ${inr0(m.cost)}` : ''}</span>
                 <b className={m.type === 'USAGE' || m.quantity < 0 ? 'text-danger-text' : 'text-brand'}>{m.type === 'USAGE' || m.quantity < 0 ? '−' : '+'}{kg(Math.abs(m.quantity))}</b>
               </div>
