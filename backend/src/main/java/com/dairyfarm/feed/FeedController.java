@@ -32,7 +32,8 @@ import com.dairyfarm.feed.FeedViews.Move;
 import com.dairyfarm.feed.FeedViews.Overview;
 import com.dairyfarm.feed.FeedViews.PurchaseRequest;
 import com.dairyfarm.feed.FeedViews.PurchaseSaved;
-import com.dairyfarm.feed.FeedViews.RationCategory;
+import com.dairyfarm.feed.FeedViews.AnimalGroup;
+import com.dairyfarm.feed.FeedViews.FeedGroup;
 import com.dairyfarm.feed.FeedViews.RationSummary;
 import com.dairyfarm.feed.FeedViews.RuleRequest;
 import com.dairyfarm.feed.FeedViews.RuleSet;
@@ -198,6 +199,12 @@ public class FeedController {
         return feed.summary(ctx.farmId(), date, ctx.isOwner());
     }
 
+    @GetMapping("/groups")
+    @Operation(summary = "Each active animal's feeding group on a date")
+    public List<AnimalGroup> groups(@PathVariable Long farmId, @RequestParam(required = false) LocalDate date) {
+        return feed.groups(ctx.farmId(), date);
+    }
+
     @GetMapping("/need")
     @Operation(summary = "Farm feed need vs stock, ingredient need for batches, and shortfalls within N days")
     public FeedNeed need(@PathVariable Long farmId, @RequestParam(defaultValue = "7") int days) {
@@ -211,7 +218,7 @@ public class FeedController {
 
     @PutMapping("/ration-rules/{category}")
     @OwnerOnly
-    public List<RuleSet> saveRule(@PathVariable Long farmId, @PathVariable RationCategory category,
+    public List<RuleSet> saveRule(@PathVariable Long farmId, @PathVariable FeedGroup category,
                                   @Valid @RequestBody RuleRequest req) {
         return feed.saveRule(ctx.farmId(), category, req.effectiveFrom(), req.params());
     }

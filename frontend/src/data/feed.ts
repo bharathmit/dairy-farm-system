@@ -5,7 +5,8 @@ import type { AnimalRef } from './breeding'
 
 export type FeedCategory = 'CONCENTRATE_INGREDIENT' | 'GREEN_FODDER' | 'DRY_FODDER' | 'SILAGE' | 'MINERAL' | 'MIX'
 export type Section = 'GREEN' | 'DRY' | 'CONCENTRATE' | 'OTHER'
-export type RuleCategory = 'MILKING' | 'DRY' | 'HEIFER' | 'CALF' | 'BULL'
+/** Feeding group (also the ration rule key); the backend places each animal in one every day. */
+export type RuleCategory = 'FRESH' | 'EARLY' | 'MID' | 'LATE' | 'CLOSE_UP' | 'STEAM_UP' | 'DRY' | 'HEIFER' | 'CALF' | 'BULL'
 export type StockStatus = 'OK' | 'LOW' | 'REORDER' | 'PREPARE' | 'EXCLUDED' | 'UNUSED'
 export type NutrientStatus = 'OK' | 'LOW' | 'HIGH' | 'UNKNOWN'
 export type Target = 'FARM' | 'GROUP' | 'ANIMAL'
@@ -91,6 +92,7 @@ export interface RationParams {
   cpPct: number; tdnPct: number; caPct: number; pPct: number
 }
 export interface RuleVersion { effectiveFrom: string; params: RationParams }
+export interface AnimalGroup { animalId: number; group: RuleCategory }
 export interface RationRule { category: RuleCategory; current: RuleVersion; upcoming: RuleVersion[]; history: RuleVersion[] }
 
 // ---------- labels ----------
@@ -127,11 +129,27 @@ export const NUTRIENT_TONE: Record<NutrientStatus, { text: string; cls: string }
   OK: { text: 'OK', cls: 'bg-brand-soft text-brand' }, LOW: { text: 'Low', cls: 'bg-warn-soft text-warn-ink' },
   HIGH: { text: 'High', cls: 'bg-info-soft text-info-text' }, UNKNOWN: { text: '—', cls: 'bg-ground text-ink-3' },
 }
-export const RULE_CATEGORIES: { value: RuleCategory; label: string }[] = [
-  { value: 'MILKING', label: 'Milking' }, { value: 'DRY', label: 'Dry' }, { value: 'HEIFER', label: 'Heifer' },
-  { value: 'CALF', label: 'Calf' }, { value: 'BULL', label: 'Bull' },
+/** Feeding groups, in the order the backend checks them (docs/api-feed.md, "Feeding groups"). */
+export const RULE_CATEGORIES: { value: RuleCategory; label: string; hint: string }[] = [
+  { value: 'FRESH', label: 'Fresh cow', hint: 'First 21 days after calving' },
+  { value: 'EARLY', label: 'Early lactation', hint: 'Days 22–100' },
+  { value: 'MID', label: 'Mid lactation', hint: 'Days 101–200' },
+  { value: 'LATE', label: 'Late lactation', hint: 'Day 201 until dry-off' },
+  { value: 'CLOSE_UP', label: 'Close-up', hint: 'Final 21 days before expected calving' },
+  { value: 'STEAM_UP', label: 'Steaming-up', hint: 'Pregnant, 22–60 days before calving' },
+  { value: 'DRY', label: 'Dry & mature heifers', hint: 'Dry cows, and heifers ready for first service' },
+  { value: 'HEIFER', label: 'Growing heifers', hint: '9 months until ready for first service' },
+  { value: 'CALF', label: 'Calves', hint: 'Under 9 months' },
+  { value: 'BULL', label: 'Bulls', hint: 'Breeding bulls' },
 ]
 export const ruleLabel = (c: RuleCategory | string) => RULE_CATEGORIES.find((x) => x.value === c)?.label ?? c
+export const ruleHint = (c: RuleCategory | string) => RULE_CATEGORIES.find((x) => x.value === c)?.hint ?? ''
+export const MILKING_GROUPS: RuleCategory[] = ['FRESH', 'EARLY', 'MID', 'LATE']
+export const isMilkingGroup = (c: RuleCategory) => MILKING_GROUPS.includes(c)
+/** The lactation-stage DMI field a milking group's cows use. */
+export const STAGE_DMI: Partial<Record<RuleCategory, 'dmiEarlyPct' | 'dmiMidPct' | 'dmiLatePct'>> = {
+  FRESH: 'dmiEarlyPct', EARLY: 'dmiEarlyPct', MID: 'dmiMidPct', LATE: 'dmiLatePct',
+}
 export const PAYMENT_METHODS: { value: PaymentMethod; label: string }[] = [
   { value: 'UPI', label: 'UPI' }, { value: 'CASH', label: 'Cash' }, { value: 'BANK_TRANSFER', label: 'Bank transfer' },
   { value: 'CARD', label: 'Card' }, { value: 'CHEQUE', label: 'Cheque' }, { value: 'OTHER', label: 'Other' },
@@ -201,6 +219,7 @@ export const feedApi = (farmId: string) => {
     prepareBatch: (id: string | number, body: Record<string, unknown>) => api.post<{ preview: BatchPreview; mix: StockItem }>(`${b}/formulas/${id}/batches`, body),
     ration: (animalId: string | number, date?: string) => api.get<AnimalRation>(`${b}/ration${q({ animalId, date })}`),
     summary: (date?: string) => api.get<RationSummary>(`${b}/ration/summary${q({ date })}`),
+    groups: (date?: string) => api.get<AnimalGroup[]>(`${b}/groups${q({ date })}`),
     need: (d = 7) => api.get<FeedNeed>(`${b}/need${q({ days: d })}`),
     rules: () => api.get<RationRule[]>(`${b}/ration-rules`),
     saveRule: (category: RuleCategory, body: RuleVersion) => api.put<RationRule>(`${b}/ration-rules/${category}`, body),

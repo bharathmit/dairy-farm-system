@@ -17,7 +17,7 @@ import java.util.UUID;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
-import com.dairyfarm.feed.FeedViews.RationCategory;
+import com.dairyfarm.feed.FeedViews.FeedGroup;
 import com.dairyfarm.feed.FeedViews.Targets;
 
 import tools.jackson.databind.json.JsonMapper;
@@ -44,7 +44,7 @@ public class FeedRepository {
 
     public record AnimalRow(Long id, String tag, String name, String category, String breed, Long groupId,
                             LocalDate lastCalvingDate, BigDecimal currentWeightKg, BigDecimal measuredKg,
-                            LocalDate weighedOn, BigDecimal milkYesterday, LocalDate dateOfBirth) {
+                            LocalDate weighedOn, BigDecimal milkYesterday, LocalDate dateOfBirth, String sex, LocalDate dueDate) {
     }
 
     public record FormulaRow(Long id, String name, Long mixItemId, BigDecimal batchKg, Targets targets, String notes,
@@ -54,7 +54,7 @@ public class FeedRepository {
     public record LineRow(Long formulaId, Long itemId, BigDecimal kg) {
     }
 
-    public record RuleRow(RationCategory category, LocalDate effectiveFrom, RationParams params) {
+    public record RuleRow(FeedGroup category, LocalDate effectiveFrom, RationParams params) {
     }
 
     private final JdbcClient jdbc;
@@ -197,7 +197,10 @@ public class FeedRepository {
     public List<AnimalRow> animals(Long farmId, LocalDate date, Long groupId, Long animalId) {
         return jdbc.sql("""
                 select a.id, a.tag, a.name, a.category, a.breed, a.group_id, a.last_calving_date, a.current_weight_kg, a.date_of_birth,
-                       w.weight_kg, w.event_date,
+                       a.sex, w.weight_kg, w.event_date,
+                       (select b.expected_due_date from breeding_record b
+                         where b.dam_id = a.id and b.pregnancy_status = 'PREGNANT' and b.calving_date is null
+                         order by b.service_date desc nulls last, b.id desc limit 1) as due,
                        (select sum(p.quantity) from production_record p
                          where p.animal_id = a.id and p.record_date = cast(:date as date) - 1) as milk
                 from animal a
@@ -214,7 +217,7 @@ public class FeedRepository {
                         rs.getString("category"), rs.getString("breed"), (Long) rs.getObject("group_id"),
                         rs.getObject("last_calving_date", LocalDate.class), rs.getBigDecimal("current_weight_kg"),
                         rs.getBigDecimal("weight_kg"), rs.getObject("event_date", LocalDate.class), rs.getBigDecimal("milk"),
-                        rs.getObject("date_of_birth", LocalDate.class)))
+                        rs.getObject("date_of_birth", LocalDate.class), rs.getString("sex"), rs.getObject("due", LocalDate.class)))
                 .list();
     }
 
@@ -299,12 +302,12 @@ public class FeedRepository {
         return jdbc.sql("select category, effective_from, params from ration_rule where farm_id = :farm "
                         + "order by category, effective_from")
                 .param("farm", farmId)
-                .query((rs, n) -> new RuleRow(RationCategory.valueOf(rs.getString("category")),
+                .query((rs, n) -> new RuleRow(FeedGroup.valueOf(rs.getString("category")),
                         rs.getObject("effective_from", LocalDate.class), json.readValue(rs.getString("params"), RationParams.class)))
                 .list();
     }
 
-    public void upsertRule(Long farmId, RationCategory category, LocalDate from, RationParams params) {
+    public void upsertRule(Long farmId, FeedGroup category, LocalDate from, RationParams params) {
         jdbc.sql("""
                 insert into ration_rule (farm_id, category, effective_from, params) values (:farm, :cat, :from, cast(:p as jsonb))
                 on conflict (farm_id, category, effective_from) do update set params = excluded.params, updated_at = now()""")
@@ -313,8 +316,8 @@ public class FeedRepository {
     }
 
     /** The rule in force for each category on a date (latest effective_from ≤ date). */
-    public static Map<RationCategory, RuleRow> inForce(List<RuleRow> rules, LocalDate date) {
-        Map<RationCategory, RuleRow> out = new HashMap<>();
+    public static Map<FeedGroup, RuleRow> inForce(List<RuleRow> rules, LocalDate date) {
+        Map<FeedGroup, RuleRow> out = new HashMap<>();
         for (RuleRow r : rules) {
             if (!r.effectiveFrom().isAfter(date)) {
                 RuleRow cur = out.get(r.category());

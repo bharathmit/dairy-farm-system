@@ -29,7 +29,7 @@ PLAN.md    module plan · PROGRESS.md  status, decisions, blockers (keep up to d
 - One package per area under `com.dairyfarm.<area>`: `*Controller`, `*Service`, `*Repository` (JdbcClient SQL),
   `*Views` (request/response records). Pure calculations in their own class (e.g. `feed/RationCalc`).
 - New tables/columns: new Flyway file `backend/src/main/resources/db/migration/V<next>__<name>.sql`
-  (latest is V7). Never edit an applied migration.
+  (latest is V8). Never edit an applied migration.
 - Tests: JUnit 5 + AssertJ. Unit tests for calculators; `*ControllerTest` extends `support/IntegrationTest`
   (Testcontainers, or `TEST_DATABASE_URL`).
 
@@ -55,6 +55,9 @@ npm ci && npm run lint && npm run build
   (guide 35–45 / 15–25 / 25–40). Concentrate per category by milk (1.5 + 0.4 kg/L, capped) or by DMI share.
   Fresh kg = DM ÷ item DM % (fallback 30/90/80). Optional fixed-kg green items (hydroponic, azolla) come off
   the green share. Water = base + 4 L per litre of milk.
+- **Feeding groups** (`feed/FeedGroups`, V8): Fresh 1–21 DIM, Early 22–100, Mid 101–200, Late 201+, Close-up ≤ 21 d
+  to calving, Steaming-up 22–60 d, Dry & mature heifers, Growing heifers (9 m to first service), Calves, Bulls.
+  Calculated daily; one ration rule per group.
 - Concentrate formula: 100 kg batch, Villupuram ingredients; **no cottonseed cake** (gossypol); gingelly cake has
   stage-wise daily limits.
 - Lactation stage from `last_calving_date`; milk yesterday = AM + PM total.

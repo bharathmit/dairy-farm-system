@@ -212,8 +212,8 @@ feed_formula: name (unique per farm) · mix_item_id (→ `item` MIX) · batch_kg
 caPct, pPct, costMin, costMax) · notes · active. feed_formula_line: formula_id · item_id · kg · sort_order.
 The latest active formula of a mix splits ration concentrate into ingredient need.
 
-## 16. `ration_rule` — ration rule per category, versioned (built in V5)
-category (CALF, HEIFER, MILKING, DRY, BULL) · effective_from · params JSONB (bwPct, concBaseKg, concPerLitreKg,
+## 16. `ration_rule` — ration rule per feeding group, versioned (built in V5; V8 = 10 feeding groups)
+category (feeding group: FRESH, EARLY, MID, LATE, CLOSE_UP, STEAM_UP, DRY, HEIFER, CALF, BULL; V5 had CALF, HEIFER, MILKING, DRY, BULL) · effective_from · params JSONB (bwPct, concBaseKg, concPerLitreKg,
 maxConcKg, concItemId, greenSharePct, green[], dry[], limits[], dmIntakePct, cpPct, tdnPct, caPct, pPct).
 UNIQUE (farm_id, category, effective_from). No row = defaults in code.
 

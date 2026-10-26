@@ -12,6 +12,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 import com.dairyfarm.feed.FeedViews.Category;
+import com.dairyfarm.feed.FeedViews.FeedGroup;
 import com.dairyfarm.feed.FeedViews.RationCategory;
 import com.dairyfarm.feed.FeedViews.Section;
 import com.dairyfarm.feed.RationCalc.AnimalInput;
@@ -52,8 +53,16 @@ class RationCalcTest {
     private static final Map<Long, Map<Long, BigDecimal>> SHARES = Map.of(5L, Map.of(6L, d("0.93"), 7L, d("0.07")));
 
     private static AnimalInput cow(RationCategory cat, String kg, String milk, LocalDate calved, LocalDate born) {
+        // a group whose defaults match the old category defaults
+        FeedGroup g = switch (cat) {
+            case MILKING -> FeedGroup.EARLY;
+            case DRY -> FeedGroup.DRY;
+            case HEIFER -> FeedGroup.HEIFER;
+            case CALF -> FeedGroup.CALF;
+            case BULL -> FeedGroup.BULL;
+        };
         return new AnimalInput(1L, "VD-001", "Lakshmi", cat, "HF", d(kg), "ANIMAL", null, milk == null ? null : d(milk),
-                calved, born);
+                calved, born, g);
     }
 
     private static RationParams rule(List<Share> green, List<Share> dry, List<Limit> limits) {

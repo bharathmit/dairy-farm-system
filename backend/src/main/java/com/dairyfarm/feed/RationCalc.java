@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import com.dairyfarm.feed.FeedViews.Category;
+import com.dairyfarm.feed.FeedViews.FeedGroup;
 import com.dairyfarm.feed.FeedViews.RationCategory;
 import com.dairyfarm.feed.FeedViews.Section;
 import com.dairyfarm.feed.RationParams.Limit;
@@ -18,7 +19,7 @@ import com.dairyfarm.feed.RationParams.Share;
 import com.dairyfarm.feed.RationParams.Stage;
 
 /**
- * One animal's daily TMR ration from its category rule (docs/api-feed.md, "Ration rule"). Pure calculation:
+ * One animal's daily TMR ration from its feeding group's rule (docs/api-feed.md, "Ration rule"). Pure calculation:
  * DMI = body weight × DMI % (by lactation stage, age band or the rule's base %); concentrate = base + milk × perLitre
  * (MILK mode) or DMI × concentrate DM share ÷ its DM (DMI mode), capped; the DM left is split green / dry by their
  * shares; each item's fresh kg = its DM ÷ the item's DM %. Fixed-kg items (hydroponic fodder, azolla) come off
@@ -37,7 +38,7 @@ public final class RationCalc {
 
     public record AnimalInput(Long id, String tag, String name, RationCategory category, String breed,
                               BigDecimal bodyWeightKg, String weightSource, LocalDate weighedOn,
-                              BigDecimal milkYesterday, LocalDate lastCalvingDate, LocalDate dateOfBirth) {
+                              BigDecimal milkYesterday, LocalDate lastCalvingDate, LocalDate dateOfBirth, FeedGroup group) {
     }
 
     /** A line of the plan; item null = a part with no item picked in the rule yet. */
@@ -70,7 +71,7 @@ public final class RationCalc {
      */
     public static Plan plan(AnimalInput a, RationParams rule, LocalDate date, Map<Long, ItemInfo> items,
                             Map<Long, Map<Long, BigDecimal>> formulaShares, Long defaultConcId) {
-        RationParams p = rule.resolved(a.category());
+        RationParams p = rule.resolved(a.group());
         double bw = num(a.bodyWeightKg());
         double milk = a.category() == RationCategory.MILKING ? num(a.milkYesterday()) : 0;
 

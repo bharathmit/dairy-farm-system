@@ -17,14 +17,33 @@ Quantities in kg (unit from the item). `ItemRef` = `{id, name, category, unit}`.
   `item_txn.batch_id UUID` (rows saved together).
 - New `feed_formula` (farm_id, name, mix_item_id → item MIX, batch_kg, targets JSONB, notes, active) and
   `feed_formula_line` (formula_id, item_id, kg, sort_order).
-- New `ration_rule` (farm_id, category CALF|HEIFER|MILKING|DRY|BULL, effective_from DATE, params JSONB),
+- New `ration_rule` (farm_id, category = feeding group, effective_from DATE, params JSONB) — V5 had
+  CALF|HEIFER|MILKING|DRY|BULL; V8 moved it to the 10 feeding groups below,
   UNIQUE (farm_id, category, effective_from). The rule in force on a date = latest effective_from ≤ date;
   no row = the defaults below.
 - Category MIX is shown as **"Mix targets"**: the item holds the nutrient targets (as fed) its formula is compared
   against; only nutrients are edited in the UI. Its stock still comes from batches and is used by feeding.
 - Purchases are stored for the Finance module (Canvas 6) to post as FEED expenses; no finance rows yet.
 
-## Ration rule (per category) — TMR, dry-matter based
+## Feeding groups (V8, `feed/FeedGroups`)
+Each active animal is placed in one group every day, checked in this order. The group picks the ration rule and is
+shown as a badge on animals (for shed grouping and feed management). Groups are calculated, not stored.
+| Group | Who |
+|---|---|
+| FRESH — Fresh cow | milking, days 1–21 after calving |
+| EARLY — Early lactation | milking, days 22–100 |
+| MID — Mid lactation | milking, days 101–200 (also a milking cow with no calving date) |
+| LATE — Late lactation | milking, day 201 until dry-off |
+| CLOSE_UP — Close-up | confirmed pregnant dry cow / heifer, ≤ 21 days to `expected_due_date` (or overdue) |
+| STEAM_UP — Steaming-up | confirmed pregnant dry cow / heifer, 22–60 days to due date |
+| DRY — Dry & mature heifers | other dry cows; heifers ready for first service (age ≥ breeding setting `heiferFirstServiceMonths` or recorded weight ≥ `heiferFirstServiceKg`; estimates ignored) |
+| HEIFER — Growing heifers | female young stock 9 months until ready for first service |
+| CALF — Calves | under 9 months; male calves; a CALF with no birth date |
+| BULL — Bulls | category BULL |
+Pregnancy = latest breeding record with `pregnancy_status` PREGNANT and no `calving_date`. A milking cow stays in her
+lactation group even when pregnant. V8 copied existing rules: MILKING → FRESH, EARLY, MID, LATE; DRY → CLOSE_UP, STEAM_UP.
+
+## Ration rule (per feeding group) — TMR, dry-matter based
 ```
 RationParams = {
   dmiEarlyPct: 3.75, dmiMidPct: 3.25, dmiLatePct: 2.75,         // DMI % of BW for milking cows by stage (EARLY ≤ 100 DIM, MID ≤ 200, LATE after)
@@ -45,7 +64,7 @@ formula when the item has none). DM left = DMI − concentrate DM, split green :
 they are skipped when the item is inactive or excluded. The DM left is split by share and each item's fresh kg = DM ÷ the
 item's DM %. Items without a DM % use green 30 %, dry 90 %, concentrate 80 %. Old keys `bwPct`, `greenSharePct` are ignored.
 
-Defaults: MILKING {MILK, conc 1.5 + 0.4/L max 10, 45/15/40, base DMI 3.25, water 30 + 4/L, CP 14, TDN 65} ·
+Defaults (FRESH/EARLY/MID/LATE use MILKING; CLOSE_UP/STEAM_UP use DRY): MILKING {MILK, conc 1.5 + 0.4/L max 10, 45/15/40, base DMI 3.25, water 30 + 4/L, CP 14, TDN 65} ·
 DRY {DMI, max 3, 45/25/30, DMI 2.00, CP 12, TDN 60} · HEIFER {DMI, base 1.0 max 2, 45/25/30, DMI 2.50, water 20, CP 14, TDN 62} ·
 CALF {DMI, base 0.5 max 1.5, 40/20/40, DMI 3.00, water 10, CP 18, TDN 70} · BULL {DMI, base 2 max 3, 45/25/30, DMI 2.00, CP 10, TDN 58}.
 Stage and age bands default to 3.75/3.25/2.75 and 3.00/2.75/2.50 in every category. Default green/dry lists are
@@ -86,6 +105,7 @@ The editor computes the same check live (`bisCheck` in `src/data/feed.ts`).
 | POST | `/feed/formulas/{id}/batches` | `{date, batchKg, preparedByMemberId, allowShort}` → 201 `{preview: BatchPreview, mix: StockItem}`; 400 when short unless `allowShort`; one USAGE per ingredient + one PRODUCE for the mix (same batch_id, source_type FORMULA_BATCH); mix cost per kg = batch cost ÷ batch kg |
 | GET | `/feed/ration?animalId=&date=` | `AnimalRation` |
 | GET | `/feed/ration/summary?date=` | `{date, farm: Totals, categories:[{category, animals, totals: Totals}]}` |
+| GET | `/feed/groups?date=` | `[{animalId, group}]` — each active animal's feeding group |
 | GET | `/feed/need?days=7` | `FeedNeed` |
 | GET | `/feed/ration-rules` | `[{category, current: {effectiveFrom, params: RationParams}, upcoming: […], history: […]}]` |
 | PUT | `/feed/ration-rules/{category}` | owner; `{effectiveFrom, params}` → saves a version (same date replaces it) |
@@ -147,7 +167,8 @@ the check date can't be in the future either. The UI sets the date input's `min`
    (need 0: 100 with stock, else 0). Lead time defaults to 2 days when not set.
 7. Costs (`costPerDay`, `plannedCostPerDay`, totals) are `null` when any planned part has no item picked or no
    price yet, rather than a partial sum.
-8. Ration rules are stored with the category defaults filled in. Shares (green, dry) must add up to 100 %; green
+8. Ration rules are stored with the group defaults filled in; `{category}` and `categories[].category` are feeding groups,
+   listed in the order above. Shares (green, dry) must add up to 100 %; green
    items must be GREEN_FODDER/SILAGE, dry items DRY_FODDER/SILAGE, `concItemId` a MIX or concentrate ingredient.
    `PUT /feed/ration-rules/{category}` returns the full `[RuleSet]` list. `current.effectiveFrom` is absent/null
    when the defaults apply.

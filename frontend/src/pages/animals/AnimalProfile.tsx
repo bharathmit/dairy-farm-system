@@ -5,6 +5,7 @@ import { Icon, type IconName } from '../../components/icons'
 import { ageText, daysInMilk, fmtDate, inr, toneClass, useStore } from '../../data/store'
 import type { Animal } from '../../data/types'
 import { HealthTab, MilkTab } from './ProfileTabs'
+import { FeedGroupBadge, useFeedGroups } from '../../components/feed'
 
 type ExitStatus = 'Sold' | 'Dead' | 'Transferred'
 const REASONS = ['Low milk yield (cull)', 'Fertility problem (cull)', 'Age / replacement', 'Male calf sale', 'Illness', 'Other']
@@ -109,6 +110,7 @@ export default function AnimalProfile() {
   const { animals, groups, loading, notify } = useStore()
   const [sheet, setSheet] = useState(false)
   const [tab, setTab] = useState('Overview')
+  const feedGroups = useFeedGroups()
   const nav = useNavigate()
   const a = animals.find((x) => x.id === id)
   const later = () => notify('Coming in a later module')
@@ -154,6 +156,7 @@ export default function AnimalProfile() {
           <div className="mt-0.5 text-sm text-ink-3">{[a.species, a.breed, a.sex, ageText(a.dob)].filter(Boolean).join(' · ')}</div>
           <div className="mt-2 flex flex-wrap gap-1.5">
             <span className="badge bg-brand text-white">{a.status === 'Active' ? a.category : a.status}</span>
+            {a.status === 'Active' && <FeedGroupBadge group={feedGroups.get(String(a.id))} />}
             {a.flags.map((f) => <span key={f.text} className={`badge ${toneClass[f.tone]}`}>{f.text}</span>)}
           </div>
         </div>

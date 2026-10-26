@@ -39,7 +39,14 @@ public final class FeedViews {
 
     public enum StockMoveType { HARVEST, ADJUSTMENT }
 
+    /** The animal's herd category (animal.category). */
     public enum RationCategory { CALF, HEIFER, MILKING, DRY, BULL }
+
+    /**
+     * Feeding group, worked out each day ({@link FeedGroups}); each group has its own ration rule.
+     * DRY = dry cows and heifers ready for first service; HEIFER = growing heifers (9 months to first service).
+     */
+    public enum FeedGroup { FRESH, EARLY, MID, LATE, CLOSE_UP, STEAM_UP, DRY, HEIFER, CALF, BULL }
 
     public static Section sectionOf(Category c) {
         if (c == null) {
@@ -220,7 +227,7 @@ public final class FeedViews {
     public record NutrientCheck(String name, BigDecimal ration, BigDecimal need, String unit, String status) {
     }
 
-    public record RuleRef(RationCategory category, LocalDate effectiveFrom) {
+    public record RuleRef(FeedGroup category, LocalDate effectiveFrom) {
     }
 
     public record RationAnimal(Long id, String tag, String name, String category, String breed) {
@@ -236,7 +243,7 @@ public final class FeedViews {
     public record Totals(BigDecimal greenKg, BigDecimal dryKg, BigDecimal concentrateKg, BigDecimal costPerDay) {
     }
 
-    public record CategoryTotals(RationCategory category, int animals, Totals totals) {
+    public record CategoryTotals(FeedGroup category, int animals, Totals totals) {
     }
 
     public record RationSummary(LocalDate date, Totals farm, List<CategoryTotals> categories) {
@@ -258,10 +265,14 @@ public final class FeedViews {
                            List<Shortfall> shortfalls) {
     }
 
+    /** An animal's feeding group on a date (for badges on animal screens). */
+    public record AnimalGroup(Long animalId, FeedGroup group) {
+    }
+
     public record RuleVersion(LocalDate effectiveFrom, RationParams params) {
     }
 
-    public record RuleSet(RationCategory category, RuleVersion current, List<RuleVersion> upcoming,
+    public record RuleSet(FeedGroup category, RuleVersion current, List<RuleVersion> upcoming,
                           List<RuleVersion> history) {
     }
 

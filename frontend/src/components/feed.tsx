@@ -2,7 +2,8 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useStore } from '../data/store'
-import { categoryLabel, days, feedApi, kg, STATUS_BADGE, type FeedItem, type StockItem } from '../data/feed'
+import { useLoad } from '../data/records'
+import { categoryLabel, days, feedApi, kg, ruleLabel, STATUS_BADGE, type FeedItem, type RuleCategory, type StockItem } from '../data/feed'
 
 /** Feed API calls for the chosen farm, and whether money and owner actions are shown. */
 export function useFeed() {
@@ -10,6 +11,18 @@ export function useFeed() {
   const farmId = farm?.id ?? ''
   const fd = useMemo(() => feedApi(farmId), [farmId])
   return { fd, farmId, isOwner: farm?.role === 'Owner' }
+}
+
+/** Today's feeding group per animal id (empty while loading or on error). */
+export function useFeedGroups() {
+  const { fd, farmId } = useFeed()
+  const res = useLoad(farmId ? () => fd.groups() : null, [fd, farmId])
+  return useMemo(() => new Map((res.data ?? []).map((g) => [String(g.animalId), g.group])), [res.data])
+}
+
+/** Small badge naming the feeding group. */
+export function FeedGroupBadge({ group }: { group?: RuleCategory }) {
+  return group ? <span className="badge bg-info-soft text-info-text">{ruleLabel(group)}</span> : null
 }
 
 const barColor = (s: StockItem) => (s.status === 'REORDER' || s.status === 'PREPARE' ? 'bg-danger' : s.status === 'LOW' ? 'bg-[#C2410C]' : 'bg-brand')

@@ -6,6 +6,7 @@ import AccountButton from '../../components/AccountButton'
 import { ageText, CATEGORIES, daysInMilk, SPECIES, toneClass, useStore } from '../../data/store'
 import type { Animal, AnimalStatus, Category, Species } from '../../data/types'
 import { breedInitials } from './shared'
+import { FeedGroupBadge, useFeedGroups } from '../../components/feed'
 
 const STATUSES: AnimalStatus[] = ['Active', 'Sold', 'Dead', 'Transferred']
 const ATTENTION = ['Pregnant', 'In milk withdrawal', 'High SCC', 'Alerts due'] as const
@@ -120,6 +121,7 @@ export default function AnimalList() {
   const [quick, setQuick] = useState<Category | 'All'>('All')
   const [filters, setFilters] = useState<Filters>(DEFAULT)
   const [open, setOpen] = useState(false)
+  const feedGroups = useFeedGroups()
 
   const active = animals.filter((a) => a.status === 'Active')
   const countOf = (c: Category) => active.filter((a) => a.category === c).length
@@ -187,9 +189,10 @@ export default function AnimalList() {
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2"><span className="text-base font-bold">{a.tag}</span><span className="truncate text-ink-2">{a.name ?? '—'}</span></div>
                 <div className="mt-0.5 text-[13px] text-ink-3">{meta}</div>
-                {(a.flags.length > 0 || a.status !== 'Active') && (
+                {(a.flags.length > 0 || a.status !== 'Active' || feedGroups.has(String(a.id))) && (
                   <div className="mt-1.5 flex flex-wrap gap-1.5">
                     {a.status !== 'Active' && <span className="badge bg-track text-ink-2">{a.status}</span>}
+                    {a.status === 'Active' && <FeedGroupBadge group={feedGroups.get(String(a.id))} />}
                     {a.flags.map((f) => <span key={f.text} className={`badge ${toneClass[f.tone]}`}>{f.text}</span>)}
                   </div>
                 )}

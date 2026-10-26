@@ -17,7 +17,11 @@ import org.springframework.stereotype.Component;
 import com.dairyfarm.feed.FeedRepository.AnimalRow;
 import com.dairyfarm.feed.FeedRepository.LastPrice;
 import com.dairyfarm.feed.FeedRepository.RuleRow;
+import com.dairyfarm.breeding.BreedingSettings;
+import com.dairyfarm.farm.FarmRepository;
+import com.dairyfarm.feed.FeedViews.AnimalGroup;
 import com.dairyfarm.feed.FeedViews.Category;
+import com.dairyfarm.feed.FeedViews.FeedGroup;
 import com.dairyfarm.feed.FeedViews.ItemRef;
 import com.dairyfarm.feed.FeedViews.RationCategory;
 import com.dairyfarm.feed.FeedViews.StockItem;
@@ -37,7 +41,7 @@ public class FeedPlanner {
     /** Everything about a farm's feed that the screens need, loaded once per request. */
     public record Catalog(Map<Long, Item> entities, Map<Long, ItemInfo> items, Map<Long, Map<Long, BigDecimal>> formulaShares,
                           Long defaultConcId, Map<Long, Level> levels, Map<Long, LastPrice> lastPrices,
-                          List<RuleRow> rules) {
+                          List<RuleRow> rules, int matureMonths, BigDecimal matureKg) {
 
         public ItemRef ref(Long id) {
             ItemInfo i = items.get(id);
@@ -68,11 +72,13 @@ public class FeedPlanner {
     private final ItemRepository itemRepo;
     private final StockRepository stock;
     private final FeedRepository repo;
+    private final FarmRepository farms;
 
-    public FeedPlanner(ItemRepository itemRepo, StockRepository stock, FeedRepository repo) {
+    public FeedPlanner(ItemRepository itemRepo, StockRepository stock, FeedRepository repo, FarmRepository farms) {
         this.itemRepo = itemRepo;
         this.stock = stock;
         this.repo = repo;
+        this.farms = farms;
     }
 
     public Catalog catalog(Long farmId) {
@@ -104,8 +110,10 @@ public class FeedPlanner {
         }
         Long defaultConc = all.stream().filter(i -> i.isActive() && "MIX".equals(i.getCategory())).map(Item::getId)
                 .findFirst().orElse(null);
+        // Heifer "ready for first service" comes from the breeding settings
+        BreedingSettings bs = farms.findById(farmId).map(f -> f.getBreedingSettings()).orElse(BreedingSettings.DEFAULTS).resolved();
         return new Catalog(entities, items, shares, defaultConc, stock.levels(entities.keySet()), repo.lastPrices(farmId),
-                repo.rules(farmId));
+                repo.rules(farmId), bs.heiferFirstServiceMonths(), bs.heiferFirstServiceKg());
     }
 
     static ItemInfo info(Item i) {
@@ -115,18 +123,18 @@ public class FeedPlanner {
                 i.isActive());
     }
 
-    /** The rule in force for a category on a date (defaults when none is saved). */
-    public static RationParams rule(Catalog c, RationCategory cat, LocalDate date) {
+    /** The rule in force for a feeding group on a date (defaults when none is saved). */
+    public static RationParams rule(Catalog c, FeedGroup cat, LocalDate date) {
         RuleRow r = FeedRepository.inForce(c.rules(), date).get(cat);
         return r == null ? RationParams.defaults(cat) : r.params();
     }
 
-    public static LocalDate ruleFrom(Catalog c, RationCategory cat, LocalDate date) {
+    public static LocalDate ruleFrom(Catalog c, FeedGroup cat, LocalDate date) {
         RuleRow r = FeedRepository.inForce(c.rules(), date).get(cat);
         return r == null ? null : r.effectiveFrom();
     }
 
-    public static AnimalInput input(AnimalRow a) {
+    public static AnimalInput input(AnimalRow a, Catalog c, LocalDate date) {
         RationCategory cat = RationCategory.valueOf(a.category());
         BigDecimal bw;
         String source;
@@ -140,8 +148,10 @@ public class FeedPlanner {
             bw = ESTIMATED_WEIGHT.get(cat);
             source = "ESTIMATE";
         }
+        FeedGroup group = FeedGroups.of(cat, a.sex(), a.dateOfBirth(), a.lastCalvingDate(), a.dueDate(),
+                "ESTIMATE".equals(source) ? null : bw, date, c.matureMonths(), c.matureKg());
         return new AnimalInput(a.id(), a.tag(), a.name(), cat, a.breed(), bw, source,
-                "MEASURED".equals(source) ? a.weighedOn() : null, a.milkYesterday(), a.lastCalvingDate(), a.dateOfBirth());
+                "MEASURED".equals(source) ? a.weighedOn() : null, a.milkYesterday(), a.lastCalvingDate(), a.dateOfBirth(), group);
     }
 
     public Herd herd(Long farmId, Catalog c, LocalDate date, Long groupId, Long animalId) {
@@ -149,13 +159,18 @@ public class FeedPlanner {
         Map<Long, BigDecimal> direct = new LinkedHashMap<>();
         Map<Long, BigDecimal> ingredients = new LinkedHashMap<>();
         for (AnimalRow a : repo.animals(farmId, date, groupId, animalId)) {
-            AnimalInput in = input(a);
-            Plan p = RationCalc.plan(in, rule(c, in.category(), date), date, c.items(), c.formulaShares(), c.defaultConcId());
+            AnimalInput in = input(a, c, date);
+            Plan p = RationCalc.plan(in, rule(c, in.group(), date), date, c.items(), c.formulaShares(), c.defaultConcId());
             plans.add(p);
             p.kgByItem().forEach((k, v) -> direct.merge(k, v, BigDecimal::add));
             p.ingredientKg().forEach((k, v) -> ingredients.merge(k, v, BigDecimal::add));
         }
         return new Herd(date, plans, direct, ingredients);
+    }
+
+    /** Each active animal's feeding group on a date. */
+    public List<AnimalGroup> groups(Long farmId, Catalog c, LocalDate date) {
+        return repo.animals(farmId, date, null, null).stream().map(a -> new AnimalGroup(a.id(), input(a, c, date).group())).toList();
     }
 
     /** Stock status for each item against the herd's daily need. Money (last price) only for owners. */

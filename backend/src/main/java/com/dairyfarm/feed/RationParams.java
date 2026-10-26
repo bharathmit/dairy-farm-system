@@ -3,7 +3,7 @@ package com.dairyfarm.feed;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.dairyfarm.feed.FeedViews.RationCategory;
+import com.dairyfarm.feed.FeedViews.FeedGroup;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.validation.Valid;
@@ -13,8 +13,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 /**
- * One category's TMR ration rule (JSONB in ration_rule). Missing values fall back to the category defaults
- * ({@link #defaults(RationCategory)}). Unknown keys (bwPct, greenSharePct from the old as-fed rule) are ignored.
+ * One feeding group's TMR ration rule (JSONB in ration_rule). Missing values fall back to the category defaults
+ * ({@link #defaults(FeedGroup)}). Unknown keys (bwPct, greenSharePct from the old as-fed rule) are ignored.
  *
  * <p>Dry matter intake (DMI) = body weight × DMI %; the DMI % comes from the lactation stage (milking), the age
  * band (heifers, calves) or {@code dmIntakePct}. DMI is split green / dry / concentrate by the DM shares, and
@@ -84,18 +84,19 @@ public record RationParams(
                 d(cp), d(tdn), d("0.6"), d("0.4"));
     }
 
-    public static RationParams defaults(RationCategory c) {
-        return switch (c) {
-            case MILKING -> base(ConcMode.MILK, "1.5", "0.4", "10", "45", "15", "40", "3.25", "30", "14", "65");
-            case DRY -> base(ConcMode.DMI, "1.5", "0", "3", "45", "25", "30", "2.00", "30", "12", "60");
+    /** Milking groups start from the old milking defaults, close-up / steaming-up from the dry ones. */
+    public static RationParams defaults(FeedGroup g) {
+        return switch (g) {
+            case FRESH, EARLY, MID, LATE -> base(ConcMode.MILK, "1.5", "0.4", "10", "45", "15", "40", "3.25", "30", "14", "65");
+            case CLOSE_UP, STEAM_UP, DRY -> base(ConcMode.DMI, "1.5", "0", "3", "45", "25", "30", "2.00", "30", "12", "60");
             case HEIFER -> base(ConcMode.DMI, "1.0", "0", "2", "45", "25", "30", "2.50", "20", "14", "62");
             case CALF -> base(ConcMode.DMI, "0.5", "0", "1.5", "40", "20", "40", "3.00", "10", "18", "70");
             case BULL -> base(ConcMode.DMI, "2", "0", "3", "45", "25", "30", "2.00", "30", "10", "58");
         };
     }
 
-    /** This rule with the category defaults filled in. */
-    public RationParams resolved(RationCategory c) {
+    /** This rule with the group defaults filled in. */
+    public RationParams resolved(FeedGroup c) {
         var d = defaults(c);
         return new RationParams(or(concMode, d.concMode), or(concBaseKg, d.concBaseKg), or(concPerLitreKg, d.concPerLitreKg),
                 or(maxConcKg, d.maxConcKg), concItemId, or(greenDmPct, d.greenDmPct), or(dryDmPct, d.dryDmPct),

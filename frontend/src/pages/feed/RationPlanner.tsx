@@ -1,13 +1,12 @@
 import { Link, useSearchParams } from 'react-router-dom'
 import { Footer, Screen, Segmented, TopBar } from '../../components/ui'
 import { AnimalSelect, Card, LoadState } from '../../components/records'
-import { Tile, useFeed } from '../../components/feed'
+import { Tile, useFeed, useFeedGroups } from '../../components/feed'
 import { L, shortDate, useLoad } from '../../data/records'
 import { inr0 } from '../../data/breeding'
-import { kg, NUTRIENT_TONE, ruleLabel, RULE_CATEGORIES, SECTION_LABEL, type AnimalRation, type RuleCategory, type Section, type Totals } from '../../data/feed'
+import { kg, NUTRIENT_TONE, ruleHint, ruleLabel, RULE_CATEGORIES, SECTION_LABEL, type AnimalRation, type RuleCategory, type Section, type Totals } from '../../data/feed'
 
 type View = 'FARM' | 'CATEGORY' | 'COW'
-const toRule = (c: string) => c.toUpperCase() as RuleCategory
 const TIMING: Record<Section, string> = { GREEN: '6 AM, before milking', DRY: 'after milking', CONCENTRATE: 'after milking · AM + PM', OTHER: '' }
 
 function TotalsRow({ t, showMoney }: { t: Totals; showMoney: boolean }) {
@@ -70,11 +69,12 @@ export default function RationPlanner() {
   const [params, setParams] = useSearchParams()
   const { fd, isOwner } = useFeed()
   const view = (['FARM', 'CATEGORY', 'COW'].includes(params.get('view') ?? '') ? params.get('view') : params.get('animal') ? 'COW' : 'FARM') as View
-  const category = (params.get('category') as RuleCategory) || 'MILKING'
+  const category = (params.get('category') as RuleCategory) || 'EARLY'
   const animalId = params.get('animal') ?? ''
   const setParam = (p: Record<string, string>) => setParams((cur) => { const n = new URLSearchParams(cur); Object.entries(p).forEach(([k, v]) => (v ? n.set(k, v) : n.delete(k))); return n }, { replace: true })
   const summary = useLoad(() => fd.summary(), [fd])
   const ration = useLoad(view === 'COW' && animalId ? () => fd.ration(animalId) : null, [fd, view, animalId])
+  const groups = useFeedGroups()
   const s = summary.data
   const counts = new Map((s?.categories ?? []).map((c) => [c.category, c]))
   const cat = counts.get(category)
@@ -84,7 +84,7 @@ export default function RationPlanner() {
     <Screen>
       <TopBar title="Ration planner" back="/feed" />
       <div className="flex flex-col gap-3.5 px-4 pb-4">
-        <Segmented label="View" options={[{ value: 'FARM', label: 'Farm total' }, { value: 'CATEGORY', label: 'By category' }, { value: 'COW', label: 'One cow' }]} value={view} onChange={(v) => setParam({ view: v })} />
+        <Segmented label="View" options={[{ value: 'FARM', label: 'Farm total' }, { value: 'CATEGORY', label: 'By group' }, { value: 'COW', label: 'One cow' }]} value={view} onChange={(v) => setParam({ view: v })} />
         <LoadState loading={summary.loading} error={summary.error} onRetry={summary.reload} empty={!s} />
         {view !== 'FARM' && s && (
           <div className="flex gap-2 overflow-x-auto pb-1">
@@ -115,16 +115,17 @@ export default function RationPlanner() {
         {view === 'CATEGORY' && s && (
           cat && cat.animals > 0 ? (
             <>
+              <div className="-mb-1.5 text-[13px] text-ink-3">{ruleHint(category)}</div>
               <Card title={`${ruleLabel(category)} · ${cat.animals} animal${cat.animals === 1 ? '' : 's'}`}><TotalsRow t={cat.totals} showMoney={isOwner} /></Card>
               <div className="text-[13px] text-ink-3">Pick one animal to see her ration and nutrient check.</div>
-              <AnimalSelect id="rp-cow" value={animalId} onChange={(v) => setParam({ view: 'COW', animal: v })} filter={(a) => toRule(a.category) === category} />
+              <AnimalSelect id="rp-cow" value={animalId} onChange={(v) => setParam({ view: 'COW', animal: v })} filter={(a) => groups.get(String(a.id)) === category} />
             </>
-          ) : <div className="rounded-[14px] bg-white px-4 py-5 text-center text-sm text-ink-3">No active {ruleLabel(category).toLowerCase()} animals.</div>
+          ) : <div className="rounded-[14px] bg-white px-4 py-5 text-center text-sm text-ink-3">No animals in {ruleLabel(category)} today.</div>
         )}
 
         {view === 'COW' && (
           <>
-            <div><label className="lab" htmlFor="rp-an">Cow</label><AnimalSelect id="rp-an" value={animalId} onChange={(v) => setParam({ animal: v })} filter={(a) => !params.get('category') || toRule(a.category) === category} placeholder="Choose an animal" />
+            <div><label className="lab" htmlFor="rp-an">Cow</label><AnimalSelect id="rp-an" value={animalId} onChange={(v) => setParam({ animal: v })} filter={(a) => !params.get('category') || groups.get(String(a.id)) === category} placeholder="Choose an animal" />
               {ration.data && <div className="hint">{ration.data.animal.tag} · {ration.data.animal.name} · {ration.data.animal.breed} · {ruleLabel(ration.data.rule.category)}</div>}</div>
             <LoadState loading={ration.loading} error={ration.error} onRetry={ration.reload} empty={!ration.data} />
             {!animalId && <div className="rounded-[14px] bg-white px-4 py-5 text-center text-sm text-ink-3">Choose an animal to see her daily ration.</div>}

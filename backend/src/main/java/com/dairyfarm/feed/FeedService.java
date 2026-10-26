@@ -53,7 +53,8 @@ import com.dairyfarm.feed.FeedViews.PaymentMethod;
 import com.dairyfarm.feed.FeedViews.PurchaseRequest;
 import com.dairyfarm.feed.FeedViews.PurchaseSaved;
 import com.dairyfarm.feed.FeedViews.RationAnimal;
-import com.dairyfarm.feed.FeedViews.RationCategory;
+import com.dairyfarm.feed.FeedViews.AnimalGroup;
+import com.dairyfarm.feed.FeedViews.FeedGroup;
 import com.dairyfarm.feed.FeedViews.RationLine;
 import com.dairyfarm.feed.FeedViews.RationSummary;
 import com.dairyfarm.feed.FeedViews.RationTotals;
@@ -364,15 +365,20 @@ public class FeedService {
         LocalDate d = date == null ? DailyDates.today() : date;
         Catalog c = planner.catalog(farmId);
         Herd h = planner.herd(farmId, c, d, null, null);
-        Map<RationCategory, List<Plan>> by = new EnumMap<>(RationCategory.class);
-        h.plans().forEach(p -> by.computeIfAbsent(p.animal().category(), k -> new ArrayList<>()).add(p));
+        Map<FeedGroup, List<Plan>> by = new EnumMap<>(FeedGroup.class);
+        h.plans().forEach(p -> by.computeIfAbsent(p.animal().group(), k -> new ArrayList<>()).add(p));
         List<CategoryTotals> cats = new ArrayList<>();
-        for (RationCategory rc : List.of(RationCategory.MILKING, RationCategory.DRY, RationCategory.HEIFER, RationCategory.CALF,
-                RationCategory.BULL)) {
+        for (FeedGroup rc : FeedGroup.values()) {
             List<Plan> ps = by.getOrDefault(rc, List.of());
             cats.add(new CategoryTotals(rc, ps.size(), totals(ps, showMoney)));
         }
         return new RationSummary(d, totals(h.plans(), showMoney), cats);
+    }
+
+    @Transactional(readOnly = true)
+    public List<AnimalGroup> groups(Long farmId, LocalDate date) {
+        LocalDate d = date == null ? DailyDates.today() : date;
+        return planner.groups(farmId, planner.catalog(farmId), d);
     }
 
     @Transactional(readOnly = true)
@@ -396,7 +402,7 @@ public class FeedService {
                 p.daysInMilk() == null ? null : p.stage().name(),
                 new RationTotals(p.greenKg(), p.dryKg(), p.concKg(), p.totalKg(), p.targetKg(), p.dmiPct(), p.waterL()), p.explain(), p.capped(),
                 lines, ingr, showMoney ? p.costPerDay() : null, nut,
-                new RuleRef(a.category(), FeedPlanner.ruleFrom(c, a.category(), d)));
+                new RuleRef(a.group(), FeedPlanner.ruleFrom(c, a.group(), d)));
     }
 
     @Transactional(readOnly = true)
@@ -579,8 +585,7 @@ public class FeedService {
         List<RuleRow> all = repo.rules(farmId);
         var current = FeedRepository.inForce(all, today);
         List<RuleSet> out = new ArrayList<>();
-        for (RationCategory rc : List.of(RationCategory.MILKING, RationCategory.DRY, RationCategory.HEIFER, RationCategory.CALF,
-                RationCategory.BULL)) {
+        for (FeedGroup rc : FeedGroup.values()) {
             RuleRow cur = current.get(rc);
             List<RuleVersion> upcoming = new ArrayList<>();
             List<RuleVersion> history = new ArrayList<>();
@@ -598,7 +603,7 @@ public class FeedService {
     }
 
     @Transactional
-    public List<RuleSet> saveRule(Long farmId, RationCategory category, LocalDate from, RationParams params) {
+    public List<RuleSet> saveRule(Long farmId, FeedGroup category, LocalDate from, RationParams params) {
         RationParams p = params.resolved(category);
         Map<Long, Item> feed = new LinkedHashMap<>();
         items.findByFarmIdAndItemTypeOrderByNameAsc(farmId, Item.Type.FEED).forEach(i -> feed.put(i.getId(), i));

@@ -200,19 +200,21 @@ class FeedControllerTest extends IntegrationTest {
         assertThat(r.get("explain").asString()).contains("18.5 L × 0.4");
         assertThat(r.get("rule").get("effectiveFrom") == null || r.get("rule").get("effectiveFrom").isNull()).isTrue();
 
-        // Owner picks items for milking cows from today; a worker can't
+        // Owner picks items for early-lactation cows (day 84) from today; a worker can't
         String rule = "{\"effectiveFrom\":\"" + today + "\",\"params\":{\"green\":[{\"itemId\":" + velimasal + ",\"sharePct\":40},"
                 + "{\"itemId\":" + napier + ",\"sharePct\":60}],\"dry\":[{\"itemId\":" + straw + ",\"sharePct\":100}],\"concItemId\":"
                 + mix + "}}";
-        call(put(base() + "/feed/ration-rules/MILKING"), worker, rule, 403);
-        call(put(base() + "/feed/ration-rules/MILKING"), owner, rule.replace("\"sharePct\":60", "\"sharePct\":50"), 400);
-        call(put(base() + "/feed/ration-rules/MILKING"), owner, rule, 200);
+        call(put(base() + "/feed/ration-rules/EARLY"), worker, rule, 403);
+        call(put(base() + "/feed/ration-rules/EARLY"), owner, rule.replace("\"sharePct\":60", "\"sharePct\":50"), 400);
+        call(put(base() + "/feed/ration-rules/EARLY"), owner, rule, 200);
         // A rule from tomorrow: early-lactation DMI 4 % of body weight
-        call(put(base() + "/feed/ration-rules/MILKING"), owner, "{\"effectiveFrom\":\"" + today.plusDays(1)
+        call(put(base() + "/feed/ration-rules/EARLY"), owner, "{\"effectiveFrom\":\"" + today.plusDays(1)
                 + "\",\"params\":{\"dmiEarlyPct\":4}}", 200);
         JsonNode rules = call(get(base() + "/feed/ration-rules"), worker, null, 200);
-        JsonNode milking = rules.get(0);
-        assertThat(milking.get("category").asString()).isEqualTo("MILKING");
+        assertThat(rules.size()).isEqualTo(10);
+        assertThat(rules.get(0).get("category").asString()).isEqualTo("FRESH");
+        JsonNode milking = rules.get(1);
+        assertThat(milking.get("category").asString()).isEqualTo("EARLY");
         assertThat(milking.get("current").get("effectiveFrom").asString()).isEqualTo(today.toString());
         assertThat(milking.get("current").get("params").get("dmiEarlyPct").asDouble()).isEqualTo(3.75);
         assertThat(milking.get("upcoming").size()).isEqualTo(1);
@@ -272,8 +274,14 @@ class FeedControllerTest extends IntegrationTest {
         assertThat(ov.get("reorderCount").asInt()).isGreaterThanOrEqualTo(1);
 
         JsonNode summary = call(get(base() + "/feed/ration/summary"), owner, null, 200);
-        assertThat(summary.get("categories").get(0).get("category").asString()).isEqualTo("MILKING");
+        assertThat(summary.get("categories").get(1).get("category").asString()).isEqualTo("EARLY");
         assertThat(summary.get("categories").get(1).get("animals").asInt()).isEqualTo(1);
+        assertThat(summary.get("categories").get(6).get("category").asString()).isEqualTo("DRY");
+        assertThat(summary.get("categories").get(6).get("animals").asInt()).isEqualTo(1);
+
+        // Feeding group per animal (for badges)
+        JsonNode groups = call(get(base() + "/feed/groups"), worker, null, 200);
+        assertThat(groups.toString()).contains("\"animalId\":" + cow + ",\"group\":\"EARLY\"", "\"group\":\"DRY\"");
 
         JsonNode need = call(get(base() + "/feed/need?days=7"), owner, null, 200);
         assertThat(need.get("animals").asInt()).isEqualTo(2);

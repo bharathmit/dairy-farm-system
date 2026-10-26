@@ -5,7 +5,7 @@ import { LoadState } from '../../components/records'
 import { FeedItemSelect, useFeed } from '../../components/feed'
 import { useStore } from '../../data/store'
 import { addDays, decimal, numText, shortDate, todayIso, toNum, useLoad } from '../../data/records'
-import { ruleLabel, type FeedItem, type Limit, type RationParams, type RuleCategory } from '../../data/feed'
+import { isMilkingGroup, ruleHint, ruleLabel, STAGE_DMI, type FeedItem, type Limit, type RationParams, type RuleCategory } from '../../data/feed'
 import { errorMessage } from '../../lib/api'
 
 type Num = 'concBaseKg' | 'concPerLitreKg' | 'maxConcKg' | 'greenDmPct' | 'dryDmPct' | 'concDmPct' | 'dmIntakePct'
@@ -61,7 +61,7 @@ function ShareList({ title, rows, setRows, items, filter, ro, hint }: {
 }
 
 export default function RationRuleEditor() {
-  const { category = 'MILKING' } = useParams()
+  const { category = 'EARLY' } = useParams()
   const cat = category.toUpperCase() as RuleCategory
   const { fd, isOwner } = useFeed()
   const { notify } = useStore()
@@ -94,9 +94,10 @@ export default function RationRuleEditor() {
   // Example with standard DM: green 30 %, dry 90 %, concentrate 80 % (the plan uses each item's own DM %)
   const preview = useMemo(() => {
     const n = (k: Num) => toNum(nums[k] ?? '') ?? 0
-    const bw = cat === 'MILKING' ? 450 : cat === 'CALF' ? 100 : cat === 'HEIFER' ? 250 : cat === 'BULL' ? 500 : 420
-    const milk = cat === 'MILKING' ? 18 : 0
-    const pct = cat === 'MILKING' ? n('dmiEarlyPct') : cat === 'HEIFER' ? n('dmiAge12to24Pct') : cat === 'CALF' ? n('dmiAge3to6Pct') : n('dmIntakePct')
+    const milking = isMilkingGroup(cat)
+    const bw = milking ? 450 : cat === 'CALF' ? 100 : cat === 'HEIFER' ? 250 : cat === 'BULL' ? 500 : 420
+    const milk = milking ? 18 : 0
+    const pct = milking ? n(STAGE_DMI[cat]!) : cat === 'HEIFER' ? n('dmiAge12to24Pct') : cat === 'CALF' ? n('dmiAge3to6Pct') : n('dmIntakePct')
     const dmi = bw * pct / 100
     const g = n('greenDmPct'); const d = n('dryDmPct'); const c = n('concDmPct'); const sum = g + d + c
     let conc = concMode === 'MILK' ? n('concBaseKg') + milk * n('concPerLitreKg') : sum > 0 ? dmi * c / sum / 0.8 : 0
@@ -137,6 +138,7 @@ export default function RationRuleEditor() {
         {rule && (
           <>
             <div className="rounded-xl bg-white px-3.5 py-3 text-sm">
+              <div className="text-ink-3">{ruleHint(cat)}{cat === 'DRY' || cat === 'HEIFER' ? ' (first service age and weight from Breeding settings)' : ''}.</div>
               In force {rule.current.effectiveFrom ? `since ${shortDate(rule.current.effectiveFrom)}` : 'as the default'}.
               {rule.upcoming.map((u) => <div key={u.effectiveFrom} className="text-info-text">Change saved from {shortDate(u.effectiveFrom)} (shown below).</div>)}
               {rule.history.length > 0 && <div className="text-ink-3">{rule.history.length} earlier version{rule.history.length === 1 ? '' : 's'} kept for past days.</div>}
@@ -146,9 +148,11 @@ export default function RationRuleEditor() {
               <div className="rounded-[14px] bg-white p-3.5">
                 <b className="text-[15px]">Dry matter intake (% of body weight)</b>
                 <div className="mt-3 grid grid-cols-2 gap-3">
-                  {(cat === 'MILKING' ? DMI_MILKING : cat === 'HEIFER' || cat === 'CALF' ? DMI_YOUNG : [{ k: 'dmIntakePct' as Num, label: 'DMI %' }]).map(numInput)}
+                  {(isMilkingGroup(cat) ? DMI_MILKING.filter((x) => x.k === STAGE_DMI[cat]) : cat === 'HEIFER' || cat === 'CALF' ? DMI_YOUNG
+                    : cat === 'BULL' ? [{ k: 'dmIntakePct' as Num, label: 'DMI %' }]
+                    : [{ k: 'dmIntakePct' as Num, label: 'Dry cows' }, { k: 'dmiAge12to24Pct' as Num, label: 'Heifers 12+ months' }]).map(numInput)}
                 </div>
-                <div className="hint">{cat === 'MILKING' ? 'Guide: early 3.75, mid 3.25, late 2.75 %.' : cat === 'HEIFER' || cat === 'CALF' ? 'Picked by age from the birth date. Guide: 3.00, 2.75, 2.50 %.' : cat === 'DRY' ? 'Guide: dry cow 2.00 %.' : ''}</div>
+                <div className="hint">{isMilkingGroup(cat) ? 'Guide: early 3.75, mid 3.25, late 2.75 %.' : cat === 'HEIFER' || cat === 'CALF' ? 'Picked by age from the birth date. Guide: 3.00, 2.75, 2.50 %.' : cat === 'BULL' ? '' : 'Guide: dry cow 2.00 %, heifer 2.50 %.'}</div>
               </div>
               <div className="rounded-[14px] bg-white p-3.5">
                 <div className="flex items-baseline justify-between"><b className="text-[15px]">TMR mix (% of dry matter)</b><span className={`text-[13px] font-semibold ${Math.abs(mixSum - 100) > 0.5 ? 'text-danger-text' : 'text-ink-3'}`}>{Math.round(mixSum)} % of 100</span></div>
@@ -167,7 +171,7 @@ export default function RationRuleEditor() {
                   <div><label className="lab" htmlFor="rr-mode">Concentrate by</label><select className="inp" id="rr-mode" value={concMode} onChange={(e) => setConcMode(e.target.value as RationParams['concMode'])}><option value="MILK">Milk yield</option><option value="DMI">DMI share</option></select></div>
                   {(concMode === 'MILK' ? CONC : CONC.filter((x) => x.k === 'maxConcKg')).map(numInput)}
                   <div><label className="lab" htmlFor="rr-conc">Concentrate item</label><FeedItemSelect id="rr-conc" items={items.data} value={concItem} onChange={setConcItem} filter={(i) => i.category === 'MIX' || i.category === 'CONCENTRATE_INGREDIENT'} placeholder="First mix item" /></div>
-                  {(cat === 'MILKING' ? WATER : WATER.slice(0, 1)).map(numInput)}
+                  {(isMilkingGroup(cat) ? WATER : WATER.slice(0, 1)).map(numInput)}
                 </div>
                 <div className="mt-3 rounded-[10px] bg-brand-soft px-3 py-2.5 text-[13px]">
                   Example {preview.bw} kg{preview.milk ? `, ${preview.milk} L/day` : ''}: DMI {preview.pct} % = {preview.dmi.toFixed(1)} kg DM → green {preview.green.toFixed(1)} + dry {preview.dry.toFixed(1)} + concentrate {preview.conc.toFixed(1)} kg fresh · water {preview.water.toFixed(0)} L
