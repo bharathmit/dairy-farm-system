@@ -98,7 +98,7 @@ export default function RationPlanner() {
       <div className="flex flex-col gap-3.5 px-4 pb-4">
         <Segmented label="View" options={[{ value: 'FARM', label: 'Farm total' }, { value: 'CATEGORY', label: 'By group' }, { value: 'COW', label: 'One cow' }]} value={view} onChange={(v) => setParam({ view: v })} />
         <LoadState loading={summary.loading} error={summary.error} onRetry={summary.reload} empty={!s} />
-        {view !== 'FARM' && s && (
+        {view === 'CATEGORY' && s && (
           <div className="flex gap-2 overflow-x-auto pb-1">
             {RULE_CATEGORIES.map((c) => (
               <button key={c.value} type="button" aria-pressed={category === c.value} onClick={() => setParam({ category: c.value, animal: '' })} className={`chip ${category === c.value ? 'chip-on' : ''}`}>
@@ -137,7 +137,7 @@ export default function RationPlanner() {
 
         {view === 'COW' && (
           <>
-            <div><label className="lab" htmlFor="rp-an">Cow</label><AnimalSelect id="rp-an" value={animalId} onChange={(v) => setParam({ animal: v })} filter={(a) => !params.get('category') || groups.get(String(a.id)) === category} placeholder="Choose an animal" />
+            <div><label className="lab" htmlFor="rp-an">Cow</label><AnimalSelect id="rp-an" value={animalId} onChange={(v) => setParam({ animal: v })} placeholder="Choose an animal" />
               {ration.data && <div className="hint">{ration.data.animal.tag} · {ration.data.animal.name} · {ration.data.animal.breed} · {ruleLabel(ration.data.rule.category)}</div>}</div>
             <LoadState loading={ration.loading} error={ration.error} onRetry={ration.reload} empty={!ration.data} />
             {!animalId && <div className="rounded-[14px] bg-white px-4 py-5 text-center text-sm text-ink-3">Choose an animal to see her daily ration.</div>}
