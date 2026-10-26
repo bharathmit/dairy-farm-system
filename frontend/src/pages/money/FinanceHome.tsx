@@ -50,7 +50,7 @@ export default function FinanceHome() {
   }
 
   return (
-    <Screen>
+    <Screen wide>
       <TopBar title="Finance" back="/home" right={<Link to="/money/entries/new" className="flex h-10 items-center rounded-[10px] bg-brand px-3.5 text-sm font-semibold text-white no-underline hover:text-white">+ Add</Link>} />
       <div className="flex flex-col gap-3 px-4 pb-4">
         <div>
@@ -68,7 +68,7 @@ export default function FinanceHome() {
         <LoadState loading={sum.loading} error={sum.error} onRetry={sum.reload} empty={!s} />
         {s && (
           <>
-            <div className="grid grid-cols-2 gap-2.5">
+            <div className="grid grid-cols-2 gap-2.5 md:grid-cols-4">
               <Stat k="Income" v={<span className="text-brand">{rupees(s.income)}</span>} sub={s.incomeChangePct != null ? `${changePct(s.incomeChangePct)} vs previous` : 'no earlier period'} />
               <Stat k="Expense" v={<span className="text-danger">{rupees(s.expense)}</span>} sub={s.expenseChangePct != null ? `${changePct(s.expenseChangePct)} vs previous` : 'no earlier period'} />
               <Stat k="Net" v={rupees(s.net)} sub="income − expense" />

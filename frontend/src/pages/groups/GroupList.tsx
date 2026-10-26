@@ -10,7 +10,7 @@ export default function GroupList() {
   const ungrouped = active.filter((a) => !a.groupId).length
 
   return (
-    <Screen>
+    <Screen wide>
       <div className="flex items-center gap-2 px-4 pb-2.5 pt-3.5">
         <LogoMark />
         <h1 className="m-0 flex-1 text-2xl font-bold">Herd</h1>
@@ -51,7 +51,7 @@ export default function GroupList() {
         )}
       </div>
 
-      <div className="sticky bottom-[72px] z-10">
+      <div className="sticky bottom-[72px] z-10 xl:bottom-0">
         <div className="pointer-events-none flex justify-end px-4 pb-3">
           <Link to="/groups/new" className="pointer-events-auto flex h-[52px] items-center gap-2 rounded-full bg-brand px-5 font-semibold text-white no-underline shadow-[0_6px_14px_rgba(31,92,58,.3)] hover:text-white">
             <Icon name="plus" size={20} color="#fff" strokeWidth={2.4} />New group

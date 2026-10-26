@@ -41,7 +41,7 @@ export default function HealthHome() {
   }
 
   return (
-    <Screen>
+    <Screen wide>
       <TopBar title="Health" back="/home" right={<>
         <Link to="/health/batch" className="mr-1.5 flex h-10 items-center rounded-[10px] border border-brand px-3 text-sm font-semibold text-brand no-underline">Batch</Link>
         <Link to="/health/new" className="flex h-10 items-center rounded-[10px] bg-brand px-3 text-sm font-semibold text-white no-underline hover:text-white">+ Record</Link>

@@ -34,7 +34,7 @@ export default function BreedingHome() {
   const days = o ? [...new Set(o.calendar.map((c) => c.date))].sort() : []
 
   return (
-    <Screen>
+    <Screen wide>
       <TopBar title="Breeding" back="/home" right={<Link to="/breeding/service/new" className="flex h-10 items-center rounded-[10px] bg-brand px-3.5 text-sm font-semibold text-white no-underline hover:text-white">+ Service</Link>} />
       <div className="flex flex-col gap-3.5 px-4 pb-4">
         <div className="text-sm text-ink-3">{farm?.name}{o ? ` · ${o.breedable} breedable` : ''} · {dayLabel(today)}</div>

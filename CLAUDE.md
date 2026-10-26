@@ -37,6 +37,8 @@ PLAN.md    module plan · PROGRESS.md  status, decisions, blockers (keep up to d
 - API clients and types in `src/data/<area>.ts`; shared UI in `src/components/ui.tsx` and `components/<area>.tsx`;
   screens in `src/pages/<area>/`. Use existing Tailwind tokens (`text-ink-3`, `text-danger-text`, `bg-brand-soft`…).
 - Keep screens phone-width friendly; reuse `Screen`, `TopBar`, `LoadState`, `useLoad`.
+- Responsive: phone first; `md:` (≥768) tablet column 720 px, `<Screen wide>` (dashboards, lists, reports) grows to
+  1040 px at `lg:`; forms stay 720 px. Bottom nav becomes a left rail at `xl:`; sheets/dialogs centre on `md:`+.
 
 ## Commands
 ```bash

@@ -116,11 +116,11 @@ export default function AnimalProfile() {
   const later = () => notify('Coming in a later module')
 
   if (!a && loading) {
-    return <Screen><TopBar title="Animal" back="/animals" /><p className="px-5 text-ink-3" role="status">Loading…</p></Screen>
+    return <Screen wide><TopBar title="Animal" back="/animals" /><p className="px-5 text-ink-3" role="status">Loading…</p></Screen>
   }
   if (!a) {
     return (
-      <Screen>
+      <Screen wide>
         <TopBar title="Animal" back="/animals" />
         <div className="card mt-4"><div className="font-bold">Animal not found</div><p className="m-0 mt-1 text-sm text-ink-3">It may have been deleted.</p><Link to="/animals" className="mt-2 inline-block font-semibold">Back to herd</Link></div>
         <div className="flex-1" /><Footer />
@@ -138,7 +138,7 @@ export default function AnimalProfile() {
   const stage = dim === undefined ? '' : dim <= 100 ? ' · early' : dim <= 200 ? ' · mid' : ' · late'
 
   return (
-    <Screen>
+    <Screen wide>
       <div className="flex items-center gap-1 px-2 pt-2">
         <Link className={ib} to="/animals" aria-label="Back"><Icon name="back" /></Link>
         <LogoMark />

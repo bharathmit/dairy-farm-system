@@ -62,7 +62,7 @@ export default function CullAdvisor() {
   )
 
   return (
-    <Screen>
+    <Screen wide>
       <TopBar title="Cull advisor" back="/reports" />
       <div className="flex flex-col gap-3 px-4 pb-4">
         <LoadState loading={data.loading} error={data.error} onRetry={data.reload} empty={!d} />

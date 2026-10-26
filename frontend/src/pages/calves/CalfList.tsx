@@ -69,7 +69,7 @@ export default function CalfList() {
   const who = `${sex === 'FEMALE' ? 'female' : sex === 'MALE' ? 'male' : ''} calves`.trim()
 
   return (
-    <Screen>
+    <Screen wide>
       <TopBar title="Calves" back="/breeding" right={<Link to="/calves/feeding" className="flex h-10 items-center rounded-[10px] bg-brand px-3.5 text-sm font-semibold text-white no-underline hover:text-white">+ Feeding</Link>} />
       <div className="flex flex-col gap-3 px-4 pb-4">
         <div className="grid grid-cols-3 gap-2.5">

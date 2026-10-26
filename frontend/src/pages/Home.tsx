@@ -64,7 +64,7 @@ export default function Home() {
   const tile = 'rounded-xl bg-white p-3 text-ink no-underline hover:text-ink'
 
   return (
-    <Screen>
+    <Screen wide>
       <div className="flex items-center gap-2.5 px-4 pb-1.5 pt-3.5">
         <LogoMark />
         <div className="min-w-0 flex-1"><h1 className="m-0 text-xl font-bold leading-tight">{title}</h1><div className="text-[13px] text-ink-3">{sub}</div></div>
@@ -77,7 +77,7 @@ export default function Home() {
         <LoadState loading={home.loading} error={home.error} onRetry={home.reload} empty={!h} />
         {h && isOwner && (
           <>
-            <div className="grid grid-cols-2 gap-2.5">
+            <div className="grid grid-cols-2 gap-2.5 md:grid-cols-4">
               <Link to="/milk" className={tile}>
                 <div className="text-xs font-semibold text-ink-3">Today's milk</div><div className="mt-0.5 text-[22px] font-bold">{L(h.tiles.milkToday)} L</div>
                 {h.tiles.milkChangePct != null && <div className={`mt-0.5 text-xs font-semibold ${h.tiles.milkChangePct < 0 ? 'text-danger' : 'text-brand'}`}>{changePct(h.tiles.milkChangePct)} {h.tiles.milkCompareNote || 'vs yesterday'}</div>}
@@ -99,13 +99,17 @@ export default function Home() {
               </Link>
             </div>
 
+            {/* Laptop: tasks on the left, herd lists on the right. */}
+            <div className="lg:grid lg:grid-cols-2 lg:gap-x-4">
+            <div>
             <SectionHead title="Today's tasks"><Link to="/checklist" className={headLink}>Checklist</Link></SectionHead>
             <div className="rounded-[14px] bg-white px-3.5 py-1">
               {h.tasks.length === 0 ? <div className="py-3 text-sm text-ink-3">Nothing due today.</div> : h.tasks.map((t, i) => <TaskRow key={`${t.key}-${i}`} t={t} first={i === 0} />)}
             </div>
             {checklistCard}
             {barnBlock}
-
+            </div>
+            <div>
             <SectionHead title="Top producers · 7 d avg"><Link to="/reports/compare" className={headLink}>Compare</Link></SectionHead>
             <div className="rounded-[14px] bg-white px-3.5 py-1">
               {!h.topProducers?.length ? <div className="py-3 text-sm text-ink-3">No milk logged in the last 7 days.</div> : h.topProducers.map((p, i, all) => (
@@ -126,6 +130,8 @@ export default function Home() {
                   <Badge className={c.days <= 7 ? 'bg-warn-soft text-warn-ink' : 'bg-info-soft text-info-text'}>{shortDate(c.dueDate)} · {c.days} d</Badge>
                 </Link>
               ))}
+            </div>
+            </div>
             </div>
           </>
         )}
@@ -169,7 +175,7 @@ export default function Home() {
         )}
 
         <SectionHead title="More" />
-        <div className="grid grid-cols-2 gap-2.5">
+        <div className="grid grid-cols-2 gap-2.5 md:grid-cols-4">
           {[
             { to: '/milk', icon: 'drop' as const, color: '#1F5C3A', label: 'Milk' },
             { to: '/health', icon: 'health' as const, color: '#A3271B', label: 'Health' },

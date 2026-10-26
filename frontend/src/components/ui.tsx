@@ -4,10 +4,13 @@ import { Icon, type IconName } from './icons'
 import { useStore } from '../data/store'
 import { alertCountSnapshot, loadAlertCount, subscribeAlertCount } from '../data/alerts'
 
-/** Phone-width column. On wider screens it sits centred like a device. */
-export function Screen({ children, className = '' }: { children: ReactNode; className?: string }) {
+/**
+ * Page column. Phone: full width (max 430 px). Tablet (md ≥ 768 px): 720 px. `wide` screens — dashboards,
+ * lists and reports — grow to 1040 px on laptops (lg ≥ 1024 px). Forms stay at 720 px so fields stay readable.
+ */
+export function Screen({ children, className = '', wide }: { children: ReactNode; className?: string; wide?: boolean }) {
   return (
-    <div className={`relative mx-auto flex min-h-[100dvh] w-full max-w-[430px] flex-col bg-ground shadow-sm ${className}`}>
+    <div className={`relative mx-auto flex min-h-[100dvh] w-full max-w-[430px] flex-col bg-ground shadow-sm md:max-w-[720px] ${wide ? 'lg:max-w-[1040px]' : ''} ${className}`}>
       {children}
     </div>
   )
@@ -144,13 +147,13 @@ export function Switch({ checked, onChange, label }: { checked: boolean; onChang
   )
 }
 
-/** Bottom sheet over a dimmed backdrop. */
+/** Bottom sheet over a dimmed backdrop; a centred panel on tablet and desktop. */
 export function Sheet({ onClose, children, label, tall }: { onClose: () => void; children: ReactNode; label: string; tall?: boolean }) {
   return (
-    <div className="fixed inset-0 z-40 mx-auto flex max-w-[430px] flex-col justify-end" role="dialog" aria-modal="true" aria-label={label}>
+    <div className="fixed inset-0 z-40 mx-auto flex max-w-[430px] flex-col justify-end md:max-w-none md:items-center md:justify-center md:p-6" role="dialog" aria-modal="true" aria-label={label}>
       <button type="button" aria-label="Close" onClick={onClose} className="absolute inset-0 bg-[rgba(20,30,24,.45)]" />
-      <div className={`relative flex flex-col overflow-hidden rounded-t-[22px] bg-white ${tall ? 'max-h-[calc(100dvh-64px)]' : 'max-h-[90dvh]'}`}>
-        <div className="mx-auto mb-1 mt-2.5 h-1 w-10 shrink-0 rounded bg-line" />
+      <div className={`relative flex w-full flex-col overflow-hidden rounded-t-[22px] bg-white md:max-w-[560px] md:rounded-[22px] md:pt-3 ${tall ? 'max-h-[calc(100dvh-64px)]' : 'max-h-[90dvh]'}`}>
+        <div className="mx-auto mb-1 mt-2.5 h-1 w-10 shrink-0 rounded bg-line md:hidden" />
         {children}
       </div>
     </div>
@@ -159,9 +162,9 @@ export function Sheet({ onClose, children, label, tall }: { onClose: () => void;
 
 export function Dialog({ title, children, onClose }: { title: string; children: ReactNode; onClose: () => void }) {
   return (
-    <div className="fixed inset-0 z-50 mx-auto flex max-w-[430px] items-center px-6" role="dialog" aria-modal="true" aria-labelledby="dlg-title">
+    <div className="fixed inset-0 z-50 mx-auto flex max-w-[430px] items-center px-6 md:max-w-none md:justify-center" role="dialog" aria-modal="true" aria-labelledby="dlg-title">
       <button type="button" aria-label="Close" onClick={onClose} className="absolute inset-0 bg-[rgba(20,30,24,.45)]" />
-      <div className="relative w-full rounded-[18px] bg-white p-6">
+      <div className="relative w-full rounded-[18px] bg-white p-6 md:max-w-[420px]">
         <h2 id="dlg-title" className="m-0 mb-2 text-xl font-bold">{title}</h2>
         {children}
       </div>
@@ -201,7 +204,7 @@ export function AddRecordSheet({ onClose }: { onClose: () => void }) {
           <h2 className="m-0 text-xl font-bold">Add a record</h2>
           <Link to="/animals/scan" className="flex h-10 items-center gap-1.5 rounded-[10px] border border-line px-3 text-sm font-semibold text-ink no-underline"><Icon name="scan" size={18} color="currentColor" />Scan cow first</Link>
         </div>
-        <div className="grid grid-cols-2 gap-2.5">
+        <div className="grid grid-cols-2 gap-2.5 md:grid-cols-3">
           {tiles.map((t) => (
             <Link key={t.to} to={t.to} className="flex min-h-24 flex-col items-start gap-2 rounded-[14px] bg-ground p-3.5 text-ink no-underline hover:text-ink">
               <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white"><Icon name={t.icon} color={t.color} /></span>
@@ -235,11 +238,12 @@ export function BottomNav({ active }: { active: 'home' | 'herd' | 'alerts' | 'mo
   )
   return (
     <>
-      <nav aria-label="Main" className="sticky bottom-0 z-20 grid h-[72px] grid-cols-5 border-t border-line-soft bg-white">
+      {/* Bottom bar on phone and tablet; a fixed left rail on desktop (xl ≥ 1280 px), with + on top. */}
+      <nav aria-label="Main" className="sticky bottom-0 z-20 grid h-[72px] grid-cols-5 border-t border-line-soft bg-white xl:fixed xl:inset-y-0 xl:left-0 xl:h-auto xl:w-24 xl:auto-rows-[76px] xl:grid-cols-1 xl:content-start xl:gap-1 xl:border-r xl:border-t-0 xl:pt-5">
         {item('home', '/home', 'home', 'Home')}
         {item('herd', '/animals', 'tag', 'Herd')}
-        <button type="button" onClick={() => setAdding(true)} aria-label="Add a record" className="flex items-center justify-center border-0 bg-transparent">
-          <span className="-mt-[18px] flex h-12 w-12 items-center justify-center rounded-full bg-brand shadow-[0_4px_10px_rgba(31,92,58,.3)]"><Icon name="plus" color="#fff" /></span>
+        <button type="button" onClick={() => setAdding(true)} aria-label="Add a record" className="flex items-center justify-center border-0 bg-transparent xl:order-first">
+          <span className="-mt-[18px] xl:mt-0 flex h-12 w-12 items-center justify-center rounded-full bg-brand shadow-[0_4px_10px_rgba(31,92,58,.3)]"><Icon name="plus" color="#fff" /></span>
         </button>
         {item('alerts', '/alerts', 'bell', 'Alerts', open)}
         {item('more', '/settings', 'menu', 'More')}
@@ -252,6 +256,6 @@ export function BottomNav({ active }: { active: 'home' | 'herd' | 'alerts' | 'mo
 export function Toast({ text }: { text: string | null }) {
   if (!text) return null
   return (
-    <div role="status" className="fixed bottom-24 left-1/2 z-50 -translate-x-1/2 rounded-xl bg-ink px-4 py-2.5 text-sm font-medium text-white shadow-lg">{text}</div>
+    <div role="status" className="fixed bottom-24 left-1/2 z-50 xl:bottom-8 -translate-x-1/2 rounded-xl bg-ink px-4 py-2.5 text-sm font-medium text-white shadow-lg">{text}</div>
   )
 }

@@ -20,7 +20,7 @@ export default function EntryList() {
   const items = list.data?.items ?? []
   const total = items.reduce((s, e) => s + (e.direction === 'INCOME' ? e.amount : -e.amount), 0)
   return (
-    <Screen>
+    <Screen wide>
       <TopBar title={a ? `Entries · ${a.tag}` : 'Entries'} back={animalId ? `/money/pnl?animal=${animalId}` : '/money'} />
       <div className="flex flex-col gap-3 px-4 pb-4">
         <LoadState loading={list.loading} error={list.error} onRetry={list.reload} empty={!list.data} />

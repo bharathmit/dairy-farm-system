@@ -56,7 +56,7 @@ export default function Reports() {
   const tile = 'rounded-xl bg-white p-3 text-ink no-underline hover:text-ink'
 
   return (
-    <Screen>
+    <Screen wide>
       <TopBar title="Reports" back="/home" />
       <div className="flex flex-col gap-3 px-4 pb-4">
         <ChoiceChips label="Period" options={PERIODS} value={period} onChange={setPeriod} />
@@ -68,7 +68,7 @@ export default function Reports() {
         )}
         <LoadState loading={sum.loading} error={sum.error} onRetry={sum.reload} empty={!s} />
         {s && (
-          <div className="grid grid-cols-2 gap-2.5">
+          <div className="grid grid-cols-2 gap-2.5 md:grid-cols-4">
             <Link to="/milk" className={tile}><div className="text-xs font-semibold text-ink-3">Milk</div><div className="mt-0.5 text-xl font-bold">{Math.round(s.milkLitres).toLocaleString('en-IN')} L</div>
               {s.milkChangePct != null && <div className={`text-xs font-semibold ${s.milkChangePct < 0 ? 'text-danger' : 'text-brand'}`}>{changePct(s.milkChangePct)} vs previous</div>}</Link>
             <Link to="/money" className={tile}><div className="text-xs font-semibold text-ink-3">Net profit</div><div className={`mt-0.5 text-xl font-bold ${(s.netProfit ?? 0) < 0 ? 'text-danger' : ''}`}>{rupees(s.netProfit)}</div>

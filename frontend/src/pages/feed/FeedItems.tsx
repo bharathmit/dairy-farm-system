@@ -13,7 +13,7 @@ export default function FeedItems() {
   const f = STOCK_FILTERS.find((x) => x.key === filter) ?? STOCK_FILTERS[0]
   const list = (res.data ?? []).filter((i) => f.match(i.category)).sort((a, b) => Number(b.active) - Number(a.active) || a.name.localeCompare(b.name))
   return (
-    <Screen>
+    <Screen wide>
       <TopBar title="Feed items" back="/settings" right={isOwner ? <Link to="/feed/items/new" className="flex h-10 items-center rounded-[10px] bg-brand px-3 text-sm font-semibold text-white no-underline hover:text-white">+ Item</Link> : undefined} />
       <div className="flex flex-col gap-3 px-4 pb-4">
         <div className="flex gap-2 overflow-x-auto pb-1">

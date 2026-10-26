@@ -8,5 +8,7 @@
     "directory": "./dist",
     // Unknown paths (e.g. /animals/12) return index.html so React Router can handle them.
     "not_found_handling": "single-page-application"
-  }
+  },
+  // Required by `wrangler preview`, which Cloudflare runs for non-production branches.
+  "previews": {}
 }
