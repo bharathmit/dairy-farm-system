@@ -7,7 +7,6 @@ import { inr0 } from '../../data/breeding'
 import { kg, NUTRIENT_TONE, ruleHint, ruleLabel, RULE_CATEGORIES, SECTION_LABEL, type AnimalRation, type RuleCategory, type Section, type Totals } from '../../data/feed'
 
 type View = 'FARM' | 'CATEGORY' | 'COW'
-const TIMING: Record<Section, string> = { GREEN: '6 AM, before milking', DRY: 'after milking', CONCENTRATE: 'after milking · AM + PM', OTHER: '' }
 
 function TotalsRow({ t, showMoney }: { t: Totals; showMoney: boolean }) {
   return (
@@ -28,27 +27,40 @@ function CowRation({ r, showMoney }: { r: AnimalRation; showMoney: boolean }) {
         <div className="rounded-xl bg-white p-3"><div className="text-xs font-semibold text-ink-3">Body weight</div><div className="mt-0.5 text-lg font-bold">{kg(r.bodyWeightKg, 0)} kg</div>
           <div className="text-xs text-ink-3">{r.weightSource === 'MEASURED' ? `Weighed ${shortDate(r.weighedOn)}` : r.weightSource === 'ANIMAL' ? 'From the animal record' : 'Estimate — weigh her'}</div></div>
         <div className="rounded-xl bg-white p-3"><div className="text-xs font-semibold text-ink-3">Milk yesterday</div><div className="mt-0.5 text-lg font-bold">{r.milkYesterday != null ? `${L(r.milkYesterday)} L` : '—'}</div>
-          <div className="text-xs text-ink-3">{r.daysInMilk != null ? `DIM ${r.daysInMilk}${r.stage ? ` · ${r.stage.toLowerCase()}` : ''}` : 'From milk log'}</div></div>
+          <div className="text-xs text-ink-3">{r.daysInMilk != null ? `Day ${r.daysInMilk} since calving${r.stage ? ` · ${r.stage.toLowerCase()} lactation` : ''}` : 'From milk log'}</div></div>
       </div>
       <div className="grid grid-cols-3 gap-2.5">
         <Tile k="Green" v={`${kg(r.totals.greenKg)} kg`} /><Tile k="Dry" v={`${kg(r.totals.dryKg)} kg`} /><Tile k="Concentrate" v={`${kg(r.totals.concentrateKg)} kg`} />
       </div>
-      <div className="-mt-1 text-[13px] text-ink-3">Total {kg(r.totals.totalKg)} kg fresh · DMI {kg(r.totals.targetKg)} kg DM · water ~{kg(r.totals.waterL, 0)} L/day<div>{r.explain}</div></div>
+      <div className="rounded-[14px] bg-white p-3.5">
+        <div className="grid grid-cols-2 gap-3">
+          <div><div className="text-xs font-semibold text-ink-3">Total fresh feed</div><div className="mt-0.5 text-lg font-bold">{kg(r.totals.totalKg)} kg/day</div>
+            <div className="text-xs text-ink-3">Green + dry + concentrate, weighed as you feed it (with its moisture).</div></div>
+          <div><div className="text-xs font-semibold text-ink-3">Dry matter intake (DMI)</div><div className="mt-0.5 text-lg font-bold">{kg(r.totals.targetKg)} kg/day</div>
+            <div className="text-xs text-ink-3">The same feed with the moisture taken out. The TMR is planned on this.</div></div>
+        </div>
+        <div className="mt-2.5 text-[13px] text-ink-3">{r.explain}</div>
+        <div className="mt-1 text-[13px] text-ink-3">Water ~{kg(r.totals.waterL, 0)} L/day</div>
+      </div>
       <div className="overflow-hidden rounded-[14px] bg-white">
         {sections.map((s) => {
           const ls = r.lines.filter((l) => l.section === s)
           if (!ls.length) return null
           return (
             <div key={s}>
-              <div className="flex justify-between bg-[#F7F7F3] px-3.5 pb-1 pt-3 text-xs font-bold uppercase tracking-[.06em] text-ink-3"><span>{SECTION_LABEL[s].split(' · ').pop()}</span><span className="normal-case tracking-normal">{ls[0].timing ?? TIMING[s]}</span></div>
+              <div className="flex justify-between bg-[#F7F7F3] px-3.5 pb-1 pt-3 text-xs font-bold uppercase tracking-[.06em] text-ink-3"><span>{SECTION_LABEL[s].split(' · ').pop()}</span></div>
               {ls.map((l, i) => <div key={i} className="flex justify-between border-t border-line-faint px-3.5 py-2.5 text-sm"><span>{l.item?.name ?? (s === 'GREEN' ? 'Green fodder (pick items in the rule)' : s === 'DRY' ? 'Dry fodder (pick items in the rule)' : 'Concentrate')}</span><b>{kg(l.kg)} kg</b></div>)}
             </div>
           )
         })}
-        {r.ingredients.map((g) => <div key={g.item.id} className="flex justify-between border-t border-line-faint px-3.5 py-2 text-[13px] text-ink-3"><span>of which {g.item.name}</span><span className={g.over ? 'font-bold text-danger-text' : ''}>{kg(g.kgPerDay, 2)} kg</span></div>)}
+        {r.ingredients.length > 0 && (
+          <details className="border-t border-line-faint">
+            <summary className="flex min-h-11 cursor-pointer items-center justify-between px-3.5 text-[13px] font-semibold text-brand">Concentrate ingredients ({r.ingredients.length})<span className="text-ink-3">Show</span></summary>
+            {r.ingredients.map((g) => <div key={g.item.id} className="flex justify-between border-t border-line-faint px-3.5 py-2 text-[13px] text-ink-3"><span>of which {g.item.name}</span><span className={g.over ? 'font-bold text-danger-text' : ''}>{kg(g.kgPerDay, 2)} kg</span></div>)}
+          </details>
+        )}
         {showMoney && r.costPerDay != null && <div className="flex justify-between border-t border-line-faint bg-[#F7F7F3] px-3.5 py-2.5 text-sm font-bold"><span>Cost per day</span><span>{inr0(r.costPerDay)}</span></div>}
       </div>
-      <div className="-mt-1 text-xs text-ink-3">Split per session: half at 6 AM, half at 6 PM.</div>
       {r.ingredients.filter((g) => g.over).map((g) => <div key={g.item.id} className="rounded-xl bg-warn-soft px-3.5 py-3 text-sm text-warn-text"><b className="text-warn-ink">{g.item.name} {kg(g.kgPerDay, 2)} kg/day</b> — above the limit of {kg(g.limitKg, 2)} kg/day.</div>)}
       {r.capped && <div className="rounded-xl bg-warn-soft px-3.5 py-3 text-sm text-warn-text"><b className="text-warn-ink">Concentrate capped</b> at the {ruleLabel(r.rule.category)} maximum.</div>}
       <div className="overflow-hidden rounded-[14px] bg-white">
