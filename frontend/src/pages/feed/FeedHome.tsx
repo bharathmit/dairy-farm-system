@@ -47,14 +47,14 @@ export default function FeedHome() {
   const shown = items.filter(f.match)
 
   return (
-    <Screen>
+    <Screen wide>
       <TopBar title="Feed" back="/home" right={isOwner ? <Link to="/feed/items/new" className="flex h-10 items-center rounded-[10px] border border-line bg-white px-3.5 text-sm font-semibold text-ink no-underline">+ Item</Link> : undefined} />
       <div className="flex flex-col gap-3 px-4 pb-4">
         <div className="text-sm text-ink-3">Today · {dayLabel(today)} · {farm?.name}</div>
         <LoadState loading={ov.loading} error={ov.error} onRetry={ov.reload} empty={!o} />
         {o && (
           <>
-            <div className="flex flex-col gap-2"><SessionRow ses="AM" info={o.sessions.AM} /><SessionRow ses="PM" info={o.sessions.PM} /></div>
+            <div className="flex flex-col gap-2 md:grid md:grid-cols-2"><SessionRow ses="AM" info={o.sessions.AM} /><SessionRow ses="PM" info={o.sessions.PM} /></div>
             <div className="grid grid-cols-3 gap-2.5">
               <Tile k="Green / day" v={`${kg(o.needPerDay.green, 0)} kg`} to="/feed/need" />
               <Tile k="Dry / day" v={`${kg(o.needPerDay.dry, 0)} kg`} to="/feed/need" />

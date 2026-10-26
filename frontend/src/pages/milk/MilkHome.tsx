@@ -58,7 +58,7 @@ export default function MilkHome() {
   const cows = (yday.data?.cows ?? []).filter((c) => c.am != null || c.pm != null)
 
   return (
-    <Screen>
+    <Screen wide>
       <TopBar title="Milk" back="/home" right={<Link to="/milk/sheet" className="flex h-10 items-center rounded-[10px] bg-brand px-3.5 text-sm font-semibold text-white no-underline hover:text-white">+ Log</Link>} />
       <div className="px-4 pb-24">
         <div className="mb-2 text-sm text-ink-3">Today · {dayLabel(today)}</div>

@@ -93,7 +93,7 @@ export default function RationPlanner() {
   const ruleCat = view === 'COW' ? ration.data?.rule.category ?? category : category
 
   return (
-    <Screen>
+    <Screen wide>
       <TopBar title="Ration planner" back="/feed" />
       <div className="flex flex-col gap-3.5 px-4 pb-4">
         <Segmented label="View" options={[{ value: 'FARM', label: 'Farm total' }, { value: 'CATEGORY', label: 'By group' }, { value: 'COW', label: 'One cow' }]} value={view} onChange={(v) => setParam({ view: v })} />

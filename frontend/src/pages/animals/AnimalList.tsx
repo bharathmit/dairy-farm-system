@@ -144,7 +144,7 @@ export default function AnimalList() {
   const filtered = isFiltered(filters)
 
   return (
-    <Screen>
+    <Screen wide>
       <div className="flex items-center gap-2 px-4 pb-2.5 pt-3.5">
         <span className="mr-0.5"><LogoMark /></span>
         <h1 className="m-0 flex-1 text-2xl font-bold">Herd</h1>
@@ -172,9 +172,9 @@ export default function AnimalList() {
         <Chips wrap={false} label="Category" options={quickOpts} value={[quick]} onToggle={(v) => setQuick(v)} />
       </div>
 
-      <div className="flex flex-1 flex-col gap-2.5 px-4 pb-24">
+      <div className="flex flex-1 flex-col gap-2.5 px-4 pb-24 md:grid md:grid-cols-2 md:content-start lg:grid-cols-3">
         {list.length === 0 && (
-          <div className="rounded-[14px] bg-white p-6 text-center">
+          <div className="rounded-[14px] bg-white p-6 text-center md:col-span-full">
             <div className="text-base font-bold">No animals match</div>
             <p className="m-0 mt-1 text-sm text-ink-3">Try a different search or clear the filters.</p>
             <button type="button" onClick={() => { setQ(''); setQuick('All'); setFilters(DEFAULT) }} className="mt-3 h-11 px-3 font-semibold text-brand">Reset</button>
@@ -205,12 +205,12 @@ export default function AnimalList() {
         })}
       </div>
 
-      <div className="pointer-events-none sticky bottom-[112px] z-10 -mt-14 flex justify-end px-4">
+      <div className="pointer-events-none sticky bottom-[112px] z-10 -mt-14 xl:bottom-[40px] flex justify-end px-4">
         <Link to="/animals/new" className="pointer-events-auto flex h-[52px] items-center gap-2 rounded-full bg-brand px-5 font-semibold text-white no-underline shadow-[0_6px_14px_rgba(31,92,58,.3)] hover:text-white">
           <Icon name="plus" size={20} color="#fff" strokeWidth={2.4} />Add animal
         </Link>
       </div>
-      <div className="sticky bottom-[72px] z-10 bg-ground"><Footer className="py-2" /></div>
+      <div className="sticky bottom-[72px] z-10 bg-ground xl:bottom-0"><Footer className="py-2" /></div>
       <BottomNav active="herd" />
       {open && <FiltersSheet initial={filters} onClose={() => setOpen(false)} onApply={(f) => { setFilters(f); setOpen(false) }} />}
     </Screen>

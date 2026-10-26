@@ -66,7 +66,7 @@ export default function AlertsList() {
   const empty = p && !p.overdue.length && !p.today.length && !p.thisWeek.length && !p.later.length
 
   return (
-    <Screen>
+    <Screen wide>
       <div className="flex items-center gap-2 px-4 pb-1.5 pt-3.5">
         <h1 className="m-0 flex-1 text-2xl font-bold">Alerts</h1>
         <button type="button" aria-label="Check for new alerts" onClick={refresh} className="flex h-11 w-11 items-center justify-center rounded-xl border-0 bg-transparent"><Icon name="check" /></button>

@@ -62,7 +62,7 @@ export default function CompareCows() {
   ]
 
   return (
-    <Screen>
+    <Screen wide>
       <TopBar title="Compare cows" back="/reports" />
       <div className="flex flex-col gap-3 px-4 pb-4">
         <div className="grid grid-cols-2 gap-3">

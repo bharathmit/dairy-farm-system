@@ -36,7 +36,7 @@ export default function ProfitLoss() {
   const maxCat = Math.max(0, ...(p?.farm.byCategory ?? []).map((c) => Math.abs(c.amount)))
 
   return (
-    <Screen>
+    <Screen wide>
       <TopBar title="Profit & loss" back="/money" />
       <div className="flex flex-col gap-3 px-4 pb-4">
         <Segmented label="Scope" value={scope} onChange={(v) => set('scope', v)} options={[{ value: 'FARM', label: 'Farm' }, { value: 'ANIMAL', label: 'Per animal' }]} />

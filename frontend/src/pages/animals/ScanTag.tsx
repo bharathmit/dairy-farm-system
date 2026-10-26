@@ -27,7 +27,7 @@ export default function ScanTag() {
   const small = 'flex h-[46px] items-center justify-center rounded-xl text-sm font-semibold no-underline'
 
   return (
-    <div className="relative mx-auto flex min-h-[100dvh] w-full max-w-[430px] flex-col bg-[#121815] text-white">
+    <div className="relative mx-auto flex min-h-[100dvh] w-full max-w-[430px] flex-col bg-[#121815] md:max-w-[720px] text-white">
       <div className="flex items-center px-3 py-2">
         <Link to="/animals" aria-label="Close scanner" className="flex h-11 w-11 items-center justify-center"><Icon name="close" color="#fff" /></Link>
         <div className="mr-11 flex flex-1 items-center justify-center gap-2"><LogoMark /><h1 className="m-0 text-[17px] font-semibold">Scan ear tag or QR</h1></div>
