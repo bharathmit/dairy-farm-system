@@ -65,6 +65,8 @@ UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile s
 - Responsive layout (Oct 2026, branch `responsive`): tablet 720 px column, wide screens (dashboards, lists, reports) 1040 px on laptops, forms stay 720 px; Home tiles/More 4 across and tasks | herd lists side by side on laptops; Herd cards 2–3 across; bottom nav → left rail on desktop; sheets and dialogs centred on tablet+.
 - Feeding groups (Oct 2026): 10 groups — Fresh, Early, Mid, Late, Close-up, Steaming-up, Dry & mature heifers, Growing heifers, Calves, Bulls — calculated daily, one ration rule each (V8 copied MILKING/DRY rules). For shed identification and feed management; pens are grouped offline, no pen names or move list in the app. Heifer maturity uses the breeding settings (first service age/weight).
 
+- Log feeding matches the ration planner (Oct 2026): "Group" = feeding group (same as planner "By group"), stored in `item_txn.feed_group` (V9); AM + PM planned = day plan (PM takes the rounding rest); ration parts with no item picked (e.g. Calves/Bulls green and dry) show as a planned-only line so Whole farm / Animal totals match. Farm feed need: concentrate ingredients collapsed by default. 113 backend tests pass.
+
 ## Notes / blockers
 - Before first deploy: create the private `animal-photos` bucket and keep email confirmation on (see backend/README.md).
 - Tests use Testcontainers in CI; locally they can use an existing Postgres via `TEST_DATABASE_URL`.

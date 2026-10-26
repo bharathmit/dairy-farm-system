@@ -134,7 +134,7 @@ Kept separate because one row is updated over ~10 months and many alerts read it
 ## 9. `item_txn` — stock movements (built in V4; V5 adds payment_method, paid, session, batch_id)
 item_id · txn_type (PURCHASE, USAGE, ADJUSTMENT, SERVICE, **PRODUCE**) · txn_date · txn_time · quantity · cost ·
 payment_method · paid · session (AM/PM feeding) · batch_id (rows saved together) · created_by ·
-supplier · allocation: species / group_id / animal_id (all optional = whole farm) ·
+supplier · allocation: species / group_id / animal_id / feed_group (V9, feeding group for group feedings; all optional = whole farm) ·
 source_type / source_id (e.g. the breeding record that used a straw) · notes.
 Stock = purchases + produced + adjustments − usage. A PURCHASE or SERVICE with a cost creates a finance entry.
 **Concentrate batch preparation** = one USAGE row per ingredient + one PRODUCE row for the mix item,

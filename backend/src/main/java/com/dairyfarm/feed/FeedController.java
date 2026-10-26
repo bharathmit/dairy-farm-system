@@ -132,8 +132,9 @@ public class FeedController {
     @Operation(summary = "Planned (half the day's ration) and logged kg for a session and target")
     public FeedingSheet sheet(@PathVariable Long farmId, @RequestParam(required = false) LocalDate date,
                               @RequestParam(required = false) Session session, @RequestParam(required = false) Target target,
-                              @RequestParam(required = false) Long groupId, @RequestParam(required = false) Long animalId) {
-        return feed.sheet(ctx.farmId(), date, session, target, groupId, animalId);
+                              @RequestParam(required = false) Long groupId, @RequestParam(required = false) FeedGroup feedGroup,
+                              @RequestParam(required = false) Long animalId) {
+        return feed.sheet(ctx.farmId(), date, session, target, groupId, feedGroup, animalId);
     }
 
     @PutMapping("/feeding-sheet")

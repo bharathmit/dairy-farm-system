@@ -68,7 +68,15 @@ export default function FarmFeedNeed() {
                 if (!rows.length) return null
                 return <div key={s}><div className="bg-[#F7F7F3] px-3 pb-1 pt-2.5 text-xs font-bold uppercase tracking-[.06em] text-ink-3">{SECTION_NAME[s]}</div><Rows rows={rows} /></div>
               })}
-              {n.ingredientRows.length > 0 && <div><div className="bg-[#F7F7F3] px-3 pb-1 pt-2.5 text-xs font-bold uppercase tracking-[.06em] text-ink-3">Concentrate ingredients (for batches)</div><Rows rows={n.ingredientRows} /></div>}
+              {n.ingredientRows.length > 0 && (
+                <details className="group">
+                  <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 bg-[#F7F7F3] px-3 text-xs font-bold uppercase tracking-[.06em] text-ink-3 [&::-webkit-details-marker]:hidden">
+                    <span>Concentrate ingredients (for batches) · {n.ingredientRows.length}{n.ingredientRows.some((r) => r.overLeadTime) && <span className="ml-1.5 normal-case tracking-normal text-danger-text">· {n.ingredientRows.filter((r) => r.overLeadTime).length} low</span>}</span>
+                    <span className="normal-case tracking-normal text-brand"><span className="group-open:hidden">Show</span><span className="hidden group-open:inline">Hide</span></span>
+                  </summary>
+                  <Rows rows={n.ingredientRows} />
+                </details>
+              )}
               {!n.rows.length && !n.ingredientRows.length && <div className="border-t border-line-faint px-4 py-5 text-center text-sm text-ink-3">No items in the ration plan yet. <Link to="/feed/ration-rules" className="font-semibold">Pick items in the ration rules</Link></div>}
             </div>
             <div className="text-xs text-ink-3">Ingredient need = concentrate need × formula share. Red = days left ≤ lead time.</div>

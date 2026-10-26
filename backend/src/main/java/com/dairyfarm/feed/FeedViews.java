@@ -139,10 +139,11 @@ public final class FeedViews {
                            BigDecimal plannedCostPerDay, int reorderCount, List<StockItem> items) {
     }
 
+    /** item is null for a ration part with no feed item picked in the rule (planned only, can't be logged). */
     public record SheetLine(ItemRef item, Section section, BigDecimal plannedKg, BigDecimal actualKg, BigDecimal stock) {
     }
 
-    public record FeedingSheet(LocalDate date, Session session, Target target, String label, int animals,
+    public record FeedingSheet(LocalDate date, Session session, Target target, FeedGroup feedGroup, String label, int animals,
                                List<SheetLine> lines, BigDecimal plannedKg, BigDecimal actualKg, boolean saved,
                                List<String> warnings) {
     }
@@ -154,7 +155,7 @@ public final class FeedViews {
     public record FeedingRequest(@NotNull(message = "Enter the date") LocalDate date,
                                  @NotNull(message = "Pick the session") Session session,
                                  @JsonFormat(pattern = "HH:mm") LocalTime time,
-                                 Target target, Long groupId, Long animalId,
+                                 Target target, Long groupId, FeedGroup feedGroup, Long animalId,
                                  @NotNull @Size(max = 200) List<@Valid SheetEntry> lines,
                                  @Size(max = 500) String notes) {
     }

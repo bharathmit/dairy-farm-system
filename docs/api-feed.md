@@ -99,8 +99,8 @@ The editor computes the same check live (`bisCheck` in `src/data/feed.ts`).
 | POST | `/feed/items/{id}/stock` | `{type: HARVEST\|ADJUSTMENT, date, quantity (± for ADJUSTMENT), notes}` → `StockItem` (HARVEST = PRODUCE of own fodder) |
 | POST | `/feed/purchases` | `{itemId, date, quantity, costPerUnit \| totalAmount, supplierContactId, paymentMethod, paid, notes}` → 201 `{move: Move, item: StockItem}`; item cost per kg = this price |
 | GET | `/feed/purchases?from=&to=&itemId=` | `[Move]` |
-| GET | `/feed/feeding-sheet?date=&session=AM\|PM&target=FARM\|GROUP\|ANIMAL&groupId=&animalId=` | `FeedingSheet` |
-| PUT | `/feed/feeding-sheet` | `{date, session, time, target, groupId, animalId, lines:[{itemId, kg}], notes}` → `FeedingSheet`; replaces that session's rows for the same target |
+| GET | `/feed/feeding-sheet?date=&session=AM\|PM&target=FARM\|GROUP\|ANIMAL&feedGroup=&animalId=` | `FeedingSheet` (GROUP = feeding group `feedGroup`, calculated on the date; `groupId` = herd group, older saves only) |
+| PUT | `/feed/feeding-sheet` | `{date, session, time, target, feedGroup, animalId, lines:[{itemId, kg}], notes}` → `FeedingSheet`; replaces that session's rows for the same target |
 | GET | `/feed/formulas` · GET/POST/PUT/DELETE `/feed/formulas/{id}` | `Formula`; 400 if a line uses an excluded item; over-max-inclusion saves with a warning |
 | GET | `/feed/formulas/{id}/batch-preview?batchKg=` | `BatchPreview` |
 | POST | `/feed/formulas/{id}/batches` | `{date, batchKg, preparedByMemberId, allowShort}` → 201 `{preview: BatchPreview, mix: StockItem}`; 400 when short unless `allowShort`; one USAGE per ingredient + one PRODUCE for the mix (same batch_id, source_type FORMULA_BATCH); mix cost per kg = batch cost ÷ batch kg |
@@ -173,8 +173,10 @@ the check date can't be in the future either. The UI sets the date input's `min`
    items must be GREEN_FODDER/SILAGE, dry items DRY_FODDER/SILAGE, `concItemId` a MIX or concentrate ingredient.
    `PUT /feed/ration-rules/{category}` returns the full `[RuleSet]` list. `current.effectiveFrom` is absent/null
    when the defaults apply.
-9. Planned kg on the feeding sheet = half of the day's plan per item, 1 decimal; ration parts with no item picked
-   are not on the sheet and add the warning "Some ration parts have no feed items picked yet …".
+9. Planned kg on the feeding sheet: the day's plan per item at 1 decimal; AM = half (1 decimal), PM = the rest, so
+   AM + PM = the ration planner. Ration parts with no item picked are a line with `item: null` (planned kg only,
+   not saved) and add the warning "Some ration parts have no feed items picked yet …". Group feedings are stored
+   with `item_txn.feed_group` (V9).
 10. Supplier contacts (`supplierContactId` on items and purchases) must have the role SUPPLIER. A purchase without a
     supplier uses the item's supplier.
 11. Animals planned: active cows and buffalo in categories CALF, HEIFER, MILKING, DRY, BULL.

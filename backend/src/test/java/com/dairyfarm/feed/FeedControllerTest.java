@@ -231,14 +231,25 @@ class FeedControllerTest extends IntegrationTest {
         assertThat(sheet.get("saved").asBoolean()).isFalse();
         JsonNode first = sheet.get("lines").get(0);
         assertThat(first.get("section").asString()).isEqualTo("GREEN");
-        double velPlanned = 0;
-        for (JsonNode l : sheet.get("lines")) {
-            if (l.get("item").get("id").asLong() == velimasal) {
-                velPlanned = l.get("plannedKg").asDouble();
+        assertThat(planned(sheet, velimasal)).isEqualTo(4.9);
+        // AM + PM add up to the day's plan; parts with no item picked still show their planned kg
+        JsonNode pm = call(get(base() + "/feed/feeding-sheet?date=" + today + "&session=PM"), worker, null, 200);
+        double day = 0;
+        for (JsonNode l : r.get("lines")) {
+            if (!l.get("item").isNull() && l.get("item").get("id").asLong() == velimasal) {
+                day += l.get("kg").asDouble();
             }
         }
-        assertThat(velPlanned).isEqualTo(4.9);
+        assertThat(planned(sheet, velimasal) + planned(pm, velimasal)).isCloseTo(day, org.assertj.core.data.Offset.offset(0.051));
+        JsonNode farm = call(get(base() + "/feed/ration/summary"), owner, null, 200).get("farm");
+        double farmDay = farm.get("greenKg").asDouble() + farm.get("dryKg").asDouble() + farm.get("concentrateKg").asDouble();
+        assertThat(sheet.get("plannedKg").asDouble() + pm.get("plannedKg").asDouble()).isCloseTo(farmDay, org.assertj.core.data.Offset.offset(0.5));
         call(get(base() + "/feed/feeding-sheet?target=GROUP"), worker, null, 400);
+        // Group = feeding group, calculated daily (same as the ration planner's "By group")
+        JsonNode grp = call(get(base() + "/feed/feeding-sheet?date=" + today + "&session=AM&target=GROUP&feedGroup=EARLY"), worker, null, 200);
+        assertThat(grp.get("label").asString()).isEqualTo("Early lactation");
+        assertThat(grp.get("animals").asInt()).isEqualTo(1);
+        assertThat(planned(grp, velimasal)).isEqualTo(4.9);
 
         call(post(base() + "/feed/items/" + velimasal + "/stock"), owner, "{\"type\":\"HARVEST\",\"date\":\"" + today
                 + "\",\"quantity\":20}", 200);
@@ -287,5 +298,14 @@ class FeedControllerTest extends IntegrationTest {
         assertThat(need.get("animals").asInt()).isEqualTo(2);
         assertThat(need.get("rows").toString()).contains("Velimasal");
         assertThat(need.get("shortfalls").toString()).contains("Velimasal");
+    }
+
+    private static double planned(JsonNode sheet, long itemId) {
+        for (JsonNode l : sheet.get("lines")) {
+            if (!l.get("item").isNull() && l.get("item").get("id").asLong() == itemId) {
+                return l.get("plannedKg").asDouble();
+            }
+        }
+        return 0;
     }
 }

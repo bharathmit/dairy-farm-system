@@ -28,12 +28,19 @@ public class FeedRepository {
 
     public record Txn(Long id, Long itemId, LocalDate date, LocalTime time, String type, BigDecimal quantity,
                       BigDecimal cost, Long supplierId, String paymentMethod, Boolean paid, String session,
-                      Long animalId, Long groupId, String sourceType, String notes, String targetLabel) {
+                      Long animalId, Long groupId, String sourceType, String notes, String targetLabel, FeedGroup feedGroup) {
     }
 
     public record NewTxn(Long itemId, String type, LocalDate date, LocalTime time, BigDecimal quantity, BigDecimal cost,
                          Long supplierId, String paymentMethod, Boolean paid, String session, Long animalId,
-                         Long groupId, String sourceType, Long sourceId, UUID batchId, String notes) {
+                         Long groupId, String sourceType, Long sourceId, UUID batchId, String notes, FeedGroup feedGroup) {
+
+        public NewTxn(Long itemId, String type, LocalDate date, LocalTime time, BigDecimal quantity, BigDecimal cost,
+                      Long supplierId, String paymentMethod, Boolean paid, String session, Long animalId,
+                      Long groupId, String sourceType, Long sourceId, UUID batchId, String notes) {
+            this(itemId, type, date, time, quantity, cost, supplierId, paymentMethod, paid, session, animalId, groupId,
+                    sourceType, sourceId, batchId, notes, null);
+        }
     }
 
     public record LastPrice(BigDecimal price, LocalDate date) {
@@ -70,13 +77,14 @@ public class FeedRepository {
     public Long insert(Long farmId, NewTxn t) {
         return jdbc.sql("""
                 insert into item_txn (farm_id, item_id, txn_type, txn_date, txn_time, quantity, cost, supplier_contact_id,
-                                      payment_method, paid, session, animal_id, group_id, source_type, source_id, batch_id, notes, created_by)
-                values (:farm, :item, :type, :date, :time, :qty, :cost, :sup, :pm, :paid, :ses, :animal, :grp, :st, :sid, :batch, :notes, :by)
+                                      payment_method, paid, session, animal_id, group_id, feed_group, source_type, source_id, batch_id, notes, created_by)
+                values (:farm, :item, :type, :date, :time, :qty, :cost, :sup, :pm, :paid, :ses, :animal, :grp, :fg, :st, :sid, :batch, :notes, :by)
                 returning id""")
                 .param("farm", farmId).param("item", t.itemId()).param("type", t.type()).param("date", t.date())
                 .param("time", t.time()).param("qty", t.quantity()).param("cost", t.cost()).param("sup", t.supplierId())
                 .param("pm", t.paymentMethod()).param("paid", t.paid()).param("ses", t.session())
-                .param("animal", t.animalId()).param("grp", t.groupId()).param("st", t.sourceType())
+                .param("animal", t.animalId()).param("grp", t.groupId())
+                .param("fg", t.feedGroup() == null ? null : t.feedGroup().name()).param("st", t.sourceType())
                 .param("sid", t.sourceId()).param("batch", t.batchId()).param("notes", t.notes())
                 .param("by", com.dairyfarm.security.CurrentUser.idOrNull())
                 .query(Long.class).single();
@@ -84,7 +92,7 @@ public class FeedRepository {
 
     private static final String TXN_COLS = """
             t.id, t.item_id, t.txn_date, t.txn_time, t.txn_type, t.quantity, t.cost, t.supplier_contact_id, t.payment_method,
-            t.paid, t.session, t.animal_id, t.group_id, t.source_type, t.notes,
+            t.paid, t.session, t.animal_id, t.group_id, t.feed_group, t.source_type, t.notes,
             coalesce(a.tag, g.name) as target_label
             from item_txn t left join animal a on a.id = t.animal_id left join animal_group g on g.id = t.group_id""";
 
@@ -93,7 +101,8 @@ public class FeedRepository {
                 rs.getObject("txn_time", LocalTime.class), rs.getString("txn_type"), rs.getBigDecimal("quantity"),
                 rs.getBigDecimal("cost"), (Long) rs.getObject("supplier_contact_id"), rs.getString("payment_method"),
                 (Boolean) rs.getObject("paid"), rs.getString("session"), (Long) rs.getObject("animal_id"),
-                (Long) rs.getObject("group_id"), rs.getString("source_type"), rs.getString("notes"), rs.getString("target_label"));
+                (Long) rs.getObject("group_id"), rs.getString("source_type"), rs.getString("notes"), rs.getString("target_label"),
+                rs.getString("feed_group") == null ? null : FeedGroup.valueOf(rs.getString("feed_group")));
     }
 
     public Optional<Txn> txn(Long farmId, Long id) {
@@ -147,14 +156,17 @@ public class FeedRepository {
     // ---- feeding -----------------------------------------------------------------------------------------------
 
     /** Feeding rows (kg by item) saved for a session and target. */
-    public Map<Long, BigDecimal> feeding(Long farmId, LocalDate date, String session, Long groupId, Long animalId) {
+    public Map<Long, BigDecimal> feeding(Long farmId, LocalDate date, String session, Long groupId, FeedGroup feedGroup,
+                                         Long animalId) {
         Map<Long, BigDecimal> out = new LinkedHashMap<>();
         jdbc.sql("""
                 select item_id, sum(quantity) as kg from item_txn
                 where farm_id = :farm and source_type = 'FEEDING' and txn_date = :date and session = :ses
                   and group_id is not distinct from cast(:grp as bigint) and animal_id is not distinct from cast(:animal as bigint)
+                  and feed_group is not distinct from cast(:fg as varchar)
                 group by item_id""")
                 .param("farm", farmId).param("date", date).param("ses", session).param("grp", groupId).param("animal", animalId)
+                .param("fg", feedGroup == null ? null : feedGroup.name())
                 .query((rs, n) -> {
                     out.put(rs.getLong("item_id"), rs.getBigDecimal("kg"));
                     return null;
@@ -162,11 +174,13 @@ public class FeedRepository {
         return out;
     }
 
-    public int deleteFeeding(Long farmId, LocalDate date, String session, Long groupId, Long animalId) {
+    public int deleteFeeding(Long farmId, LocalDate date, String session, Long groupId, FeedGroup feedGroup, Long animalId) {
         return jdbc.sql("""
                 delete from item_txn where farm_id = :farm and source_type = 'FEEDING' and txn_date = :date and session = :ses
-                  and group_id is not distinct from cast(:grp as bigint) and animal_id is not distinct from cast(:animal as bigint)""")
+                  and group_id is not distinct from cast(:grp as bigint) and animal_id is not distinct from cast(:animal as bigint)
+                  and feed_group is not distinct from cast(:fg as varchar)""")
                 .param("farm", farmId).param("date", date).param("ses", session).param("grp", groupId).param("animal", animalId)
+                .param("fg", feedGroup == null ? null : feedGroup.name())
                 .update();
     }
 

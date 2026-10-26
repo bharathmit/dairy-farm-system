@@ -29,6 +29,22 @@ public final class FeedGroups {
     private FeedGroups() {
     }
 
+    /** Plain name shown to the farm (same as the app's feeding group labels). */
+    public static String label(FeedGroup g) {
+        return switch (g) {
+            case FRESH -> "Fresh cow";
+            case EARLY -> "Early lactation";
+            case MID -> "Mid lactation";
+            case LATE -> "Late lactation";
+            case CLOSE_UP -> "Close-up";
+            case STEAM_UP -> "Steaming-up";
+            case DRY -> "Dry & mature heifers";
+            case HEIFER -> "Growing heifers";
+            case CALF -> "Calves";
+            case BULL -> "Bulls";
+        };
+    }
+
     /**
      * @param dueDate        expected calving of a confirmed pregnancy not yet calved, or null
      * @param knownWeightKg  measured or recorded weight (not an estimate), or null

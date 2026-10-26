@@ -155,11 +155,19 @@ public class FeedPlanner {
     }
 
     public Herd herd(Long farmId, Catalog c, LocalDate date, Long groupId, Long animalId) {
+        return herd(farmId, c, date, groupId, null, animalId);
+    }
+
+    /** As above; a feeding group (calculated on the date) narrows the herd to the animals in it. */
+    public Herd herd(Long farmId, Catalog c, LocalDate date, Long groupId, FeedGroup feedGroup, Long animalId) {
         List<Plan> plans = new ArrayList<>();
         Map<Long, BigDecimal> direct = new LinkedHashMap<>();
         Map<Long, BigDecimal> ingredients = new LinkedHashMap<>();
         for (AnimalRow a : repo.animals(farmId, date, groupId, animalId)) {
             AnimalInput in = input(a, c, date);
+            if (feedGroup != null && in.group() != feedGroup) {
+                continue;
+            }
             Plan p = RationCalc.plan(in, rule(c, in.group(), date), date, c.items(), c.formulaShares(), c.defaultConcId());
             plans.add(p);
             p.kgByItem().forEach((k, v) -> direct.merge(k, v, BigDecimal::add));

@@ -39,9 +39,10 @@ export interface Move {
   supplier?: ContactRef | null; paymentMethod?: PaymentMethod | null; paid?: boolean | null; session?: Ses | null
   target?: { kind: Target; id?: number | null; label: string } | null; sourceType?: string | null; notes?: string | null
 }
-export interface SheetLine { item: ItemRef; section: Section; plannedKg?: number | null; actualKg?: number | null; stock?: number | null }
+/** item is null for a ration part with no feed item picked in the rule (planned only). */
+export interface SheetLine { item: ItemRef | null; section: Section; plannedKg?: number | null; actualKg?: number | null; stock?: number | null }
 export interface FeedingSheet {
-  date: string; session: Ses; target: Target; label: string; animals: number; lines: SheetLine[]
+  date: string; session: Ses; target: Target; feedGroup?: RuleCategory | null; label: string; animals: number; lines: SheetLine[]
   plannedKg?: number | null; actualKg?: number | null; saved: boolean; warnings: string[]
 }
 export interface FormulaLine { item: ItemRef; kg: number; pct?: number | null; cost?: number | null; overMax?: boolean; maxInclusionPct?: number | null }
@@ -209,7 +210,7 @@ export const feedApi = (farmId: string) => {
     stock: (id: string | number, body: { type: 'HARVEST' | 'ADJUSTMENT'; date: string; quantity: number; notes?: string }) => api.post<StockItem>(`${b}/items/${id}/stock`, body),
     purchase: (body: Record<string, unknown>) => api.post<{ move: Move; item: StockItem }>(`${b}/purchases`, body),
     purchases: (p: { from?: string; to?: string; itemId?: string | number }) => api.get<Move[]>(`${b}/purchases${q(p)}`),
-    sheet: (p: { date: string; session: Ses; target: Target; groupId?: string; animalId?: string }) => api.get<FeedingSheet>(`${b}/feeding-sheet${q(p)}`),
+    sheet: (p: { date: string; session: Ses; target: Target; feedGroup?: string; animalId?: string }) => api.get<FeedingSheet>(`${b}/feeding-sheet${q(p)}`),
     saveSheet: (body: Record<string, unknown>) => api.put<FeedingSheet>(`${b}/feeding-sheet`, body),
     formulas: () => api.get<Formula[]>(`${b}/formulas`),
     formula: (id: string | number) => api.get<Formula>(`${b}/formulas/${id}`),

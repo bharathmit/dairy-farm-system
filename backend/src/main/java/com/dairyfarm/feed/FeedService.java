@@ -304,6 +304,7 @@ public class FeedService {
 
     private static Move move(Txn t, Map<Long, Contact> sup, boolean showMoney) {
         MoveTarget target = t.animalId() != null ? new MoveTarget(Target.ANIMAL, t.animalId(), t.targetLabel())
+                : t.feedGroup() != null ? new MoveTarget(Target.GROUP, null, FeedGroups.label(t.feedGroup()))
                 : t.groupId() != null ? new MoveTarget(Target.GROUP, t.groupId(), t.targetLabel())
                 : new MoveTarget(Target.FARM, null, "Whole farm");
         BigDecimal per = t.cost() == null || t.quantity().signum() == 0 ? null
@@ -469,18 +470,23 @@ public class FeedService {
 
     // ---- feeding sheet -----------------------------------------------------------------------------------------
 
-    private record TargetSpec(Target target, Long groupId, Long animalId, String label) {
+    /** GROUP is a feeding group (feedGroup); a herd group (groupId) is still read for feedings saved that way. */
+    private record TargetSpec(Target target, Long groupId, FeedGroup feedGroup, Long animalId, String label) {
     }
 
-    private TargetSpec target(Long farmId, Target t, Long groupId, Long animalId) {
-        Target kind = t == null ? (animalId != null ? Target.ANIMAL : groupId != null ? Target.GROUP : Target.FARM) : t;
+    private TargetSpec target(Long farmId, Target t, Long groupId, FeedGroup feedGroup, Long animalId) {
+        Target kind = t == null ? (animalId != null ? Target.ANIMAL
+                : groupId != null || feedGroup != null ? Target.GROUP : Target.FARM) : t;
         return switch (kind) {
-            case FARM -> new TargetSpec(Target.FARM, null, null, "Whole farm");
+            case FARM -> new TargetSpec(Target.FARM, null, null, null, "Whole farm");
             case GROUP -> {
+                if (feedGroup != null) {
+                    yield new TargetSpec(Target.GROUP, null, feedGroup, null, FeedGroups.label(feedGroup));
+                }
                 if (groupId == null) {
                     throw ApiException.badRequest("Pick a group.");
                 }
-                yield new TargetSpec(Target.GROUP, groupId, null,
+                yield new TargetSpec(Target.GROUP, groupId, null, null,
                         repo.groupName(farmId, groupId).orElseThrow(() -> ApiException.badRequest("That group isn't on this farm.")));
             }
             case ANIMAL -> {
@@ -492,25 +498,27 @@ public class FeedService {
                     throw ApiException.badRequest("That animal isn't an active cow or buffalo on this farm.");
                 }
                 var a = rows.get(0);
-                yield new TargetSpec(Target.ANIMAL, null, animalId, a.tag() + (a.name() == null ? "" : " " + a.name()));
+                yield new TargetSpec(Target.ANIMAL, null, null, animalId, a.tag() + (a.name() == null ? "" : " " + a.name()));
             }
         };
     }
 
     @Transactional(readOnly = true)
-    public FeedingSheet sheet(Long farmId, LocalDate date, Session session, Target t, Long groupId, Long animalId) {
+    public FeedingSheet sheet(Long farmId, LocalDate date, Session session, Target t, Long groupId, FeedGroup feedGroup,
+                              Long animalId) {
         LocalDate d = date == null ? DailyDates.today() : date;
         Session s = session == null ? (LocalTime.now(FarmService.FARM_ZONE).getHour() >= 12 ? Session.PM : Session.AM) : session;
-        TargetSpec spec = target(farmId, t, groupId, animalId);
+        TargetSpec spec = target(farmId, t, groupId, feedGroup, animalId);
         Catalog c = planner.catalog(farmId);
-        Herd h = planner.herd(farmId, c, d, spec.groupId(), spec.animalId());
+        Herd h = planner.herd(farmId, c, d, spec.groupId(), spec.feedGroup(), spec.animalId());
         Map<Long, BigDecimal> planned = new LinkedHashMap<>();
-        boolean unpicked = false;
+        Map<Section, BigDecimal> unpicked = new EnumMap<>(Section.class);
         for (Plan p : h.plans()) {
             p.kgByItem().forEach((k, v) -> planned.merge(k, v, BigDecimal::add));
-            unpicked |= p.lines().stream().anyMatch(l -> l.itemId() == null && l.kg().signum() > 0);
+            p.lines().stream().filter(l -> l.itemId() == null && l.kg().signum() > 0)
+                    .forEach(l -> unpicked.merge(l.section(), l.kg(), BigDecimal::add));
         }
-        Map<Long, BigDecimal> actual = repo.feeding(farmId, d, s.name(), spec.groupId(), spec.animalId());
+        Map<Long, BigDecimal> actual = repo.feeding(farmId, d, s.name(), spec.groupId(), spec.feedGroup(), spec.animalId());
         Set<Long> ids = new java.util.LinkedHashSet<>(planned.keySet());
         ids.addAll(actual.keySet());
         List<SheetLine> lines = new ArrayList<>();
@@ -521,7 +529,7 @@ public class FeedService {
             if (it == null) {
                 continue;
             }
-            BigDecimal pl = planned.containsKey(id) ? planned.get(id).divide(BigDecimal.valueOf(2), 1, RoundingMode.HALF_UP) : null;
+            BigDecimal pl = planned.containsKey(id) ? sessionKg(planned.get(id), s) : null;
             BigDecimal ac = actual.get(id);
             BigDecimal st = c.stock(id);
             lines.add(new SheetLine(c.ref(id), FeedViews.sectionOf(it.category()), pl, ac == null ? null : scale1(ac), st));
@@ -540,18 +548,31 @@ public class FeedService {
                 warnings.add(it.name() + ": stock left " + plain(st) + " kg — reorder.");
             }
         }
-        if (unpicked) {
+        for (var e : unpicked.entrySet()) {
+            BigDecimal pl = sessionKg(e.getValue(), s);
+            lines.add(new SheetLine(null, e.getKey(), pl, null, null));
+            pTot = pTot.add(pl);
+        }
+        if (!unpicked.isEmpty()) {
             warnings.add("Some ration parts have no feed items picked yet — set them in the ration rules.");
         }
-        lines.sort(Comparator.comparing(SheetLine::section).thenComparing(l -> l.item().name().toLowerCase()));
-        return new FeedingSheet(d, s, spec.target(), spec.label(), h.plans().size(), lines, scale1(pTot),
+        lines.sort(Comparator.comparing(SheetLine::section)
+                .thenComparing(l -> l.item() == null ? "\uffff" : l.item().name().toLowerCase()));
+        return new FeedingSheet(d, s, spec.target(), spec.feedGroup(), spec.label(), h.plans().size(), lines, scale1(pTot),
                 actual.isEmpty() ? null : scale1(aTot), !actual.isEmpty(), warnings);
+    }
+
+    /** A session's share of the day's kg: AM gets half (0.1 kg), PM the rest, so AM + PM = the day's plan. */
+    static BigDecimal sessionKg(BigDecimal dayKg, Session s) {
+        BigDecimal day = dayKg.setScale(1, RoundingMode.HALF_UP);
+        BigDecimal am = day.divide(BigDecimal.valueOf(2), 1, RoundingMode.HALF_UP);
+        return s == Session.AM ? am : day.subtract(am);
     }
 
     @Transactional
     public FeedingSheet saveSheet(Long farmId, FeedingRequest req) {
         DailyDates.notFuture(req.date());
-        TargetSpec spec = target(farmId, req.target(), req.groupId(), req.animalId());
+        TargetSpec spec = target(farmId, req.target(), req.groupId(), req.feedGroup(), req.animalId());
         Map<Long, BigDecimal> kg = new LinkedHashMap<>();
         for (SheetEntry e : req.lines()) {
             if (e.kg() != null && e.kg().signum() > 0) {
@@ -567,14 +588,15 @@ public class FeedService {
             }
             found.put(id, i);
         }
-        repo.deleteFeeding(farmId, req.date(), req.session().name(), spec.groupId(), spec.animalId());
+        repo.deleteFeeding(farmId, req.date(), req.session().name(), spec.groupId(), spec.feedGroup(), spec.animalId());
         LocalTime time = req.time() != null ? req.time() : LocalTime.now(FarmService.FARM_ZONE).withSecond(0).withNano(0);
         UUID batch = UUID.randomUUID();
         for (var e : kg.entrySet()) {
             repo.insert(farmId, new NewTxn(e.getKey(), "USAGE", req.date(), time, e.getValue(), null, null, null, null,
-                    req.session().name(), spec.animalId(), spec.groupId(), "FEEDING", null, batch, blank(req.notes())));
+                    req.session().name(), spec.animalId(), spec.groupId(), "FEEDING", null, batch, blank(req.notes()),
+                    spec.feedGroup()));
         }
-        return sheet(farmId, req.date(), req.session(), spec.target(), spec.groupId(), spec.animalId());
+        return sheet(farmId, req.date(), req.session(), spec.target(), spec.groupId(), spec.feedGroup(), spec.animalId());
     }
 
     // ---- ration rules ------------------------------------------------------------------------------------------
