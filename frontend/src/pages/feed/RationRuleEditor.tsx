@@ -30,7 +30,6 @@ const MIX: { k: Num; label: string; guide: [number, number] }[] = [
 const CONC: { k: Num; label: string }[] = [
   { k: 'concBaseKg', label: 'Concentrate base (kg)' }, { k: 'concPerLitreKg', label: '+ kg per litre of milk' }, { k: 'maxConcKg', label: 'Concentrate max (kg/day)' },
 ]
-const WATER: { k: Num; label: string }[] = [{ k: 'waterBaseL', label: 'Water base (L/day)' }, { k: 'waterPerLitreL', label: '+ L per litre of milk' }]
 const TARGETS: { k: Num; label: string }[] = [
   { k: 'cpPct', label: 'CP (% of DM)' }, { k: 'tdnPct', label: 'TDN (% of DM)' }, { k: 'caPct', label: 'Ca (% of DM)' }, { k: 'pPct', label: 'P (% of DM)' },
 ]
@@ -146,7 +145,6 @@ export default function RationRuleEditor() {
     return {
       bw, milk, pct, dmi, conc, capped: conc < rawConc, concDm, forageDm, g, d, c, greenDm, dryDm,
       greenMix: mixOf(green, items.data, 30, greenDm), dryMix: mixOf(dry, items.data, 90, dryDm),
-      waterBase: n('waterBaseL'), waterPerL: n('waterPerLitreL'), water: n('waterBaseL') + milk * n('waterPerLitreL'),
     }
   }, [nums, cat, concMode, green, dry, items.data])
   const ofTmr = (kg: number) => (preview.dmi > 0 ? Math.round(kg / preview.dmi * 100) : 0)
@@ -211,12 +209,11 @@ export default function RationRuleEditor() {
                 <div className="hint">Fresh kg = DM ÷ each item's DM % from Feed Master.{concMode === 'MILK' ? ' With concentrate by milk, the forage left is split green : dry in this ratio.' : ''}</div>
               </div>
               <div className="rounded-[14px] bg-white p-3.5">
-                <b className="text-[15px]">Concentrate & water</b>
+                <b className="text-[15px]">Concentrate</b>
                 <div className="mt-3 grid grid-cols-2 gap-3">
                   <div><label className="lab" htmlFor="rr-mode">Concentrate by</label><select className="inp" id="rr-mode" value={concMode} onChange={(e) => setConcMode(e.target.value as RationParams['concMode'])}><option value="MILK">Milk yield</option><option value="DMI">TMR share</option></select></div>
                   {(concMode === 'MILK' ? CONC : CONC.filter((x) => x.k === 'maxConcKg')).map(numInput)}
-                  <div><label className="lab" htmlFor="rr-conc">Concentrate item</label><FeedItemSelect id="rr-conc" items={items.data} value={concItem} onChange={setConcItem} filter={(i) => i.category === 'MIX' || i.category === 'CONCENTRATE_INGREDIENT'} placeholder="First mix item" /></div>
-                  {isMilkingGroup(cat) && WATER.filter((x) => x.k === 'waterPerLitreL').map(numInput)}
+                  <div><label className="lab" htmlFor="rr-conc">Concentrate item</label><FeedItemSelect id="rr-conc" items={items.data} value={concItem} onChange={setConcItem} filter={(i) => i.category === 'MIX'} placeholder="Choose" /></div>
                 </div>
                 <div className="mt-3 rounded-[10px] bg-brand-soft px-3 py-2.5 text-[13px] leading-relaxed">
                   <b>Example: {preview.bw} kg animal{preview.milk ? `, ${preview.milk} L milk/day` : ''}</b>
@@ -230,12 +227,6 @@ export default function RationRuleEditor() {
                     <li>Dry {preview.dryDm.toFixed(1)} kg DM ({ofTmr(preview.dryDm)} % of TMR) ÷ {effDm(preview.dryDm, preview.dryMix.fresh)} % DM = <b>{preview.dryMix.fresh.toFixed(1)} kg fresh</b></li>
                   </ol>
                   <div className="mt-1 text-ink-3">DM % comes from the items picked below (30 / 90 / 80 % until items are picked). Per-item kg are shown under each mix.</div>
-                </div>
-                <div className="mt-2 rounded-[10px] bg-brand-soft px-3 py-2.5 text-[13px]">
-                  <b>Water</b>: {preview.milk
-                    ? <>{preview.waterBase} L base + {preview.milk} L milk × {preview.waterPerL} L = <b>{preview.water.toFixed(0)} L/day</b></>
-                    : <><b>{preview.waterBase} L/day</b></>}
-                  <div className="text-ink-3">Shown on each animal's plan{isMilkingGroup(cat) ? ' (base + litres per litre of milk yesterday)' : ''}.</div>
                 </div>
               </div>
               <ShareList title="Green fodder mix" rows={green} setRows={setGreen} items={items.data} filter={(i) => i.category === 'GREEN_FODDER' || i.category === 'SILAGE'} ro={ro} hint="DM % comes from Feed Master. Share = % of the green dry matter; shares add up to 100 %. Fixed kg for optional feeds (hydroponic fodder, azolla): fed first, skipped when the item is inactive, and the rest fills the share." fallback={30} partDm={preview.greenDm} dmi={preview.dmi} mix={preview.greenMix} />
