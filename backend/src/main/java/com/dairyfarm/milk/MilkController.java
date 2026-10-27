@@ -75,11 +75,12 @@ public class MilkController {
     }
 
     @GetMapping("/grades")
-    @Operation(summary = "How many graded cow-days got A, B, C, D")
+    @Operation(summary = "How many graded cow-days (or cow-sessions, with session=AM|PM) got A, B, C, D")
     public Map<String, Long> grades(@PathVariable Long farmId,
                                     @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
-        return milk.grades(ctx.farmId(), from, to);
+                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+                                    @RequestParam(required = false) Session session) {
+        return milk.grades(ctx.farmId(), from, to, session);
     }
 
     @GetMapping("/sheet")
@@ -103,7 +104,7 @@ public class MilkController {
     }
 
     @PutMapping("/cows/{animalId}/days/{date}")
-    @Operation(summary = "Save one cow's day (AM, PM, quality); null AM/PM removes that session")
+    @Operation(summary = "Save one cow's day (AM, PM, quality); only the listed sessions are saved; null AM/PM removes that session")
     public CowDayForm saveCowDay(@PathVariable Long farmId, @PathVariable Long animalId,
                                  @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
                                  @Valid @RequestBody CowDayRequest req) {

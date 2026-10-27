@@ -167,6 +167,45 @@ class MilkControllerTest extends IntegrationTest {
     }
 
     @Test
+    void sheetShowsStageAndSoldSessionLocksTheMilkLog() throws Exception {
+        mvc.perform(get(milk() + "/sheet").param("date", today.toString()).param("session", "AM").with(as(worker)))
+                .andExpect(jsonPath("$.sold").value(false))
+                .andExpect(jsonPath("$.cows[0].stage").value("MID"))    // no calving date
+                .andExpect(jsonPath("$.cows[1].stage").value("EARLY")); // 84 days in milk
+
+        sheet(worker, "AM", "{\"animalId\":" + ponni + ",\"litres\":8.2}");
+        mvc.perform(get(milk() + "/grades").param("from", today.toString()).param("to", today.toString())
+                        .param("session", "AM").with(as(owner)))
+                .andExpect(jsonPath("$.A").value(1)); // 8.2 L vs half of 16.4 L expected
+
+        mvc.perform(put(milk() + "/sales").with(as(owner)).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"date\":\"" + today + "\",\"session\":\"AM\",\"soldQty\":8}"))
+                .andExpect(status().isOk());
+        mvc.perform(get(milk() + "/sheet").param("date", today.toString()).param("session", "AM").with(as(worker)))
+                .andExpect(jsonPath("$.sold").value(true));
+        mvc.perform(put(milk() + "/sheet").with(as(worker)).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"date\":\"" + today + "\",\"session\":\"AM\",\"entries\":[{\"animalId\":" + ponni + ",\"litres\":9}]}"))
+                .andExpect(status().isConflict());
+
+        // One cow: the sold morning is locked; evening alone can still be saved
+        String url = milk() + "/cows/" + ponni + "/days/" + today;
+        mvc.perform(get(url).with(as(worker)))
+                .andExpect(jsonPath("$.amSold").value(true))
+                .andExpect(jsonPath("$.pmSold").value(false));
+        mvc.perform(put(url).with(as(worker)).contentType(MediaType.APPLICATION_JSON).content("{\"am\":9,\"pm\":7}"))
+                .andExpect(status().isConflict());
+        mvc.perform(put(url).with(as(worker)).contentType(MediaType.APPLICATION_JSON).content("{\"pm\":7,\"sessions\":[\"PM\"]}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.day.am").value(8.2))
+                .andExpect(jsonPath("$.day.pm").value(7.0));
+
+        // A whole-day milk sale can't sit beside a morning sale
+        mvc.perform(put(milk() + "/sales").with(as(owner)).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"date\":\"" + today + "\",\"session\":\"DAY\",\"soldQty\":10}"))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
     void milkInWithdrawalIsWithheldAndCantBeSold() throws Exception {
         long buyer = Daily.contact(mvc, json, owner, farmId, "Aavin society", "\"BUYER\"", "\"milkRate\":38");
         sheet(owner, "AM", "{\"animalId\":" + lakshmi + ",\"litres\":9},{\"animalId\":" + ponni + ",\"litres\":8}");

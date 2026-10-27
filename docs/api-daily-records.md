@@ -47,14 +47,14 @@ grade: A|B|C|D|null, qualityIssues: [string], fatPct, snfPct, proteinPct, densit
 |---|---|---|
 | GET | `/milk/day?date=` | `DaySummary` (MilkHome; call with yesterday for the cow table) |
 | GET | `/milk/trend?from=&to=` | `[{date, amLitres, pmLitres, totalLitres, withheldLitres}]` (one per day, zero-filled) |
-| GET | `/milk/grades?from=&to=` | `{A, B, C, D}` counts of graded cow-days |
+| GET | `/milk/grades?from=&to=&session=` | `{A, B, C, D}` counts of graded cow-days; with `session=AM\|PM` counts graded cow-sessions (session litres vs half the expected day, that session's quality; withheld not graded) |
 | GET | `/milk/sheet?date=&session=AM\|PM&groupId=` | `Sheet` (groupId optional) |
-| PUT | `/milk/sheet` | body `{date, session, entries:[{animalId, litres}]}`; `litres:null` = skipped (removes that record). Returns `Sheet` |
+| PUT | `/milk/sheet` | body `{date, session, entries:[{animalId, litres}]}`; `litres:null` = skipped (removes that record). 409 when that session's milk is sold. Returns `Sheet` |
 | GET | `/milk/cows/{animalId}/days/{date}` | `CowDayForm` (MilkSingle) |
-| PUT | `/milk/cows/{animalId}/days/{date}` | body `{am, pm, fatPct, snfPct, proteinPct, density, scc, notes}`; null am/pm removes that session. Returns `CowDayForm` |
+| PUT | `/milk/cows/{animalId}/days/{date}` | body `{am, pm, fatPct, snfPct, proteinPct, density, scc, notes, sessions:[AM\|PM]}`; only listed sessions are saved (none/empty = both); null am/pm removes a listed session. 409 when a listed session is sold. Returns `CowDayForm` |
 | GET | `/milk/cows/{animalId}?from=&to=` | `[CowDay]` newest first |
 | GET | `/milk/sales?from=&to=` | `[Sale]` newest first |
-| PUT | `/milk/sales` | upsert by (date, session, product). Returns `Sale` |
+| PUT | `/milk/sales` | upsert by (date, session, product). Milk: 409 when mixing a DAY sale with an AM/PM sale on the same date. Returns `Sale` |
 | DELETE | `/milk/sales/{id}` | owner |
 
 ```
@@ -66,13 +66,14 @@ DaySummary = { date,
   milkingCows,                               // active female MILKING animals
   cows: [CowDay] }                           // milking cows plus any cow with a record that day
 Sheet = { date, session, saved, sessionLitres, otherSessionLitres, dayLitres, withheldLitres,
-  cows: [{animalId, tag, name, groupId, litres, lastLitres, usualLitres, inWithdrawal, withdrawalUntil}] }
+  cows: [{animalId, tag, name, groupId, litres, lastLitres, usualLitres, inWithdrawal, withdrawalUntil, stage: FRESH|EARLY|MID|LATE}],
+  sold }   // sold = a milk sale exists for this date+session (or DAY): the log is locked
   // saved = any cow record exists for this date+session (tells "skipped" from "not logged yet");
   // litres = saved value or null; lastLitres = her last record for this session before date;
   // usualLitres = average of her last 7 records for this session (frontend warns at −dropAlertPct %)
 CowDayForm = { animal: {id, tag, name, breed, lastCalvingDate},
   day: CowDay, expectation: {daysInMilk, expectedLitres, peakLitres, peakDay, source: OWN_LACTATION|BREED|FIRST_CALVER, pastLactation} | null,
-  lastAm, lastPm, inWithdrawal, withdrawalUntil }
+  lastAm, lastPm, inWithdrawal, withdrawalUntil, amSold, pmSold }
 Sale = { id, date, session, product: MILK|MANURE|OTHER, quantity, cowLitres, withheldLitres,
   soldQty, otherUseQty, rate, incomeAmount, buyer: ContactRef|null, fatPct, snfPct, paid, notes }
 ```

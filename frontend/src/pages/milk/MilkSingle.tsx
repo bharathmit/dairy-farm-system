@@ -50,28 +50,42 @@ export default function MilkSingle() {
   const [scc, setScc] = useState('')
   const [notes, setNotes] = useState('')
   const [busy, setBusy] = useState(false)
+  const [amOn, setAmOn] = useState(true)
+  const [pmOn, setPmOn] = useState(true)
 
   useEffect(() => {
-    const d = form.data?.day
+    const fd = animalId ? form.data : null
+    // Tick the sessions that can still be changed; a sold session stays locked.
+    setAmOn(!fd?.amSold); setPmOn(!fd?.pmSold)
+    const d = fd?.day
     setAm(d?.am != null ? d.am.toFixed(1) : ''); setPm(d?.pm != null ? d.pm.toFixed(1) : '')
     setFat(numText(d?.fatPct)); setSnf(numText(d?.snfPct)); setProtein(numText(d?.proteinPct))
     setDensity(numText(d?.density)); setScc(numText(d?.scc)); setNotes(d?.notes ?? '')
-  }, [form.data])
+  }, [form.data, animalId])
 
-  const f = form.data
+  // Changing back to "Choose a milking cow" must not keep showing the last cow.
+  const f = animalId ? form.data : null
   const exp = f?.expectation
-  const total = (toNum(am) ?? 0) + (toNum(pm) ?? 0)
+  const amSold = Boolean(f?.amSold), pmSold = Boolean(f?.pmSold)
+  const amUse = amOn && !amSold, pmUse = pmOn && !pmSold
+  const total = (amUse ? toNum(am) ?? 0 : 0) + (pmUse ? toNum(pm) ?? 0 : 0)
   const fatN = toNum(fat)
-  const g = exp && !exp.pastLactation && !f?.inWithdrawal ? liveGrade(rules.data, total, exp.expectedLitres, fatN, toNum(snf), toNum(scc)) : null
+  // Grade only what is ticked: both → day grade; one → that session against half the expected day.
+  const gradeLitres = amUse && pmUse ? total : amUse || pmUse ? total * 2 : 0
+  const g = exp && !exp.pastLactation && !f?.inWithdrawal ? liveGrade(rules.data, gradeLitres, exp.expectedLitres, fatN, toNum(snf), toNum(scc)) : null
+  const locked = amSold && pmSold
   const fatWarn = fatN !== undefined && rules.data?.minFatPct.enabled && fatN < rules.data.minFatPct.limit
 
   const save = async () => {
     if (!animalId) { notify('Choose a cow'); return }
-    if (toNum(am) === undefined && toNum(pm) === undefined) { notify('Enter morning or evening litres'); return }
+    if (locked) { notify('Milk for this date is sold — it can\'t be changed'); return }
+    if (!amUse && !pmUse) { notify('Tick morning, evening or both'); return }
+    if ((amUse ? toNum(am) : undefined) === undefined && (pmUse ? toNum(pm) : undefined) === undefined) { notify('Enter litres for the ticked session'); return }
     setBusy(true)
     try {
       await rec.saveCowDay(animalId, date, {
-        am: toNum(am) ?? null, pm: toNum(pm) ?? null, fatPct: fatN ?? null, snfPct: toNum(snf) ?? null,
+        sessions: [...(amUse ? ['AM'] : []), ...(pmUse ? ['PM'] : [])],
+        am: amUse ? toNum(am) ?? null : null, pm: pmUse ? toNum(pm) ?? null : null, fatPct: fatN ?? null, snfPct: toNum(snf) ?? null,
         proteinPct: toNum(protein) ?? null, density: toNum(density) ?? null, scc: toNum(scc) ?? null, notes: notes.trim() || null,
       })
       notify(`Milk saved for ${f?.animal.tag ?? 'the cow'}`)
@@ -87,28 +101,32 @@ export default function MilkSingle() {
     <Screen>
       <TopBar title="Milk — one cow" close="/milk" />
       <div className="flex flex-col gap-3.5 px-4 pb-4">
-        <div><label className="lab" htmlFor="mc-cow">Cow *</label><AnimalSelect id="mc-cow" value={animalId} onChange={(v) => setParam('animal', v)} filter={isMilkingCow} placeholder="Choose a milking cow" /></div>
         <DateNav id="mc-date" value={date} onChange={(v) => setParam('date', v)} />
+        <div><label className="lab" htmlFor="mc-cow">Cow *</label><AnimalSelect id="mc-cow" value={animalId} onChange={(v) => setParam('animal', v)} filter={isMilkingCow} placeholder="Choose a milking cow" /></div>
         {!animalId && <p className="m-0 text-sm text-ink-3">Choose a cow to log her milk and quality.</p>}
         {animalId && <LoadState loading={form.loading} error={form.error} onRetry={form.reload} empty={!f} />}
         {f && (
           <>
             {f.inWithdrawal && <div className="rounded-xl bg-danger-soft px-3.5 py-3 text-sm text-danger-text"><b>Milk withdrawal</b> — milk is discarded{f.withdrawalUntil ? ` until ${shortDate(f.withdrawalUntil)}` : ''} and not graded.</div>}
-            <div className="rounded-[14px] bg-white p-3.5">
-              <div className="flex items-center justify-between"><b>Morning</b><span className="text-[13px] text-ink-3">last {L(f.lastAm)} L</span></div>
-              <div className="mt-2.5"><LitresStepper big label="Morning litres" value={am} onChange={setAm} /></div>
-            </div>
-            <div className="rounded-[14px] bg-white p-3.5">
-              <div className="flex items-center justify-between"><b>Evening</b><span className="text-[13px] text-ink-3">last {L(f.lastPm)} L</span></div>
-              <div className="mt-2.5"><LitresStepper big label="Evening litres" value={pm} onChange={setPm} /></div>
-            </div>
+            {(amSold || pmSold) && <div className="rounded-xl bg-warn-soft px-3.5 py-3 text-sm text-[#4A3210]"><b>{locked ? 'Day' : amSold ? 'Morning' : 'Evening'} milk is sold</b> — {locked ? 'this day' : 'that session'} can't be changed. <Link to={`/milk/sale?date=${date}`} className="font-semibold">Open sale</Link></div>}
+            {([['AM', 'Morning', am, setAm, amOn, setAmOn, amSold, f.lastAm], ['PM', 'Evening', pm, setPm, pmOn, setPmOn, pmSold, f.lastPm]] as const).map(([k, label, v, set, on, setOn, soldS, last]) => (
+              <div key={k} className={`rounded-[14px] bg-white p-3.5 ${on && !soldS ? '' : 'opacity-60'}`}>
+                <div className="flex items-center justify-between">
+                  <label className="flex min-h-10 items-center gap-2.5 font-bold"><input type="checkbox" checked={on && !soldS} disabled={soldS} onChange={(e) => setOn(e.target.checked)} className="h-5 w-5 accent-brand" /> {label}{soldS ? <span className="text-[13px] font-semibold text-warn-ink"> · sold</span> : null}</label>
+                  <span className="text-[13px] text-ink-3">last {L(last)} L</span>
+                </div>
+                {on && !soldS
+                  ? <div className="mt-2.5"><LitresStepper big label={`${label} litres`} value={v} onChange={set} /></div>
+                  : <div className="mt-1 text-sm text-ink-3">{v ? `${v} L saved` : 'Not logged'}{soldS ? '' : ' — tick to change'}</div>}
+              </div>
+            ))}
 
             <div className="rounded-[14px] bg-white p-3.5">
-              <div className="flex items-baseline justify-between"><b>Expected yield</b><span className="text-[13px] text-ink-3">{exp ? `day ${exp.daysInMilk} of lactation` : ''}</span></div>
+              <div className="flex items-baseline justify-between"><b>Expected yield</b><span className="text-[13px] text-ink-3">{exp ? `day ${exp.daysInMilk} of lactation${amUse !== pmUse ? ` · ${amUse ? 'morning' : 'evening'} only` : ''}` : ''}</span></div>
               {exp ? (
                 <>
                   <div className="mt-2.5 grid grid-cols-2 gap-3">
-                    <div><label className="lab" htmlFor="mc-exp">Expected (L/day)</label><input className="inp bg-ground" id="mc-exp" readOnly value={L(exp.expectedLitres)} /></div>
+                    <div><label className="lab" htmlFor="mc-exp">Expected ({amUse !== pmUse ? 'L/session' : 'L/day'})</label><input className="inp bg-ground" id="mc-exp" readOnly value={L(amUse !== pmUse ? exp.expectedLitres / 2 : exp.expectedLitres)} /></div>
                     <div><span className="lab">Actual</span><div className="flex h-12 items-center gap-2 text-xl font-bold">{L(total)} L {g && <span className="text-sm text-info-text">{g.pct} %</span>}</div></div>
                   </div>
                   <div className="mt-2 text-xs leading-relaxed text-ink-3">
@@ -135,7 +153,7 @@ export default function MilkSingle() {
             {g && (
               <Link to="/settings/milk-grading" className="flex items-center gap-3 rounded-[14px] bg-white p-3.5 text-ink no-underline hover:text-ink">
                 <GradeBadge grade={g.grade} large />
-                <span className="flex-1 text-sm leading-snug"><b>Grade {g.grade}</b> · {g.pct} % of expected ({g.band} is {g.range})
+                <span className="flex-1 text-sm leading-snug"><b>{amUse !== pmUse ? `${amUse ? 'Morning' : 'Evening'} grade` : 'Grade'} {g.grade}</b> · {g.pct} % of expected ({g.band} is {g.range})
                   {g.issues.length > 0 && <><br /><span className="text-[#9A3412]">{g.issues.join(' · ')} — down {g.issues.length} grade{g.issues.length > 1 ? 's' : ''}</span></>}
                 </span>
                 <Icon name="chevron" size={18} color="#56655B" />
@@ -147,8 +165,8 @@ export default function MilkSingle() {
         )}
       </div>
       <div className="sticky bottom-0 mt-auto border-t border-line-soft bg-white px-4 pb-6 pt-3.5">
-        <div className="mb-2.5 flex justify-between text-[15px]"><span>Day total{exp ? ` · expected ${L(exp.expectedLitres)} L` : ''}</span><b>{L(total)} L{g ? ` · ${g.grade}` : ''}</b></div>
-        <button type="button" className="btn" disabled={busy || !f} onClick={save}>{busy ? 'Saving…' : 'Save'}</button>
+        <div className="mb-2.5 flex justify-between text-[15px]"><span>{amUse && pmUse ? 'Day total' : amUse ? 'Morning' : pmUse ? 'Evening' : 'Nothing ticked'}{exp ? ` · expected ${L(amUse !== pmUse ? exp.expectedLitres / 2 : exp.expectedLitres)} L` : ''}</span><b>{L(total)} L{g ? ` · ${g.grade}` : ''}</b></div>
+        <button type="button" className="btn" disabled={busy || !f || locked} onClick={save}>{locked ? 'Sold — can\'t change' : busy ? 'Saving…' : 'Save'}</button>
       </div>
     </Screen>
   )

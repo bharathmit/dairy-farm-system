@@ -9,19 +9,53 @@ import { errorMessage } from '../../lib/api'
 type SaleSession = Session | 'DAY'
 const PRODUCTS: { value: Product; label: string }[] = [{ value: 'MILK', label: 'Milk' }, { value: 'MANURE', label: 'Manure' }, { value: 'OTHER', label: 'Other' }]
 const SESSIONS: { value: SaleSession; label: string }[] = [{ value: 'AM', label: 'Morning' }, { value: 'PM', label: 'Evening' }, { value: 'DAY', label: 'Whole day' }]
+const isProduct = (v: string | null): v is Product => PRODUCTS.some((p) => p.value === v)
+const isSession = (v: string | null): v is SaleSession => SESSIONS.some((s) => s.value === v)
 
 export default function MilkSale() {
   const { rec, isOwner } = useRecords()
   const { settings, notify } = useStore()
   const nav = useNavigate()
   const [params, setParams] = useSearchParams()
+  // Product, date and session live in the URL so links (list rows, Finance) open the right record.
   const date = params.get('date') || todayIso()
-  const [product, setProduct] = useState<Product>('MILK')
-  const [session, setSession] = useState<SaleSession>(new Date().getHours() >= 12 ? 'PM' : 'AM')
+  const product: Product = isProduct(params.get('product')) ? params.get('product') as Product : 'MILK'
+  const urlSession = params.get('session')
+  const session: SaleSession = isSession(urlSession) ? urlSession
+    : product === 'MILK' ? (new Date().getHours() >= 12 ? 'PM' : 'AM') : 'DAY'
+  const update = (next: Record<string, string | null>) => {
+    const p = new URLSearchParams(params)
+    for (const [k, v] of Object.entries(next)) { if (v) p.set(k, v); else p.delete(k) }
+    setParams(p, { replace: true })
+  }
+  // Manure and other produce are day entries: no session.
+  const setProduct = (v: Product) => update({ product: v === 'MILK' ? null : v, session: null, sale: null })
+  const setSession = (v: SaleSession) => update({ session: v })
 
   const day = useLoad(() => rec.day(date), [rec, date])
   const sales = useLoad(() => rec.sales(addDays(date, -6), date), [rec, date])
   const existing = sales.data?.find((s) => s.date === date && s.session === session && s.product === product)
+
+  // Opened from Finance with ?sale=id: pick that record's product and session.
+  const saleId = params.get('sale')
+  useEffect(() => {
+    if (!saleId || !sales.data) return
+    const s = sales.data.find((x) => String(x.id) === saleId)
+    update(s ? { sale: null, date: s.date, product: s.product === 'MILK' ? null : s.product, session: s.session } : { sale: null })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [saleId, sales.data])
+
+  const open = (s: Sale) => {
+    update({ date: s.date, product: s.product === 'MILK' ? null : s.product, session: s.session, sale: null })
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  // Whole day only when both sessions are logged and neither has its own sale (or a whole-day sale exists).
+  const d0 = day.data
+  const daySales = (sales.data ?? []).filter((s) => s.date === date && s.product === 'MILK')
+  const showWholeDay = daySales.some((s) => s.session === 'DAY')
+    || (Boolean(d0 && (d0.am.cows ?? 0) > 0 && (d0.pm.cows ?? 0) > 0) && !daySales.some((s) => s.session !== 'DAY'))
+  const sessionOptions = SESSIONS.filter((s) => s.value !== 'DAY' || showWholeDay)
 
   const [qty, setQty] = useState('')
   const [sold, setSold] = useState('')
@@ -75,16 +109,19 @@ export default function MilkSale() {
       <TopBar title="Farm total & sale" close="/milk" />
       <div className="flex flex-col gap-3.5 px-4 pb-4">
         <div className="flex gap-2">{PRODUCTS.map((p) => <button key={p.value} type="button" aria-pressed={product === p.value} onClick={() => setProduct(p.value)} className={`chip ${product === p.value ? 'chip-on' : ''}`}>{p.label}</button>)}</div>
-        <DateNav id="sl-date" value={date} onChange={(v) => { const p = new URLSearchParams(params); p.set('date', v); setParams(p, { replace: true }) }} />
-        <div><label className="lab" htmlFor="sl-sess">Session</label>
-          <select className="inp" id="sl-sess" value={session} onChange={(e) => setSession(e.target.value as SaleSession)}>{SESSIONS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}</select></div>
+        <DateNav id="sl-date" value={date} onChange={(v) => update({ date: v, session: product === 'MILK' && session === 'DAY' ? null : urlSession, sale: null })} />
+        {product === 'MILK' && (
+          <div><label className="lab" htmlFor="sl-sess">Session</label>
+            <select className="inp" id="sl-sess" value={session} onChange={(e) => setSession(e.target.value as SaleSession)}>{(sessionOptions.some((s) => s.value === session) ? sessionOptions : [...sessionOptions, SESSIONS.find((s) => s.value === session)!]).map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}</select>
+            {!showWholeDay && <div className="hint">Whole day shows once both sessions are logged and neither is sold on its own.</div>}</div>
+        )}
         <LoadState loading={day.loading || sales.loading} error={day.error ?? sales.error} onRetry={() => { void day.reload(); void sales.reload() }} empty={!d} />
         {product === 'MILK' && d && (
           <div className="rounded-xl bg-brand-soft px-3.5 py-3 text-sm leading-snug text-[#1C3A28]">
             Cows logged {session === 'DAY' ? 'today' : `this ${sessionName}`}: <b>{L(cowLitres)} L</b>{withheld > 0 && <> ({L(withheld)} L in withdrawal — can't be sold)</>}. Leave total blank to use that, or type a total if you didn't log each cow.
           </div>
         )}
-        {existing && <div className="text-[13px] text-ink-3">Editing the {sessionName} {product.toLowerCase()} entry saved for this date.</div>}
+        {existing && <div className="text-[13px] text-ink-3">Editing the {product === 'MILK' || session !== 'DAY' ? `${sessionName} ` : ''}{product.toLowerCase()} entry saved for {shortDate(date)}.</div>}
         <div className="grid grid-cols-2 gap-3">
           <div><label className="lab" htmlFor="sl-tot">Total ({unit})</label><input className="inp" id="sl-tot" inputMode="decimal" placeholder={product === 'MILK' ? L(cowLitres) : ''} value={qty} onChange={(e) => setQty(decimal(e.target.value))} /></div>
           <div><label className="lab" htmlFor="sl-sold">Sold ({unit})</label><input className="inp" id="sl-sold" inputMode="decimal" value={sold} onChange={(e) => setSold(decimal(e.target.value))} /></div>
@@ -114,8 +151,8 @@ export default function MilkSale() {
             <div className="mb-2 mt-1 text-[15px] font-bold">Last 7 days</div>
             <div className="overflow-hidden rounded-[14px] bg-white">
               {sales.data.map((s) => (
-                <div key={s.id} className="flex items-center gap-2 border-t border-line-faint px-3.5 py-2.5 text-sm first:border-t-0">
-                  <span className="flex-1"><b>{shortDate(s.date)}</b> · {SESSIONS.find((x) => x.value === s.session)?.label} · {s.product.toLowerCase()}<br /><span className="text-ink-3">{L(s.soldQty)} sold{s.buyer ? ` to ${s.buyer.name}` : ''}{isOwner && s.incomeAmount != null ? ` · ${inr(s.incomeAmount)}` : ''}{s.paid ? '' : ' · pending'}</span></span>
+                <div key={s.id} className={`flex items-center gap-2 border-t border-line-faint px-3.5 py-2.5 text-sm first:border-t-0 ${existing?.id === s.id ? 'bg-brand-soft' : ''}`}>
+                  <button type="button" onClick={() => open(s)} aria-label={`Edit ${s.product.toLowerCase()} sale of ${shortDate(s.date)}`} className="flex-1 border-0 bg-transparent p-0 text-left text-sm text-ink"><b>{shortDate(s.date)}</b>{s.product === 'MILK' || s.session !== 'DAY' ? ` · ${SESSIONS.find((x) => x.value === s.session)?.label}` : ''} · {s.product.toLowerCase()}<br /><span className="text-ink-3">{L(s.soldQty)} sold{s.buyer ? ` to ${s.buyer.name}` : ''}{isOwner && s.incomeAmount != null ? ` · ${inr(s.incomeAmount)}` : ''}{s.paid ? '' : ' · pending'}</span></button>
                   {isOwner && <button type="button" onClick={() => remove(s)} className="h-10 border-0 bg-transparent px-2 text-sm font-semibold text-danger">Delete</button>}
                 </div>
               ))}

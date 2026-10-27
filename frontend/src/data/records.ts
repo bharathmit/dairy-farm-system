@@ -47,10 +47,19 @@ export interface SheetCow {
   animalId: number; tag: string; name?: string; groupId?: number | null
   litres?: number | null; lastLitres?: number | null; usualLitres?: number | null
   inWithdrawal: boolean; withdrawalUntil?: string | null
+  /** Lactation stage from days in milk. */
+  stage: Stage
 }
+export type Stage = 'FRESH' | 'EARLY' | 'MID' | 'LATE'
+export const STAGES: { value: Stage; label: string }[] = [
+  { value: 'FRESH', label: 'Fresh cows' }, { value: 'EARLY', label: 'Early lactation' },
+  { value: 'MID', label: 'Mid lactation' }, { value: 'LATE', label: 'Late lactation' },
+]
 export interface MilkSheet {
   date: string; session: Session; saved: boolean; sessionLitres?: number | null; otherSessionLitres?: number | null
   dayLitres?: number | null; withheldLitres?: number | null; cows: SheetCow[]
+  /** Milk for this date and session is sold: the log can't be changed. */
+  sold: boolean
 }
 export interface Expectation {
   daysInMilk: number; expectedLitres: number; peakLitres: number; peakDay: number
@@ -60,6 +69,7 @@ export interface CowDayForm {
   animal: { id: number; tag: string; name?: string; breed?: string; lastCalvingDate?: string | null }
   day: CowDay; expectation: Expectation | null
   lastAm?: number | null; lastPm?: number | null; inWithdrawal: boolean; withdrawalUntil?: string | null
+  amSold: boolean; pmSold: boolean
 }
 export type Product = 'MILK' | 'MANURE' | 'OTHER'
 export interface Sale {
@@ -188,7 +198,7 @@ export const recordsApi = (farmId: string) => {
 
     day: (date: string) => api.get<DaySummary>(`${b}/milk/day${q({ date })}`),
     trend: (from: string, to: string) => api.get<TrendDay[]>(`${b}/milk/trend${q({ from, to })}`),
-    grades: (from: string, to: string) => api.get<Record<Grade, number>>(`${b}/milk/grades${q({ from, to })}`),
+    grades: (from: string, to: string, session?: Session) => api.get<Record<Grade, number>>(`${b}/milk/grades${q({ from, to, session })}`),
     sheet: (date: string, session: Session, groupId?: string) => api.get<MilkSheet>(`${b}/milk/sheet${q({ date, session, groupId })}`),
     saveSheet: (date: string, session: Session, entries: { animalId: number; litres: number | null }[]) =>
       api.put<MilkSheet>(`${b}/milk/sheet`, { date, session, entries }),

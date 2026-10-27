@@ -99,7 +99,7 @@ export function sourceLink(s?: Entry['source'], e?: Entry): { label: string; to?
   if (!s) return null
   const label = s.label || s.type.toLowerCase().replace(/_/g, ' ')
   switch (s.type) {
-    case 'PRODUCTION': return { label: label || 'milk sale', to: '/milk/sale' }
+    case 'PRODUCTION': return { label: label || 'milk sale', to: `/milk/sale?sale=${s.id}${e?.date ? `&date=${e.date}` : ''}` }
     case 'ITEM_TXN': return { label: label || 'purchase', to: '/feed' }
     case 'EVENT': case 'HEALTH': return { label: label || 'health record', to: `/health/${s.id}` }
     case 'BREEDING': return { label: label || 'breeding record', to: `/breeding/service/${s.id}` }

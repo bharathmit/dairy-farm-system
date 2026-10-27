@@ -32,6 +32,8 @@ import com.dairyfarm.farm.Farm;
 import com.dairyfarm.farm.FarmRepository;
 import com.dairyfarm.farm.FarmService;
 import com.dairyfarm.farm.FarmSettings;
+import com.dairyfarm.feed.FeedGroups;
+import com.dairyfarm.feed.FeedViews.RationCategory;
 import com.dairyfarm.milk.MilkGrader.Grade;
 import com.dairyfarm.milk.MilkGrader.Quality;
 import com.dairyfarm.milk.MilkRepository.CowInfo;
@@ -148,6 +150,15 @@ public class MilkService {
 
     @Transactional(readOnly = true)
     public Map<String, Long> grades(Long farmId, LocalDate from, LocalDate to) {
+        return grades(farmId, from, to, null);
+    }
+
+    /**
+     * Grade counts. With a session (AM or PM) each cow's session is graded on its own against half her expected
+     * day yield, using that session's quality; withheld sessions are not graded.
+     */
+    @Transactional(readOnly = true)
+    public Map<String, Long> grades(Long farmId, LocalDate from, LocalDate to, Session session) {
         DailyDates.range(from, to, 366);
         List<CowRow> rows = milk.cowRows(farmId, from, to, null);
         Map<Long, CowInfo> cows = milk.animals(farmId, rows.stream().map(CowRow::animalId).collect(Collectors.toSet()))
@@ -156,7 +167,25 @@ public class MilkService {
         for (Grade g : Grade.values()) {
             counts.put(g.name(), 0L);
         }
-        cowDays(farmId, grading(farmId), cows, rows, from, to).stream()
+        MilkGradingRules rules = grading(farmId);
+        if (session != null && session != Session.DAY) {
+            Map<Long, BigDecimal> peaks = milk.ownPeaks(farmId, cows.keySet());
+            for (CowRow r : rows) {
+                CowInfo cow = cows.get(r.animalId());
+                if (cow == null || r.session() != session || r.quantity() == null || r.withheld()) {
+                    continue;
+                }
+                var exp = MilkGrader.expect(rules, cow.breed(), cow.lastCalvingDate(), r.date(), peaks.get(cow.id()),
+                        firstCalver(cow));
+                var result = MilkGrader.grade(rules, r.quantity().multiply(BigDecimal.TWO), exp,
+                        new Quality(r.fatPct(), r.snfPct(), r.scc()));
+                if (result != null) {
+                    counts.merge(result.grade().name(), 1L, Long::sum);
+                }
+            }
+            return counts;
+        }
+        cowDays(farmId, rules, cows, rows, from, to).stream()
                 .filter(d -> d.grade() != null)
                 .forEach(d -> counts.merge(d.grade().name(), 1L, Long::sum));
         return counts;
@@ -182,18 +211,21 @@ public class MilkService {
                     : r.stream().reduce(ZERO, BigDecimal::add).divide(BigDecimal.valueOf(r.size()), 1, RoundingMode.HALF_UP);
             Instant until = withdrawals.get(c.id());
             return new SheetCow(c.id(), c.tag(), c.name(), c.groupId(), saved.get(c.id()),
-                    r.isEmpty() ? null : r.get(0), usual, until != null, until);
+                    r.isEmpty() ? null : r.get(0), usual, until != null, until, stage(c, date));
         }).toList();
         Totals here = milk.cowTotals(farmId, date, session);
         Totals other = milk.cowTotals(farmId, date, session == Session.AM ? Session.PM : Session.AM);
         return new Sheet(date, session, here.cows() > 0, here.litres(), other.litres(), here.litres().add(other.litres()),
-                here.withheldLitres().add(other.withheldLitres()), list);
+                here.withheldLitres().add(other.withheldLitres()), list, soldSessions(farmId, date).contains(session));
     }
 
     @Transactional
     public Sheet saveSheet(Long farmId, SheetRequest req) {
         Session session = sessionOnly(req.session());
         DailyDates.notFuture(req.date());
+        if (soldSessions(farmId, req.date()).contains(session)) {
+            throw ApiException.conflict(soldMessage(session));
+        }
         Map<Long, SheetEntry> entries = new LinkedHashMap<>();
         req.entries().forEach(e -> entries.put(e.animalId(), e));
         Map<Long, CowInfo> cows = requireMilking(farmId, entries.keySet());
@@ -225,9 +257,11 @@ public class MilkService {
         var lastAm = milk.recent(farmId, List.of(animalId), Session.AM, date).getOrDefault(animalId, List.of());
         var lastPm = milk.recent(farmId, List.of(animalId), Session.PM, date).getOrDefault(animalId, List.of());
         Instant until = milk.withdrawals(farmId, List.of(animalId), date, sessionTime(settings, date, Session.AM)).get(animalId);
+        Set<Session> sold = soldSessions(farmId, date);
         return new CowDayForm(new AnimalRef(cow.id(), cow.tag(), cow.name(), cow.breed(), cow.lastCalvingDate()),
                 day, ExpectationView.of(exp), lastAm.isEmpty() ? null : lastAm.get(0),
-                lastPm.isEmpty() ? null : lastPm.get(0), until != null, until);
+                lastPm.isEmpty() ? null : lastPm.get(0), until != null, until,
+                sold.contains(Session.AM), sold.contains(Session.PM));
     }
 
     @Transactional
@@ -236,7 +270,16 @@ public class MilkService {
         requireMilking(farmId, List.of(animalId));
         var user = CurrentUser.idOrNull();
         String notes = req.notes() == null || req.notes().isBlank() ? null : req.notes().trim();
+        Set<Session> sold = soldSessions(farmId, date);
         for (Session s : List.of(Session.AM, Session.PM)) {
+            if (req.saves(s) && sold.contains(s)) {
+                throw ApiException.conflict(soldMessage(s));
+            }
+        }
+        for (Session s : List.of(Session.AM, Session.PM)) {
+            if (!req.saves(s)) {
+                continue;
+            }
             BigDecimal litres = s == Session.AM ? req.am() : req.pm();
             if (litres == null) {
                 milk.deleteCowSession(farmId, animalId, date, s);
@@ -289,6 +332,17 @@ public class MilkService {
             if (sold.compareTo(saleable) > 0) {
                 throw ApiException.badRequest("Only " + plain(saleable) + " L can be sold"
                         + (withheld.signum() > 0 ? ": " + plain(withheld) + " L is from cows in milk withdrawal." : "."));
+            }
+        }
+        if (product == Product.MILK) {
+            boolean day = req.session() == Session.DAY;
+            for (SaleRow other : milk.sales(farmId, req.date(), req.date())) {
+                if (other.product() == Product.MILK && other.session() != req.session()
+                        && (day || other.session() == Session.DAY)) {
+                    throw ApiException.conflict(day
+                            ? "Morning or evening milk is already sold for this date. Edit that sale instead of a whole-day one."
+                            : "Whole-day milk is already sold for this date. Edit that sale instead.");
+                }
             }
         }
         var existing = milk.sale(farmId, req.date(), req.session(), product);
@@ -425,6 +479,33 @@ public class MilkService {
         return new Sale(r.id(), r.date(), r.session(), r.product(), quantity, t.litres(), t.withheldLitres(),
                 r.soldQty(), other, showMoney ? r.rate() : null, showMoney ? r.incomeAmount() : null,
                 buyer == null ? null : Ref.of(buyer), r.fatPct(), r.snfPct(), r.paid(), r.notes());
+    }
+
+    /** Milking sessions on this date whose milk has a sale recorded (a whole-day sale covers both). */
+    private Set<Session> soldSessions(Long farmId, LocalDate date) {
+        Set<Session> out = new HashSet<>();
+        for (SaleRow r : milk.sales(farmId, date, date)) {
+            if (r.product() != Product.MILK) {
+                continue;
+            }
+            if (r.session() == Session.DAY) {
+                out.add(Session.AM);
+                out.add(Session.PM);
+            } else {
+                out.add(r.session());
+            }
+        }
+        return out;
+    }
+
+    private static String soldMessage(Session s) {
+        return (s == Session.AM ? "Morning" : "Evening")
+                + " milk for this date is already sold, so its milk log can't be changed. Delete or edit the sale first.";
+    }
+
+    /** Lactation stage (feeding group) of a milking cow: FRESH, EARLY, MID or LATE. */
+    private static String stage(CowInfo c, LocalDate date) {
+        return FeedGroups.of(RationCategory.MILKING, null, null, c.lastCalvingDate(), null, null, date, 0, null).name();
     }
 
     private static Session sessionOnly(Session s) {

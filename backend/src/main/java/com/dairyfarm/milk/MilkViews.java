@@ -52,11 +52,12 @@ public final class MilkViews {
     }
 
     public record SheetCow(Long animalId, String tag, String name, Long groupId, BigDecimal litres,
-                           BigDecimal lastLitres, BigDecimal usualLitres, boolean inWithdrawal, Instant withdrawalUntil) {
+                           BigDecimal lastLitres, BigDecimal usualLitres, boolean inWithdrawal, Instant withdrawalUntil,
+                           String stage) {
     }
 
     public record Sheet(LocalDate date, Session session, boolean saved, BigDecimal sessionLitres, BigDecimal otherSessionLitres,
-                        BigDecimal dayLitres, BigDecimal withheldLitres, List<SheetCow> cows) {
+                        BigDecimal dayLitres, BigDecimal withheldLitres, List<SheetCow> cows, boolean sold) {
     }
 
     public record AnimalRef(Long id, String tag, String name, String breed, LocalDate lastCalvingDate) {
@@ -71,7 +72,8 @@ public final class MilkViews {
     }
 
     public record CowDayForm(AnimalRef animal, CowDay day, ExpectationView expectation, BigDecimal lastAm,
-                             BigDecimal lastPm, boolean inWithdrawal, Instant withdrawalUntil) {
+                             BigDecimal lastPm, boolean inWithdrawal, Instant withdrawalUntil, boolean amSold,
+                             boolean pmSold) {
     }
 
     public record Sale(Long id, LocalDate date, Session session, Product product, BigDecimal quantity,
@@ -100,7 +102,12 @@ public final class MilkViews {
             @DecimalMin(value = "0.0", message = "Use 0 to 10 %") @DecimalMax(value = "10.0", message = "Use 0 to 10 %") BigDecimal proteinPct,
             @DecimalMin(value = "0.9", message = "Use 0.900 to 1.100") @DecimalMax(value = "1.1", message = "Use 0.900 to 1.100") BigDecimal density,
             @Min(value = 0, message = "SCC can't be negative") @Max(value = 100000, message = "SCC looks too high") Integer scc,
-            @Size(max = 2000) String notes) {
+            @Size(max = 2000) String notes,
+            List<Session> sessions) {
+        /** Sessions to save; null or empty means both (unticked sessions are left as they are). */
+        public boolean saves(Session s) {
+            return sessions == null || sessions.isEmpty() || sessions.contains(s);
+        }
     }
 
     public record SaleRequest(
