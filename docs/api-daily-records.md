@@ -75,10 +75,12 @@ CowDayForm = { animal: {id, tag, name, breed, lastCalvingDate},
   day: CowDay, expectation: {daysInMilk, expectedLitres, peakLitres, peakDay, source: OWN_LACTATION|BREED|FIRST_CALVER, pastLactation} | null,
   lastAm, lastPm, inWithdrawal, withdrawalUntil, amSold, pmSold }
 Sale = { id, date, session, product: MILK|MANURE|OTHER, quantity, cowLitres, withheldLitres,
-  soldQty, otherUseQty, rate, incomeAmount, buyer: ContactRef|null, fatPct, snfPct, paid, notes }
+  soldQty, otherUseQty, rate, incomeAmount, buyer: ContactRef|null, fatPct, snfPct, paid, notes, discount }
 ```
 Sale request = `{date, session, product (default MILK), quantity (null = use cow-logged litres for that session/day),
-soldQty, buyerContactId, rate (default buyer's milkRate, then farm milkRate), fatPct, snfPct, paid, notes}`.
+soldQty, buyerContactId, rate (default buyer's milkRate, then farm milkRate), fatPct, snfPct, paid, notes, discount}`.
+OTHER produce: soldQty = number of units (also the total), rate = unit price, incomeAmount = units × price − discount
+(400 when the discount is more than units × price); unit NOS. Milk rate max ₹1000/L. discount is null for workers.
 400 when soldQty > quantity − withheld litres.
 Cow milk rules: animal must be an active female in category MILKING (400 otherwise). A cow record is
 `withheld` when the session time (farm settings morning/evening milking time) is before an active

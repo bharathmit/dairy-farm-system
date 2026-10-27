@@ -50,6 +50,7 @@ export default function MilkSingle() {
   const [scc, setScc] = useState('')
   const [notes, setNotes] = useState('')
   const [busy, setBusy] = useState(false)
+  const [prefilled, setPrefilled] = useState(false)
   const [amOn, setAmOn] = useState(true)
   const [pmOn, setPmOn] = useState(true)
 
@@ -58,7 +59,12 @@ export default function MilkSingle() {
     // Tick the sessions that can still be changed; a sold session stays locked.
     setAmOn(!fd?.amSold); setPmOn(!fd?.pmSold)
     const d = fd?.day
-    setAm(d?.am != null ? d.am.toFixed(1) : ''); setPm(d?.pm != null ? d.pm.toFixed(1) : '')
+    // Nothing saved for this date yet: start from her last values (normally yesterday).
+    const preAm = d?.am == null && !fd?.amSold && fd?.lastAm != null
+    const prePm = d?.pm == null && !fd?.pmSold && fd?.lastPm != null
+    setAm(d?.am != null ? d.am.toFixed(1) : preAm ? fd!.lastAm!.toFixed(1) : '')
+    setPm(d?.pm != null ? d.pm.toFixed(1) : prePm ? fd!.lastPm!.toFixed(1) : '')
+    setPrefilled(preAm || prePm)
     setFat(numText(d?.fatPct)); setSnf(numText(d?.snfPct)); setProtein(numText(d?.proteinPct))
     setDensity(numText(d?.density)); setScc(numText(d?.scc)); setNotes(d?.notes ?? '')
   }, [form.data, animalId])
@@ -108,6 +114,7 @@ export default function MilkSingle() {
         {f && (
           <>
             {f.inWithdrawal && <div className="rounded-xl bg-danger-soft px-3.5 py-3 text-sm text-danger-text"><b>Milk withdrawal</b> — milk is discarded{f.withdrawalUntil ? ` until ${shortDate(f.withdrawalUntil)}` : ''} and not graded.</div>}
+            {prefilled && <div className="text-[13px] text-ink-3">Pre-filled from her last morning/evening values — check and save.</div>}
             {(amSold || pmSold) && <div className="rounded-xl bg-warn-soft px-3.5 py-3 text-sm text-[#4A3210]"><b>{locked ? 'Day' : amSold ? 'Morning' : 'Evening'} milk is sold</b> — {locked ? 'this day' : 'that session'} can't be changed. <Link to={`/milk/sale?date=${date}`} className="font-semibold">Open sale</Link></div>}
             {([['AM', 'Morning', am, setAm, amOn, setAmOn, amSold, f.lastAm], ['PM', 'Evening', pm, setPm, pmOn, setPmOn, pmSold, f.lastPm]] as const).map(([k, label, v, set, on, setOn, soldS, last]) => (
               <div key={k} className={`rounded-[14px] bg-white p-3.5 ${on && !soldS ? '' : 'opacity-60'}`}>

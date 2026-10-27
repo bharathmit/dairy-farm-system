@@ -41,7 +41,7 @@ public class MilkRepository {
 
     public record SaleRow(Long id, LocalDate date, Session session, Product product, BigDecimal quantity,
                           BigDecimal soldQty, BigDecimal rate, BigDecimal incomeAmount, Long buyerContactId,
-                          BigDecimal fatPct, BigDecimal snfPct, Boolean paid, String notes) {
+                          BigDecimal fatPct, BigDecimal snfPct, Boolean paid, String notes, BigDecimal discount) {
     }
 
     public record Totals(BigDecimal litres, BigDecimal withheldLitres, int cows) {
@@ -52,7 +52,7 @@ public class MilkRepository {
     private static final String ROW_COLS =
             "animal_id, record_date, session, quantity, fat_pct, snf_pct, protein_pct, density, scc, withheld, notes";
     private static final String SALE_COLS = "id, record_date, session, product, quantity, sold_qty, rate, "
-            + "income_amount, buyer_contact_id, fat_pct, snf_pct, paid, notes";
+            + "income_amount, buyer_contact_id, fat_pct, snf_pct, paid, notes, discount";
 
     private final JdbcClient jdbc;
 
@@ -263,21 +263,21 @@ public class MilkRepository {
 
     public Long upsertSale(Long farmId, LocalDate date, Session session, Product product, BigDecimal quantity,
                            BigDecimal soldQty, BigDecimal rate, BigDecimal income, Long buyerId, BigDecimal fat,
-                           BigDecimal snf, Boolean paid, String notes, UUID userId) {
+                           BigDecimal snf, Boolean paid, String notes, BigDecimal discount, UUID userId) {
         return jdbc.sql("""
                 insert into production_record (farm_id, record_date, session, product, animal_id, quantity, unit,
-                    sold_qty, rate, income_amount, buyer_contact_id, fat_pct, snf_pct, paid, notes, created_by)
-                values (:f, :d, :s, :p, null, :q, :unit, :sold, :rate, :income, :buyer, :fat, :snf, :paid, :notes, :u)
+                    sold_qty, rate, income_amount, buyer_contact_id, fat_pct, snf_pct, paid, notes, discount, created_by)
+                values (:f, :d, :s, :p, null, :q, :unit, :sold, :rate, :income, :buyer, :fat, :snf, :paid, :notes, :disc, :u)
                 on conflict (farm_id, record_date, session, product) where animal_id is null
                 do update set quantity = excluded.quantity, sold_qty = excluded.sold_qty, rate = excluded.rate,
                     income_amount = excluded.income_amount, buyer_contact_id = excluded.buyer_contact_id,
                     fat_pct = excluded.fat_pct, snf_pct = excluded.snf_pct, paid = excluded.paid,
-                    notes = excluded.notes, updated_at = now()
+                    notes = excluded.notes, discount = excluded.discount, updated_at = now()
                 returning id""")
                 .param("f", farmId).param("d", date).param("s", session.name()).param("p", product.name())
-                .param("q", quantity).param("unit", product == Product.MANURE ? "KG" : "L")
+                .param("q", quantity).param("unit", product == Product.MANURE ? "KG" : product == Product.OTHER ? "NOS" : "L")
                 .param("sold", soldQty).param("rate", rate).param("income", income).param("buyer", buyerId)
-                .param("fat", fat).param("snf", snf).param("paid", paid).param("notes", notes).param("u", userId)
+                .param("fat", fat).param("snf", snf).param("paid", paid).param("notes", notes).param("disc", discount).param("u", userId)
                 .query(Long.class).single();
     }
 
@@ -317,6 +317,6 @@ public class MilkRepository {
                 rs.getBigDecimal("quantity"), rs.getBigDecimal("sold_qty"), rs.getBigDecimal("rate"),
                 rs.getBigDecimal("income_amount"), rs.getObject("buyer_contact_id", Long.class),
                 rs.getBigDecimal("fat_pct"), rs.getBigDecimal("snf_pct"), rs.getObject("paid", Boolean.class),
-                rs.getString("notes"));
+                rs.getString("notes"), rs.getBigDecimal("discount"));
     }
 }

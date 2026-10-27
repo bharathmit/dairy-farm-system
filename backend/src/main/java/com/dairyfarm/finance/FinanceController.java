@@ -1,7 +1,9 @@
 package com.dairyfarm.finance;
 
 import java.time.LocalDate;
+import java.util.List;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,6 +45,14 @@ public class FinanceController {
     public Summary summary(@PathVariable Long farmId, @RequestParam(required = false) LocalDate from,
                            @RequestParam(required = false) LocalDate to) {
         return finance.summary(ctx.farmId(), from, to);
+    }
+
+    @GetMapping("/daily")
+    @Operation(summary = "Per day: feed fed cost, milk income, other income, other expenses (max 1 year)")
+    public List<DailyMoney> daily(@PathVariable Long farmId,
+                                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+                                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+        return finance.daily(ctx.farmId(), from, to);
     }
 
     @GetMapping("/entries")

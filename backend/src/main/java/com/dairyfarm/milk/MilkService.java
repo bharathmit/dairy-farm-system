@@ -320,9 +320,11 @@ public class MilkService {
         Product product = req.product() == null ? Product.MILK : req.product();
         Contact buyer = contactService.require(farmId, req.buyerContactId(), Contact.Role.BUYER);
         Totals cowTotals = product == Product.MILK ? milk.cowTotals(farmId, req.date(), req.session()) : null;
-        BigDecimal quantity = req.quantity() != null ? req.quantity()
-                : cowTotals != null && cowTotals.cows() > 0 ? cowTotals.litres() : null;
         BigDecimal sold = req.soldQty();
+        // Other produce has no separate total: the units sold are the total.
+        BigDecimal quantity = req.quantity() != null ? req.quantity()
+                : product == Product.OTHER ? sold
+                : cowTotals != null && cowTotals.cows() > 0 ? cowTotals.litres() : null;
         if (sold != null && sold.signum() > 0) {
             if (quantity == null) {
                 throw ApiException.badRequest("Enter the total litres, or log each cow first.");
@@ -356,10 +358,22 @@ public class MilkService {
         if (rate == null && product == Product.MILK) {
             rate = farm(farmId).getSettings().milkRate();
         }
-        BigDecimal income = sold != null && rate != null ? sold.multiply(rate).setScale(2, RoundingMode.HALF_UP) : null;
+        if (product == Product.MILK && rate != null && rate.compareTo(BigDecimal.valueOf(1000)) > 0) {
+            throw ApiException.badRequest("Milk rate looks too high (over ₹1000 a litre).");
+        }
+        BigDecimal discount = req.discount() == null || req.discount().signum() == 0 ? null : req.discount();
+        if (discount == null && !showMoney && existing.isPresent()) {
+            discount = existing.get().discount(); // workers don't see money; keep the owner's discount
+        }
+        BigDecimal gross = sold != null && rate != null ? sold.multiply(rate) : null;
+        if (discount != null && (gross == null || discount.compareTo(gross) > 0)) {
+            throw ApiException.badRequest("Discount can't be more than units × unit price.");
+        }
+        BigDecimal income = gross == null ? null
+                : gross.subtract(discount == null ? ZERO : discount).setScale(2, RoundingMode.HALF_UP);
         Long id = milk.upsertSale(farmId, req.date(), req.session(), product, req.quantity(), sold, rate, income,
                 buyer == null ? null : buyer.getId(), req.fatPct(), req.snfPct(), req.paid(),
-                req.notes() == null || req.notes().isBlank() ? null : req.notes().trim(), CurrentUser.idOrNull());
+                req.notes() == null || req.notes().isBlank() ? null : req.notes().trim(), discount, CurrentUser.idOrNull());
         finance.sync(farmId);
         return toSale(farmId, milk.sale(farmId, id).orElseThrow(), buyer, showMoney);
     }
@@ -478,7 +492,8 @@ public class MilkService {
                 : quantity.subtract(r.soldQty() == null ? ZERO : r.soldQty()).max(ZERO);
         return new Sale(r.id(), r.date(), r.session(), r.product(), quantity, t.litres(), t.withheldLitres(),
                 r.soldQty(), other, showMoney ? r.rate() : null, showMoney ? r.incomeAmount() : null,
-                buyer == null ? null : Ref.of(buyer), r.fatPct(), r.snfPct(), r.paid(), r.notes());
+                buyer == null ? null : Ref.of(buyer), r.fatPct(), r.snfPct(), r.paid(), r.notes(),
+                showMoney ? r.discount() : null);
     }
 
     /** Milking sessions on this date whose milk has a sale recorded (a whole-day sale covers both). */

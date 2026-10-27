@@ -145,7 +145,7 @@ saving a session again replaces its rows. Own fodder cut on the farm = PRODUCE w
 ## 10. `production_record` — milk and other produce (built in V3)
 As built: product MILK/MANURE/OTHER; per-cow rows are AM/PM only (unique per cow, date, session);
 farm totals/sales have animal_id NULL (unique per farm, date, session, product) with sold_qty, rate,
-income_amount, buyer_contact_id (→ `contact`), paid. `withheld` marks milk taken during a withdrawal
+income_amount, buyer_contact_id (→ `contact`), paid, discount (V10; Other produce: income = units × unit price − discount, unit NOS). `withheld` marks milk taken during a withdrawal
 (re-checked whenever milk or health records change). Species/group columns were not needed.
 record_date · session (AM, PM, DAY) · product (MILK, MANURE, MEAT, EGGS, WOOL) · species ·
 animal_id (null = farm total) · group_id · quantity · unit (L, KG) · fat_pct · snf_pct · protein_pct ·

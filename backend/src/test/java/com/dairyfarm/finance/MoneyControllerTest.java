@@ -346,6 +346,29 @@ class MoneyControllerTest extends IntegrationTest {
     }
 
     @Test
+    void dailyMoneyForHomePanels() throws Exception {
+        long gnc = feedItem("Groundnut cake", ",\"costPerUnit\":25");
+        jdbc.update("insert into item_txn (farm_id, item_id, txn_type, txn_date, quantity, source_type) values (?, ?, 'USAGE', ?, 10, 'FEEDING')",
+                farmId, gnc, today);
+        call(post(base() + "/finance/entries"), owner, "{\"category\":\"MILK_SALES\",\"amount\":900,\"date\":\"" + today + "\"}", 201);
+        call(post(base() + "/finance/entries"), owner, "{\"category\":\"FEED\",\"amount\":5000,\"date\":\"" + today + "\"}", 201);
+        call(post(base() + "/finance/entries"), owner, "{\"category\":\"VET\",\"amount\":300,\"date\":\"" + today + "\"}", 201);
+        // Other produce: 4 units × ₹150 − ₹50 discount
+        call(put(base() + "/milk/sales"), owner, "{\"date\":\"" + today + "\",\"session\":\"DAY\",\"product\":\"OTHER\",\"soldQty\":4,\"rate\":150,\"discount\":50}", 200);
+        call(put(base() + "/milk/sales"), owner, "{\"date\":\"" + today + "\",\"session\":\"DAY\",\"product\":\"OTHER\",\"soldQty\":1,\"rate\":10,\"discount\":50}", 400);
+
+        JsonNode days = call(get(base() + "/finance/daily?from=" + today.minusDays(1) + "&to=" + today), owner, null, 200);
+        assertThat(days.size()).isEqualTo(2);
+        assertThat(days.get(0).get("feedCost").asDouble()).isZero();
+        JsonNode d = days.get(1);
+        assertThat(d.get("feedCost").asDouble()).isEqualTo(250.0);    // fed, not the ₹5000 purchase
+        assertThat(d.get("milkIncome").asDouble()).isEqualTo(900.0);
+        assertThat(d.get("otherIncome").asDouble()).isEqualTo(550.0);
+        assertThat(d.get("otherExpense").asDouble()).isEqualTo(300.0);
+        call(get(base() + "/finance/daily?from=" + today + "&to=" + today), worker, null, 403);
+    }
+
+    @Test
     void workersCannotSeeMoney() throws Exception {
         call(get(base() + "/finance/summary"), worker, null, 403);
         call(get(base() + "/finance/entries"), worker, null, 403);

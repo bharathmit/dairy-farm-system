@@ -82,6 +82,11 @@ public final class FinanceViews {
     public record Pending(long count, BigDecimal amount) {
     }
 
+    /** Home money panels: one day's feed cost (fed), milk income, other income and other expenses. */
+    public record DailyMoney(LocalDate date, BigDecimal feedCost, BigDecimal milkIncome, BigDecimal otherIncome,
+                             BigDecimal otherExpense) {
+    }
+
     public record Summary(LocalDate from, LocalDate to, BigDecimal income, BigDecimal expense, BigDecimal net,
                           BigDecimal marginPct, int marginAlertPct, boolean nearAlert, Totals previous,
                           BigDecimal incomeChangePct, BigDecimal expenseChangePct, Pending pending,

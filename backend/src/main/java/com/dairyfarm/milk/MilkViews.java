@@ -79,7 +79,7 @@ public final class MilkViews {
     public record Sale(Long id, LocalDate date, Session session, Product product, BigDecimal quantity,
                        BigDecimal cowLitres, BigDecimal withheldLitres, BigDecimal soldQty, BigDecimal otherUseQty,
                        BigDecimal rate, BigDecimal incomeAmount, Ref buyer, BigDecimal fatPct, BigDecimal snfPct,
-                       Boolean paid, String notes) {
+                       Boolean paid, String notes, BigDecimal discount) {
     }
 
     // ---- requests
@@ -117,10 +117,11 @@ public final class MilkViews {
             @DecimalMin(value = "0.0", message = "Can't be negative") @DecimalMax(value = "100000", message = "Looks too high") BigDecimal quantity,
             @DecimalMin(value = "0.0", message = "Can't be negative") @DecimalMax(value = "100000", message = "Looks too high") BigDecimal soldQty,
             Long buyerContactId,
-            @DecimalMin(value = "0.0", message = "Rate can't be negative") @DecimalMax(value = "1000", message = "Rate looks too high") BigDecimal rate,
+            @DecimalMin(value = "0.0", message = "Rate can't be negative") @DecimalMax(value = "100000", message = "Rate looks too high") BigDecimal rate,
             @DecimalMin(value = "0.0", message = "Use 0 to 15 %") @DecimalMax(value = "15.0", message = "Use 0 to 15 %") BigDecimal fatPct,
             @DecimalMin(value = "0.0", message = "Use 0 to 15 %") @DecimalMax(value = "15.0", message = "Use 0 to 15 %") BigDecimal snfPct,
             Boolean paid,
-            @Size(max = 2000) String notes) {
+            @Size(max = 2000) String notes,
+            @DecimalMin(value = "0.0", message = "Discount can't be negative") @DecimalMax(value = "10000000", message = "Discount looks too high") BigDecimal discount) {
     }
 }

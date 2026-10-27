@@ -8,6 +8,7 @@ import { alertDetail, Badge, BarnCard, BarnSheet, ProgressRing, useAlertCount, u
 import { useStore } from '../data/store'
 import { dayLabel, L, shortDate, todayIso, useLoad } from '../data/records'
 import { changePct } from '../data/money'
+import { TodayMoney } from '../components/money'
 import { SEVERITY_DOT, taskLink, type HomeTask, type TaskStatus } from '../data/alerts'
 
 const DOT: Record<TaskStatus, string> = { DONE: '#1F5C3A', DUE: '#C2410C', LATE: '#A3271B', PENDING: '#C9D0C6' }
@@ -98,6 +99,7 @@ export default function Home() {
                 )}
               </Link>
             </div>
+            <TodayMoney />
 
             {/* Laptop: tasks on the left, herd lists on the right. */}
             <div className="lg:grid lg:grid-cols-2 lg:gap-x-4">

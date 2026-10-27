@@ -2,9 +2,9 @@
 import { useMemo, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { useStore } from '../data/store'
-import { moneyApi, rupees, type Period } from '../data/money'
+import { MONEY_KINDS, moneyApi, rupees, type MoneyKind, type Period } from '../data/money'
 import { PAYMENT_METHODS, type PaymentMethod } from '../data/feed'
-import { decimal, toNum } from '../data/records'
+import { addDays, decimal, todayIso, toNum, useLoad } from '../data/records'
 import { Icon } from './icons'
 import { Screen, TopBar } from './ui'
 
@@ -102,6 +102,32 @@ export function Stat({ k, v, sub, tone = '', bg = 'bg-white' }: { k: string; v: 
       <div className={`text-xs font-semibold ${tone || 'text-ink-3'}`}>{k}</div>
       <div className={`mt-0.5 text-xl font-bold ${tone}`}>{v}</div>
       {sub && <div className={`mt-0.5 text-xs ${tone || 'text-ink-3'}`}>{sub}</div>}
+    </div>
+  )
+}
+
+/** Home: today's feed cost, milk income and the two margins; each opens its chart page. Owner only. */
+export function TodayMoney() {
+  const { mo } = useMoney()
+  const today = todayIso()
+  const days = useLoad(() => mo.daily(addDays(today, -1), today), [mo, today])
+  const t = days.data?.find((d) => d.date === today)
+  const y = days.data?.find((d) => d.date !== today)
+  const kinds = Object.keys(MONEY_KINDS) as MoneyKind[]
+  return (
+    <div className="mt-2.5 grid grid-cols-2 gap-2.5 md:grid-cols-4">
+      {kinds.map((k) => {
+        const m = MONEY_KINDS[k]
+        const v = t ? m.value(t) : undefined
+        const margin = k.endsWith('margin')
+        return (
+          <Link key={k} to={`/money/trend/${k}`} className="rounded-xl bg-white p-3 text-ink no-underline hover:text-ink">
+            <div className="text-xs font-semibold text-ink-3">{k === 'feed' ? m.short : `Today · ${m.short.toLowerCase()}`}</div>
+            <div className={`mt-0.5 text-[22px] font-bold ${margin && v !== undefined && v < 0 ? 'text-danger' : ''}`}>{days.loading ? '…' : rupees(v, margin)}</div>
+            <div className="mt-0.5 text-xs font-semibold text-ink-3">{days.error ? 'Couldn\'t load' : `Yday ${rupees(y ? m.value(y) : undefined, margin)}`}</div>
+          </Link>
+        )
+      })}
     </div>
   )
 }

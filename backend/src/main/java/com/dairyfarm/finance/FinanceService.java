@@ -484,6 +484,12 @@ public class FinanceService {
         return new LocalDate[] {from, to};
     }
 
+    @Transactional(readOnly = true)
+    public List<DailyMoney> daily(Long farmId, LocalDate from, LocalDate to) {
+        DailyDates.range(from, to, 366);
+        return repo.daily(farmId, from, to);
+    }
+
     private static void requireRange(LocalDate from, LocalDate to) {
         if (to.isBefore(from)) {
             throw ApiException.badRequest("The period ends before it starts.");

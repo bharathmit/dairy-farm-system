@@ -40,6 +40,7 @@ source's own paid flag is updated too when it has one. Manual entries are fully 
 | Method | Path | Returns / notes |
 |---|---|---|
 | GET | `/finance/summary?from=&to=` | `Summary` |
+| GET | `/finance/daily?from=&to=` | `[{date, feedCost, milkIncome, otherIncome, otherExpense}]` one per day, zero-filled, max 1 year. feedCost = FEEDING usage × item cost per unit (line cost if set); milkIncome = MILK_SALES entries; otherIncome = other income categories; otherExpense = expenses except FEED (Home money panels) |
 | GET | `/finance/entries?from=&to=&direction=&category=&status=&animalId=&page=&size=` | `PageResponse<Entry>` newest first |
 | GET / POST / PUT / DELETE | `/finance/entries`, `/finance/entries/{id}` | `Entry`; PUT/DELETE on an auto entry: only status/paymentMethod/notes (DELETE → 409 "Delete it from its source record") |
 | GET | `/finance/pnl?scope=FARM\|ANIMAL&from=&to=` | `Pnl` (no dates = lifetime) |

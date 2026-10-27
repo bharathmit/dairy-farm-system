@@ -1,16 +1,11 @@
-import { useMemo, useRef, useState, type PointerEvent } from 'react'
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { BottomNav, Footer, Screen, TopBar } from '../../components/ui'
 import { GradeBadge, LoadState, useRecords } from '../../components/records'
-import { addDays, dayLabel, L, pct, shortDate, todayIso, useLoad, weekdayShort, type Grade, type TrendDay } from '../../data/records'
+import { LineChart, RangePicker } from '../../components/charts'
+import { byMonth, dayTick, monthName, useRange, type Point } from '../../data/charts'
+import { addDays, dayLabel, L, pct, shortDate, todayIso, useLoad, type CowDay, type Grade } from '../../data/records'
 
-const RANGES = [
-  { key: '7', label: '7 days' }, { key: '30', label: '30 days' },
-  { key: 'm', label: 'Month' }, { key: 'c', label: 'Custom' },
-] as const
-type RangeKey = (typeof RANGES)[number]['key']
-const MAX_DAYS = 365
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
 function Tile({ k, v, sub, change, muted }: { k: string; v: string; sub: string; change?: number | null; muted?: boolean }) {
   return (
@@ -30,95 +25,25 @@ function GradeCounts({ g }: { g?: Partial<Record<Grade, number>> | null }) {
   )
 }
 
-const daysBetween = (a: string, b: string) => Math.round((Date.parse(b) - Date.parse(a)) / 86400000)
-
-interface Point { label: string; tip: string; value: number }
-
-/** Average litres per day for each month (days with milk only). */
-function byMonth(days: TrendDay[]): Point[] {
-  const m = new Map<string, { sum: number; n: number }>()
-  for (const d of days) {
-    const k = d.date.slice(0, 7)
-    const e = m.get(k) ?? { sum: 0, n: 0 }
-    if (d.totalLitres > 0) { e.sum += d.totalLitres; e.n++ }
-    m.set(k, e)
-  }
-  return [...m.entries()].map(([k, e]) => {
-    const name = `${MONTHS[Number(k.slice(5, 7)) - 1]} ${k.slice(2, 4)}`
-    const avg = e.n ? e.sum / e.n : 0
-    return { label: name, tip: `${name} · avg ${L(avg)} L/day`, value: avg }
-  })
+/** Why a cow-day has no grade (null when graded). */
+function noGradeReason(c: CowDay): string | null {
+  if (c.grade) return null
+  if (c.withheld) return 'Milk withdrawal — not graded'
+  if (c.am == null || c.pm == null) return `${c.am == null ? 'Morning' : 'Evening'} not logged — grade needs both sessions`
+  if (c.daysInMilk == null) return 'No calving date — add it on the animal to get an expected yield'
+  if (c.expectedLitres == null) return 'Past the end of lactation — due for dry-off, not graded'
+  return 'No expected yield to compare with'
 }
 
-function YieldChart({ points, title }: { points: Point[]; title: string }) {
-  const [hover, setHover] = useState<number | null>(null)
-  const ref = useRef<SVGSVGElement>(null)
-  const n = points.length
-  if (!n) return null
-  const w = 340, h = 180, left = 34, right = 8, top = 10, bottom = 150
-  const rawMax = Math.max(1, ...points.map((p) => p.value))
-  const stepY = rawMax <= 20 ? 5 : rawMax <= 100 ? 20 : rawMax <= 250 ? 50 : 100
-  const max = Math.ceil(rawMax / stepY) * stepY
-  const ticks = Array.from({ length: max / stepY + 1 }, (_, i) => i * stepY)
-  const x = (i: number) => (n === 1 ? (left + w - right) / 2 : left + (i * (w - left - right)) / (n - 1))
-  const y = (v: number) => bottom - (v / max) * (bottom - top)
-  const line = points.map((p, i) => `${x(i)},${y(p.value)}`).join(' ')
-  const avg = points.reduce((s, p) => s + p.value, 0) / n
-  const every = Math.max(1, Math.ceil(n / 6))
-
-  const pick = (e: PointerEvent<SVGSVGElement>) => {
-    const r = ref.current?.getBoundingClientRect()
-    if (!r) return
-    const px = ((e.clientX - r.left) / r.width) * w
-    const i = n === 1 ? 0 : Math.round(((px - left) / (w - left - right)) * (n - 1))
-    setHover(Math.min(n - 1, Math.max(0, i)))
-  }
-  const hp = hover === null ? null : points[hover]
-
-  return (
-    <div className="mt-2.5 rounded-[14px] bg-white p-3.5">
-      <div className="flex items-baseline justify-between"><b className="text-[15px]">{title}</b><span className="text-[13px] text-ink-3">avg {L(avg, 0)} L</span></div>
-      <div className="mt-1 h-5 text-[13px] font-semibold text-brand" aria-live="polite">{hp ? `${hp.tip}` : <span className="font-normal text-ink-3">Tap or hover a point to see litres</span>}</div>
-      <svg ref={ref} width="100%" viewBox={`0 0 ${w} ${h}`} role="img" aria-label={`${title}: ${n} points, average ${avg.toFixed(0)} litres`}
-        className="block touch-none select-none" onPointerMove={pick} onPointerDown={pick} onPointerLeave={() => setHover(null)}>
-        {ticks.map((t) => (
-          <g key={t}>
-            <line x1={left} y1={y(t)} x2={w - right} y2={y(t)} stroke={t === 0 ? '#CDD2C8' : '#EEF0EA'} />
-            <text x={left - 5} y={y(t) + 3.5} textAnchor="end" fontSize="10" fill="#56655B">{t}</text>
-          </g>
-        ))}
-        <text x={2} y={top - 1} fontSize="9" fill="#56655B">L</text>
-        <polyline points={line} fill="none" stroke="#1F5C3A" strokeWidth="2" strokeLinejoin="round" />
-        {n <= 40 && points.map((p, i) => <circle key={i} cx={x(i)} cy={y(p.value)} r="2.5" fill="#1F5C3A" />)}
-        {points.map((p, i) => (i % every === 0 || i === n - 1) && (n - 1 - i >= every / 2 || i === n - 1)
-          ? <text key={`l${i}`} x={x(i)} y={h - 14} textAnchor="middle" fontSize="10" fill="#56655B">{p.label}</text> : null)}
-        {hp && hover !== null && (
-          <g>
-            <line x1={x(hover)} y1={top} x2={x(hover)} y2={bottom} stroke="#1F5C3A" strokeDasharray="3 3" />
-            <circle cx={x(hover)} cy={y(hp.value)} r="5" fill="#fff" stroke="#1F5C3A" strokeWidth="2.5" />
-          </g>
-        )}
-      </svg>
-    </div>
-  )
-}
+const COLS = 'grid-cols-[1.5fr_.65fr_.65fr_.75fr_.75fr_.5fr]'
 
 export default function MilkHome() {
   const { rec } = useRecords()
   const today = todayIso()
   const yesterday = addDays(today, -1)
-  const [range, setRange] = useState<RangeKey>('7')
-  const [cFrom, setCFrom] = useState(addDays(today, -29))
-  const [cTo, setCTo] = useState(today)
-
-  const customDays = daysBetween(cFrom, cTo)
-  const customBad = !cFrom || !cTo || customDays < 0 ? 'Pick a start date before the end date.'
-    : customDays > MAX_DAYS ? 'Pick at most 1 year.' : cTo > today ? 'The end date can\'t be in the future.' : null
   // Month view: average L/day for each of the last 12 months.
-  const firstOfMonth11Back = (() => { const d = new Date(Number(today.slice(0, 4)), Number(today.slice(5, 7)) - 12, 1); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-01` })()
-  const from = range === '7' ? addDays(today, -6) : range === '30' ? addDays(today, -29) : range === 'm' ? firstOfMonth11Back : cFrom
-  const to = range === 'c' ? cTo : today
-  const ok = range !== 'c' || !customBad
+  const r = useRange('7')
+  const { from, to, ok, monthly } = r
 
   const day = useLoad(() => rec.day(today), [rec, today])
   const yday = useLoad(() => rec.day(yesterday), [rec, yesterday])
@@ -129,14 +54,10 @@ export default function MilkHome() {
 
   const points = useMemo<Point[]>(() => {
     const t = trend.data ?? []
-    const monthly = range === 'm' || (range === 'c' && t.length > 92)
-    if (monthly) return byMonth(t)
-    return t.map((d) => ({
-      label: t.length <= 7 ? weekdayShort(d.date) : `${d.date.slice(8, 10)}/${d.date.slice(5, 7)}`,
-      tip: `${shortDate(d.date)} · ${L(d.totalLitres)} L`, value: d.totalLitres,
-    }))
-  }, [trend.data, range])
-  const monthly = range === 'm' || (range === 'c' && (trend.data?.length ?? 0) > 92)
+    if (monthly) return byMonth(t, (d) => d.totalLitres, true).map((m) => ({ label: monthName(m.month), tip: `${monthName(m.month)} · avg ${L(m.value)} L/day`, value: m.value }))
+    return t.map((d) => ({ label: dayTick(d.date, t.length <= 7), tip: `${shortDate(d.date)} · ${L(d.totalLitres)} L`, value: d.totalLitres }))
+  }, [trend.data, monthly])
+  const avg = points.length ? points.reduce((s, p) => s + p.value, 0) / points.length : 0
   const stats = useMemo(() => {
     const t = trend.data ?? []
     return { total: t.reduce((s, d) => s + d.totalLitres, 0), withheld: t.reduce((s, d) => s + (d.withheldLitres ?? 0), 0) }
@@ -188,18 +109,9 @@ export default function MilkHome() {
           <Link to="/milk/sale" className="btn2 h-12 text-[15px]">Farm total / sale</Link>
         </div>
 
-        <div className="mt-4 flex flex-wrap gap-2">
-          {RANGES.map((r) => <button key={r.key} type="button" aria-pressed={range === r.key} onClick={() => setRange(r.key)} className={`chip ${range === r.key ? 'chip-on' : ''}`}>{r.label}</button>)}
-        </div>
-        {range === 'c' && (
-          <div className="mt-2.5 grid grid-cols-2 gap-3">
-            <div><label className="lab" htmlFor="mh-from">From</label><input className="inp" id="mh-from" type="date" value={cFrom} max={cTo} onChange={(e) => setCFrom(e.target.value)} /></div>
-            <div><label className="lab" htmlFor="mh-to">To</label><input className="inp" id="mh-to" type="date" value={cTo} max={today} onChange={(e) => setCTo(e.target.value)} /></div>
-            <div className={`col-span-2 text-xs ${customBad ? 'font-semibold text-danger' : 'text-ink-3'}`}>{customBad ?? `${customDays + 1} days · up to 1 year${customDays + 1 > 92 ? ' · shown as monthly averages' : ''}`}</div>
-          </div>
-        )}
+        <div className="mt-4"><RangePicker r={r} id="mh" /></div>
         {ok && <LoadState loading={trend.loading} error={trend.error} onRetry={trend.reload} empty={!trend.data} />}
-        {ok && trend.data && <YieldChart points={points} title={monthly ? 'Average litres per day, by month' : 'Herd litres per day'} />}
+        {ok && trend.data && <LineChart points={points} unit="L" right={`avg ${L(avg, 0)} L`} title={monthly ? 'Average litres per day, by month' : 'Herd litres per day'} />}
 
         {ok && trend.data && (
           <div className="mt-2.5 rounded-[14px] bg-white p-3.5">
@@ -215,17 +127,23 @@ export default function MilkHome() {
         )}
 
         <div className="mt-4 overflow-hidden rounded-[14px] bg-white">
-          <div className="grid min-h-10 grid-cols-[1.6fr_.8fr_.8fr_.9fr_.5fr] items-center px-3 text-xs font-bold text-ink-3"><span>Cow · yesterday</span><span>AM</span><span>PM</span><span>Total</span><span>Grade</span></div>
+          <div className={`grid min-h-10 ${COLS} items-center gap-1 px-3 text-xs font-bold text-ink-3`}><span>Cow · yesterday</span><span>AM</span><span>PM</span><span>Total</span><span>Expected</span><span>Grade</span></div>
           <LoadState loading={yday.loading} error={yday.error} onRetry={yday.reload} empty={!yday.data} />
           {yday.data && cows.length === 0 && <div className="border-t border-line-faint px-3 py-4 text-sm text-ink-3">No milk logged yesterday.</div>}
-          {cows.map((c) => (
-            <Link key={c.animalId} to={`/milk/cow?animal=${c.animalId}&date=${yesterday}`} className="grid min-h-[52px] grid-cols-[1.6fr_.8fr_.8fr_.9fr_.5fr] items-center border-t border-line-faint px-3 text-sm text-ink no-underline hover:text-ink">
-              <span className="truncate"><b>{c.tag}</b> {c.name}</span><span>{L(c.am)}</span><span>{L(c.pm)}</span><b>{L(c.total)}</b><span><GradeBadge grade={c.grade} /></span>
-            </Link>
-          ))}
+          {cows.map((c) => {
+            const why = noGradeReason(c)
+            return (
+              <Link key={c.animalId} to={`/milk/cow?animal=${c.animalId}&date=${yesterday}`} className="block border-t border-line-faint px-3 py-2 text-sm text-ink no-underline hover:text-ink">
+                <span className={`grid min-h-9 ${COLS} items-center gap-1`}>
+                  <span className="truncate"><b>{c.tag}</b> {c.name}</span><span>{L(c.am)}</span><span>{L(c.pm)}</span><b>{L(c.total)}</b><span className="text-ink-3">{L(c.expectedLitres)}</span><span><GradeBadge grade={c.grade} /></span>
+                </span>
+                {why && <span className="block text-xs font-semibold text-danger">{why}</span>}
+              </Link>
+            )
+          })}
           {cows.length > 0 && yday.data && (
-            <div className="grid min-h-[52px] grid-cols-[1.6fr_.8fr_.8fr_.9fr_.5fr] items-center border-t border-line-faint bg-[#F7F7F3] px-3 text-sm">
-              <b>Farm total</b><span>{L(yday.data.am.litres)}</span><span>{L(yday.data.pm.litres)}</span><b>{L(yday.data.totalLitres)}</b><span />
+            <div className={`grid min-h-[52px] ${COLS} items-center gap-1 border-t border-line-faint bg-[#F7F7F3] px-3 text-sm`}>
+              <b>Farm total</b><span>{L(yday.data.am.litres)}</span><span>{L(yday.data.pm.litres)}</span><b>{L(yday.data.totalLitres)}</b><b className="text-ink-2">{L(cows.reduce((s, c) => s + (c.expectedLitres ?? 0), 0))}</b><span />
             </div>
           )}
         </div>

@@ -29,7 +29,7 @@ PLAN.md    module plan · PROGRESS.md  status, decisions, blockers (keep up to d
 - One package per area under `com.dairyfarm.<area>`: `*Controller`, `*Service`, `*Repository` (JdbcClient SQL),
   `*Views` (request/response records). Pure calculations in their own class (e.g. `feed/RationCalc`).
 - New tables/columns: new Flyway file `backend/src/main/resources/db/migration/V<next>__<name>.sql`
-  (latest is V9). Never edit an applied migration.
+  (latest is V10). Never edit an applied migration.
 - Tests: JUnit 5 + AssertJ. Unit tests for calculators; `*ControllerTest` extends `support/IntegrationTest`
   (Testcontainers, or `TEST_DATABASE_URL`).
 

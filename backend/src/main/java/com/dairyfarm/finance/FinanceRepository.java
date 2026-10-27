@@ -144,6 +144,37 @@ public class FinanceRepository {
         return out;
     }
 
+    /**
+     * One row per day (zero-filled): feed fed (FEEDING usage × the item's cost per unit unless the line has a cost),
+     * milk sale income, other income and other (non-feed) expenses from finance entries.
+     */
+    public List<FinanceViews.DailyMoney> daily(Long farmId, LocalDate from, LocalDate to) {
+        return jdbc.sql("""
+                with days as (select d::date as d from generate_series(cast(:from as date), cast(:to as date), interval '1 day') d),
+                feed as (
+                    select t.txn_date as d, sum(coalesce(t.cost, t.quantity * i.cost_per_unit, 0)) as v
+                    from item_txn t join item i on i.id = t.item_id
+                    where t.farm_id = :farm and t.txn_type = 'USAGE' and t.source_type = 'FEEDING'
+                      and t.txn_date between :from and :to
+                    group by t.txn_date),
+                money as (
+                    select entry_date as d,
+                           sum(case when category = 'MILK_SALES' then amount else 0 end) as milk,
+                           sum(case when direction = 'INCOME' and category <> 'MILK_SALES' then amount else 0 end) as other_in,
+                           sum(case when direction = 'EXPENSE' and category <> 'FEED' then amount else 0 end) as other_out
+                    from finance_entry where farm_id = :farm and entry_date between :from and :to
+                    group by entry_date)
+                select days.d, coalesce(feed.v, 0) as feed, coalesce(money.milk, 0) as milk,
+                       coalesce(money.other_in, 0) as other_in, coalesce(money.other_out, 0) as other_out
+                from days left join feed on feed.d = days.d left join money on money.d = days.d
+                order by days.d""")
+                .param("farm", farmId).param("from", from).param("to", to)
+                .query((rs, n) -> new FinanceViews.DailyMoney(rs.getObject("d", LocalDate.class),
+                        rs.getBigDecimal("feed").setScale(2, java.math.RoundingMode.HALF_UP), rs.getBigDecimal("milk"),
+                        rs.getBigDecimal("other_in"), rs.getBigDecimal("other_out")))
+                .list();
+    }
+
     public FinanceViews.Pending pending(Long farmId) {
         return jdbc.sql("select count(*) as n, coalesce(sum(amount), 0) as total from finance_entry "
                         + "where farm_id = :farm and status = 'PENDING'")

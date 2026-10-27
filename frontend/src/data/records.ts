@@ -77,6 +77,7 @@ export interface Sale {
   quantity?: number | null; cowLitres?: number | null; withheldLitres?: number | null
   soldQty?: number | null; otherUseQty?: number | null; rate?: number | null; incomeAmount?: number | null
   buyer?: ContactRef | null; fatPct?: number | null; snfPct?: number | null; paid?: boolean | null; notes?: string | null
+  discount?: number | null
 }
 
 export type Method = 'SCALE' | 'TAPE' | 'ESTIMATE'

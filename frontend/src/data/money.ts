@@ -31,6 +31,17 @@ export interface Entry {
   quantity?: number | null; unit?: string | null; source?: { type: string; id: number; label?: string | null } | null
   auto: boolean; notes?: string | null
 }
+/** One day for the Home money panels: feed fed cost, milk income, other income, other (non-feed) expenses. */
+export interface DailyMoney { date: string; feedCost: number; milkIncome: number; otherIncome: number; otherExpense: number }
+export type MoneyKind = 'feed' | 'milk' | 'milk-margin' | 'other-margin'
+export const MONEY_KINDS: Record<MoneyKind, { title: string; short: string; value: (d: DailyMoney) => number; note: string }> = {
+  feed: { title: 'Feed cost', short: "Today's feed cost", value: (d) => d.feedCost, note: 'Feed logged as fed × each item\'s cost per kg' },
+  milk: { title: 'Milk sale income', short: 'Milk sale income', value: (d) => d.milkIncome, note: 'Milk sales added to Finance' },
+  'milk-margin': { title: 'Milk income − feed cost', short: 'Milk vs feed margin', value: (d) => d.milkIncome - d.feedCost, note: 'Milk sale income minus feed fed' },
+  'other-margin': { title: 'Other income − other expenses', short: 'Other income vs expenses', value: (d) => d.otherIncome - d.otherExpense, note: 'Manure, animal and other sales minus labour, vet, breeding and other non-feed costs' },
+}
+export const isMoneyKind = (k?: string): k is MoneyKind => !!k && k in MONEY_KINDS
+
 export interface PnlAnimal { rank: number; animal: AnimalRef & { category?: string; breed?: string | null; lactationNumber?: number | null; ageDays?: number | null }; net: number; note?: string | null }
 export interface Pnl {
   from?: string | null; to?: string | null
@@ -155,6 +166,7 @@ export const moneyApi = (farmId: string) => {
   }
   return {
     summary: (from: string, to: string) => api.get<Summary>(`${b}/finance/summary${q({ from, to })}`),
+    daily: (from: string, to: string) => api.get<DailyMoney[]>(`${b}/finance/daily${q({ from, to })}`),
     entries: (p: { from?: string; to?: string; direction?: Direction; category?: string; status?: EntryStatus; animalId?: string | number; page?: number; size?: number }) =>
       api.get<Page<Entry>>(`${b}/finance/entries${q(p)}`),
     entry: (id: string | number) => api.get<Entry>(`${b}/finance/entries/${id}`),

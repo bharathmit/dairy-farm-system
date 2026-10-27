@@ -52,7 +52,8 @@ public final class FinanceSql {
                         case s.product when 'MILK' then 'Milk' when 'MANURE' then 'Manure' else 'Other produce' end
                           || case s.session when 'AM' then ' (morning)' when 'PM' then ' (evening)' else '' end,
                         case when s.sold_qty is not null then rtrim(to_char(s.sold_qty, 'FM9999990.99'), '.') || ' ' || s.unit
-                             || coalesce(' × ₹' || trim(to_char(s.rate, 'FM999990.00')), '') end), 240),
+                             || coalesce(' × ₹' || trim(to_char(s.rate, 'FM999990.00')), '')
+                             || coalesce(' − ₹' || trim(to_char(s.discount, 'FM9999999990.00')) || ' discount', '') end), 240),
                    true
             from production_record s left join contact c on c.id = s.buyer_contact_id
             where {F:s} and s.animal_id is null and s.income_amount > 0""", true, false);

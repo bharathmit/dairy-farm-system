@@ -62,6 +62,7 @@ import FarmFeedNeed from './pages/feed/FarmFeedNeed'
 import FinanceHome from './pages/money/FinanceHome'
 import TransactionForm from './pages/money/TransactionForm'
 import ProfitLoss from './pages/money/ProfitLoss'
+import MoneyTrend from './pages/money/MoneyTrend'
 import EntryList from './pages/money/EntryList'
 import Workers from './pages/money/Workers'
 import Attendance from './pages/money/Attendance'
@@ -172,6 +173,7 @@ export default function App() {
               <Route path="/money/entries/new" element={<TransactionForm />} />
               <Route path="/money/entries/:id" element={<TransactionForm />} />
               <Route path="/money/pnl" element={<ProfitLoss />} />
+              <Route path="/money/trend/:kind" element={<MoneyTrend />} />
               <Route path="/money/workers" element={<Workers />} />
               <Route path="/money/attendance" element={<Attendance />} />
               <Route path="/money/pay" element={<PayWages />} />
