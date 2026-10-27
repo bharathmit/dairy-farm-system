@@ -70,5 +70,6 @@ UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile s
 - Milk & money follow-ups (Oct 2026): Other produce sale = No. of units × Unit price − Discount (V10 `discount` column; Finance gets the net). Milk home cow table: Expected column + farm expected total; no-grade reason in red per row. One cow: Morning/Evening pre-filled from her last values when the date has nothing saved. Home (owner): Today feed cost (fed × item cost), milk sale income, milk − feed margin, other income − other (non-feed) expenses; each opens /money/trend/:kind with 7 d / 30 d / 12 months / custom ≤ 1 year (`GET /finance/daily`). Shared chart + range picker in components/charts.tsx, data/charts.ts. 115 backend tests pass.
 
 ## Notes / blockers
+- `V6_1__Finance_backfill` (Java migration) runs `FinanceSql.statements()` on a fresh DB, before later migrations: that SQL must only use columns that exist at V6 (e.g. not `production_record.discount`, V10). Run tests on an empty database before pushing a schema change.
 - Before first deploy: create the private `animal-photos` bucket and keep email confirmation on (see backend/README.md).
 - Tests use Testcontainers in CI; locally they can use an existing Postgres via `TEST_DATABASE_URL`.
