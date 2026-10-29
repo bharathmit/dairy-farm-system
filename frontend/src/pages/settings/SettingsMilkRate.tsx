@@ -10,6 +10,11 @@ const EXPENSES: [string, number][] = [
   ['Electricity & water', 3000],
   ['Other expenses', 3000],
 ]
+const FEED_NOTES: [string, string][] = [
+  ['Summer heat adjustment', 'In very hot weather cows eat less in the heat of the day and much more in the cool night. In hot seasons switch to a 40/60 split (40 % morning, 60 % evening) so feed doesn’t sit, heat up and spoil in the sun.'],
+  ['The 9:00 PM push-up', 'With an equal feed at 6:00 PM, do a push-up later that night (around 9:00–10:00 PM) so the overnight half stays within the cows’ reach while you sleep.'],
+  ['Morning clean-up check', 'At 5:00 AM there should still be about 2–4 % of the feed left in the bunk. If it is licked clean, increase the evening portion slightly.'],
+]
 const LITRES_PER_DAY = 100
 const DAYS = 30
 
@@ -78,6 +83,13 @@ export default function SettingsMilkRate() {
           ))}
         </div>
         <div className="hint">Push feed back to the cows between deliveries — the late-night push-up keeps overnight intake up.</div>
+      </div>
+
+      <div className="sec">Milking &amp; feeding notes</div>
+      <div className="mx-4 mb-4 space-y-3 rounded-[14px] bg-white p-4 text-sm leading-snug text-ink-2">
+        {FEED_NOTES.map(([title, body]) => (
+          <div key={title}><div className="font-bold text-ink">{title}</div><div>{body}</div></div>
+        ))}
       </div>
 
       <div className="sec">Margin alert threshold</div>

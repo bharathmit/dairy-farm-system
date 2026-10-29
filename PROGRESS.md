@@ -36,7 +36,7 @@ UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile s
 - [x] Claude Code setup: CLAUDE.md, .claude/settings.json, slash commands /plan, /check, /wrap-up.
 - [x] Feed: BIS grade check for concentrate formulas (IS 2052:2023 Type I / II, dry-basis limits incl. moisture, Ca, P, aflatoxin B1); feed items gain fat, fibre, acid insoluble ash and aflatoxin; "Excluded" toggle replaced by max inclusion 0 %. Typical as-fed values filled for farm 1 ingredients (aflatoxin left blank — needs a lab or supplier figure). 109 backend tests pass.
 - [x] Feed: "Mix" shown as "Mix targets" (nutrients only, merged "Nutrients per 100 kg" panel on every feed item); formulas compare all 9 nutrients against the chosen Mix targets item (±10 %); Mix targets filter chip on stock. Type I/II mix targets filled from BIS limits at 89 % DM.
-- [x] Milk rate & margins: feeding times — morning/evening TMR delivery (default 1 h after each milking) and 3 feed push-ups (09:00, 13:00, 21:00) in farm settings; Home Feeding AM/PM due times now use the TMR times (PM was 90 min before evening milking).
+- [x] Milk rate & margins: feeding times — morning/evening TMR delivery (default 1 h after each milking) and 3 feed push-ups (09:00, 13:00, 21:00) in farm settings; Home Feeding AM/PM due times now use the TMR times (PM was 90 min before evening milking). Milking & feeding notes card (summer 40/60 split, 9 PM push-up, morning bunk leftover check).
 - [ ] Next release items → docs/backlog.md
 
 ## Branches
