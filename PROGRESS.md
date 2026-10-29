@@ -38,6 +38,7 @@ UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile s
 - [x] Feed: "Mix" shown as "Mix targets" (nutrients only, merged "Nutrients per 100 kg" panel on every feed item); formulas compare all 9 nutrients against the chosen Mix targets item (±10 %); Mix targets filter chip on stock. Type I/II mix targets filled from BIS limits at 89 % DM.
 - [x] Milk rate & margins: feeding times — morning/evening TMR delivery (default 1 h after each milking) and 3 feed push-ups (09:00, 13:00, 21:00) in farm settings; Home Feeding AM/PM due times now use the TMR times (PM was 90 min before evening milking). Milking & feeding notes card (summer 40/60 split, 9 PM push-up, morning bunk leftover check). Margin alert slider locked until Edit is tapped (no accidental changes while scrolling). Page renamed "Milking & Feeding Margins"; paid leave days per month moved to Farm profile (owner only).
 - [x] Bottom nav: Home · Milk · + · Feed · More (alert badge on More). More: Herd under Records; Alerts under Alerts & tasks (shown to workers too, rule/schedule/checklist rows owner only). Farm pick and unknown routes land on Home.
+- [x] Fix: Daily checklist "Check heat stress" → Open now opens the barn reading sheet in place (was sending users to Home).
 - [ ] Next release items → docs/backlog.md
 
 ## Branches

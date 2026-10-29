@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Footer, Screen, TopBar } from '../../components/ui'
 import { Icon } from '../../components/icons'
 import { DateNav, LoadState } from '../../components/records'
-import { useAlerts } from '../../components/alerts'
+import { BarnSheet, useAlerts } from '../../components/alerts'
 import { useStore } from '../../data/store'
 import { taskLink, type Task } from '../../data/alerts'
 import { todayIso, useLoad } from '../../data/records'
@@ -22,6 +22,7 @@ export default function Checklist() {
   const [daily, setDaily] = useState(true)
   const [workers, setWorkers] = useState(true)
   const [busy, setBusy] = useState(false)
+  const [barnSheet, setBarnSheet] = useState(false)
   const c = list.data
   const pctDone = c && c.total ? Math.round((c.done / c.total) * 100) : 0
 
@@ -58,7 +59,9 @@ export default function Checklist() {
           {!t.builtIn && t.workerVisible ? ' · visible to workers' : ''}
         </span>
       </span>
-      {t.builtIn && !t.done && t.link && <Link to={taskLink(t)} className="text-sm font-semibold no-underline">Open</Link>}
+      {t.builtIn && !t.done && t.link && (t.link.kind === 'HEAT_STRESS'
+        ? <button type="button" onClick={() => setBarnSheet(true)} className="h-9 border-0 bg-transparent p-0 text-sm font-semibold text-brand">Open</button>
+        : <Link to={taskLink(t)} className="text-sm font-semibold no-underline">Open</Link>)}
       {!t.builtIn && isOwner && <button type="button" aria-label={`Edit ${t.name}`} onClick={() => startEdit(t)} className="flex h-11 w-11 items-center justify-center border-0 bg-transparent"><Icon name="edit" size={18} color="#56655B" /></button>}
     </div>
   )
@@ -104,6 +107,7 @@ export default function Checklist() {
         )}
       </div>
       <Footer className="mt-auto" />
+      {barnSheet && <BarnSheet onClose={() => setBarnSheet(false)} onSaved={() => { setBarnSheet(false); void list.reload() }} />}
     </Screen>
   )
 }
