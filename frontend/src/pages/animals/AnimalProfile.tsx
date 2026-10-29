@@ -6,6 +6,7 @@ import { ageText, daysInMilk, fmtDate, inr, toneClass, useStore } from '../../da
 import type { Animal } from '../../data/types'
 import { HealthTab, MilkTab } from './ProfileTabs'
 import { FeedGroupBadge, useFeedGroups } from '../../components/feed'
+import { isMilkingCow } from '../../components/records'
 
 type ExitStatus = 'Sold' | 'Dead' | 'Transferred'
 const REASONS = ['Low milk yield (cull)', 'Fertility problem (cull)', 'Age / replacement', 'Male calf sale', 'Illness', 'Other']
@@ -165,7 +166,10 @@ export default function AnimalProfile() {
       <div className="grid grid-cols-4 px-4 pb-4">
         {QUICK.map((q) => (
           <button key={q.label} type="button" onClick={() => {
-            if (q.label === 'Milk') nav(`/milk/cow?animal=${a.id}`)
+            if (q.label === 'Milk') {
+              if (a.status === 'Active' && isMilkingCow(a)) nav(`/milk/cow?animal=${a.id}`)
+              else notify(`${a.tag} isn't a milking cow — milk can only be logged for milking cows`)
+            }
             else if (q.label === 'Health') nav(`/health/new?animal=${a.id}&back=/animals/${a.id}`)
             else if (q.label === 'Weight') nav(`/weight/new?animal=${a.id}`)
             else if (q.label === 'Breeding' && a.sex === 'Female') nav(`/breeding/animals/${a.id}`)
@@ -189,7 +193,7 @@ export default function AnimalProfile() {
       </div>
 
       {tab === 'Health' && <HealthTab animalId={a.id} />}
-      {tab === 'Milk' && <MilkTab animalId={a.id} />}
+      {tab === 'Milk' && <MilkTab animalId={a.id} canLog={a.status === 'Active' && isMilkingCow(a)} />}
       {tab === 'Overview' && <>
 
       {a.flags.length > 0 && (
