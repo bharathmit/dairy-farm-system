@@ -98,15 +98,23 @@ class FarmControllerTest extends IntegrationTest {
                 .andExpect(jsonPath("$.morningMilking").value("06:00"))
                 .andExpect(jsonPath("$.eveningMilking").value("18:00"))
                 .andExpect(jsonPath("$.marginAlertPct").value(30))
+                .andExpect(jsonPath("$.morningFeeding").value("07:00"))
+                .andExpect(jsonPath("$.eveningFeeding").value("19:00"))
+                .andExpect(jsonPath("$.feedPushUps[0]").value("09:00"))
+                .andExpect(jsonPath("$.feedPushUps.length()").value(3))
                 .andExpect(jsonPath("$.notifications.leadDays").value(1));
 
         mvc.perform(put("/api/v1/farms/{id}/settings", farmId).with(as(owner))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"milkRate\":38.5,\"morningMilking\":\"05:30\",\"notifications\":{\"digest\":false}}"))
+                        .content("{\"milkRate\":38.5,\"morningMilking\":\"05:30\",\"eveningFeeding\":\"18:00\","
+                                + "\"feedPushUps\":[\"21:00\",\"09:00\"],\"notifications\":{\"digest\":false}}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.milkRate").value(38.5))
                 .andExpect(jsonPath("$.morningMilking").value("05:30"))
                 .andExpect(jsonPath("$.eveningMilking").value("18:00"))
+                .andExpect(jsonPath("$.eveningFeeding").value("18:00"))
+                .andExpect(jsonPath("$.feedPushUps[0]").value("09:00"))
+                .andExpect(jsonPath("$.feedPushUps[1]").value("21:00"))
                 .andExpect(jsonPath("$.notifications.digest").value(false))
                 .andExpect(jsonPath("$.notifications.enabled").value(true));
 

@@ -2,6 +2,7 @@ package com.dairyfarm.farm;
 
 import java.math.BigDecimal;
 import java.time.LocalTime;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -10,10 +11,12 @@ import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 
 /**
- * Farm-wide settings (stored as JSONB on farm): milk price, milking times, margin alert and
- * reminder options. Missing values fall back to the defaults.
+ * Farm-wide settings (stored as JSONB on farm): milk price, milking and feeding times, margin alert
+ * and reminder options. Missing values fall back to the defaults; TMR delivery times default to one
+ * hour after each milking.
  */
 public record FarmSettings(
         @DecimalMin(value = "0.0", message = "Milk rate can't be negative")
@@ -25,7 +28,11 @@ public record FarmSettings(
         Integer marginAlertPct,
         @Valid Notifications notifications,
         @Min(value = 0, message = "Use 0 to 15 days") @Max(value = 15, message = "Use 0 to 15 days")
-        Integer leaveDaysPerMonth) {
+        Integer leaveDaysPerMonth,
+        @JsonFormat(pattern = "HH:mm") LocalTime morningFeeding,
+        @JsonFormat(pattern = "HH:mm") LocalTime eveningFeeding,
+        @Size(max = 6, message = "Use at most 6 push-up times")
+        @JsonFormat(pattern = "HH:mm") List<LocalTime> feedPushUps) {
 
     public record Notifications(
             Boolean enabled,
@@ -54,16 +61,22 @@ public record FarmSettings(
     }
 
     public static final FarmSettings DEFAULTS = new FarmSettings(null, LocalTime.of(6, 0), LocalTime.of(18, 0), 30,
-            Notifications.DEFAULTS, 4);
+            Notifications.DEFAULTS, 4, null, null,
+            List.of(LocalTime.of(9, 0), LocalTime.of(13, 0), LocalTime.of(21, 0)));
 
     public FarmSettings resolved() {
+        var am = or(morningMilking, DEFAULTS.morningMilking);
+        var pm = or(eveningMilking, DEFAULTS.eveningMilking);
         return new FarmSettings(
                 milkRate,
-                or(morningMilking, DEFAULTS.morningMilking),
-                or(eveningMilking, DEFAULTS.eveningMilking),
+                am,
+                pm,
                 or(marginAlertPct, DEFAULTS.marginAlertPct),
                 notifications == null ? Notifications.DEFAULTS : notifications.resolved(),
-                or(leaveDaysPerMonth, DEFAULTS.leaveDaysPerMonth));
+                or(leaveDaysPerMonth, DEFAULTS.leaveDaysPerMonth),
+                or(morningFeeding, am.plusHours(1)),
+                or(eveningFeeding, pm.plusHours(1)),
+                feedPushUps == null ? DEFAULTS.feedPushUps : feedPushUps.stream().sorted().toList());
     }
 
     /** Applies the non-null values of {@code patch} on top of these settings. */
@@ -85,7 +98,10 @@ public record FarmSettings(
                 or(patch.eveningMilking, base.eveningMilking),
                 or(patch.marginAlertPct, base.marginAlertPct),
                 notifications,
-                or(patch.leaveDaysPerMonth, base.leaveDaysPerMonth));
+                or(patch.leaveDaysPerMonth, base.leaveDaysPerMonth),
+                or(patch.morningFeeding, base.morningFeeding),
+                or(patch.eveningFeeding, base.eveningFeeding),
+                patch.feedPushUps == null ? base.feedPushUps : patch.feedPushUps.stream().sorted().toList());
     }
 
     private static <T> T or(T value, T fallback) {

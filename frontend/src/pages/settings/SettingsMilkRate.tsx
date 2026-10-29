@@ -23,6 +23,9 @@ export default function SettingsMilkRate() {
   const [rate, setRate] = useState(String(settings.milkRate.toFixed(2)))
   const [morning, setMorning] = useState(settings.morningMilking)
   const [evening, setEvening] = useState(settings.eveningMilking)
+  const [feedAm, setFeedAm] = useState(settings.morningFeeding)
+  const [feedPm, setFeedPm] = useState(settings.eveningFeeding)
+  const [pushUps, setPushUps] = useState(settings.feedPushUps)
   const [pct, setPct] = useState(settings.marginAlertPct)
   const { farm } = useStore()
   const owner = farm?.role === 'Owner'
@@ -37,7 +40,7 @@ export default function SettingsMilkRate() {
 
   const save = async () => {
     if (!(rateNum > 0)) { notify('Enter a milk rate above ₹0'); return }
-    if (!(await updateSettings({ milkRate: rateNum, morningMilking: morning, eveningMilking: evening, marginAlertPct: pct, ...(owner ? { leaveDaysPerMonth: Math.min(31, Math.max(0, Number(leave) || 0)) } : {}) }))) return
+    if (!(await updateSettings({ milkRate: rateNum, morningMilking: morning, eveningMilking: evening, morningFeeding: feedAm, eveningFeeding: feedPm, feedPushUps: pushUps.filter(Boolean).sort(), marginAlertPct: pct, ...(owner ? { leaveDaysPerMonth: Math.min(31, Math.max(0, Number(leave) || 0)) } : {}) }))) return
     notify('Milk rate & margins saved')
     nav('/settings')
   }
@@ -60,6 +63,21 @@ export default function SettingsMilkRate() {
           <div><label className="lab" htmlFor="me">Evening</label><input className="inp" id="me" type="time" value={evening} onChange={(e) => setEvening(e.target.value)} /></div>
         </div>
         <div className="hint">Milk entries are recorded against the morning or evening session.</div>
+      </div>
+
+      <div className="sec">Feeding times</div>
+      <div className="px-4">
+        <div className="grid grid-cols-2 gap-3">
+          <div><label className="lab" htmlFor="fa">Morning TMR</label><input className="inp" id="fa" type="time" value={feedAm} onChange={(e) => setFeedAm(e.target.value)} /></div>
+          <div><label className="lab" htmlFor="fp">Evening TMR</label><input className="inp" id="fp" type="time" value={feedPm} onChange={(e) => setFeedPm(e.target.value)} /></div>
+        </div>
+        <div className="hint">Feed fresh TMR as cows come out of milking. Home shows Feeding AM / PM as due at these times.</div>
+        <div className="mt-3 grid grid-cols-3 gap-3">
+          {pushUps.map((t, i) => (
+            <div key={i}><label className="lab" htmlFor={`pu${i}`}>Push-up {i + 1}</label><input className="inp" id={`pu${i}`} type="time" value={t} onChange={(e) => setPushUps(pushUps.map((p, j) => (j === i ? e.target.value : p)))} /></div>
+          ))}
+        </div>
+        <div className="hint">Push feed back to the cows between deliveries — the late-night push-up keeps overnight intake up.</div>
       </div>
 
       <div className="sec">Margin alert threshold</div>

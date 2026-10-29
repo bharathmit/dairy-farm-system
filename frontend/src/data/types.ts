@@ -87,6 +87,11 @@ export interface Settings {
   marginAlertPct: number
   /** Paid leave days a month for monthly wages; more absences are deducted. */
   leaveDaysPerMonth: number
+  /** TMR deliveries, after each milking. */
+  morningFeeding: string
+  eveningFeeding: string
+  /** Feed push-up times through the day. */
+  feedPushUps: string[]
   notify: { enabled: boolean; health: boolean; breeding: boolean; checklist: boolean; lead: string; reminderTime: string; digest: boolean; digestTime: string; quietHours: string }
 }
 

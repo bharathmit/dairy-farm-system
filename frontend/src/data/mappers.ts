@@ -8,7 +8,7 @@ export interface ApiFarmSummary { id: number; name: string; village?: string; di
 export interface ApiFarm { id: number; name: string; village?: string; district?: string; state?: string; country?: string; role: string }
 export interface ApiMe { id: string; fullName?: string; email?: string; phone?: string; preferences: { theme: string; language: string }; farms: ApiFarmSummary[] }
 export interface ApiNotifications { enabled: boolean; health: boolean; breeding: boolean; checklist: boolean; leadDays: number; reminderTime: string; digest: boolean; digestTime: string; quietHoursStart: string; quietHoursEnd: string }
-export interface ApiSettings { milkRate?: number; morningMilking: string; eveningMilking: string; marginAlertPct: number; leaveDaysPerMonth?: number; notifications: ApiNotifications }
+export interface ApiSettings { milkRate?: number; morningMilking: string; eveningMilking: string; marginAlertPct: number; leaveDaysPerMonth?: number; morningFeeding?: string; eveningFeeding?: string; feedPushUps?: string[]; notifications: ApiNotifications }
 export interface ApiParent { id?: number; tag: string; name?: string }
 export interface ApiAnimal {
   id: number; tag: string; name?: string; nationalId?: string; species: string; breed?: string; sex: string
@@ -73,6 +73,9 @@ export function toSettings(s: ApiSettings, prefs: ApiMe['preferences']): Setting
     eveningMilking: s.eveningMilking,
     marginAlertPct: s.marginAlertPct,
     leaveDaysPerMonth: s.leaveDaysPerMonth ?? 4,
+    morningFeeding: s.morningFeeding ?? '07:00',
+    eveningFeeding: s.eveningFeeding ?? '19:00',
+    feedPushUps: s.feedPushUps ?? ['09:00', '13:00', '21:00'],
     notify: {
       enabled: n.enabled, health: n.health, breeding: n.breeding, checklist: n.checklist,
       lead: LEADS[n.leadDays] ?? `${n.leadDays} days`, reminderTime: n.reminderTime, digest: n.digest,
@@ -89,6 +92,9 @@ export function fromSettingsPatch(p: Partial<Settings>): Partial<ApiSettings> | 
   if (p.eveningMilking !== undefined) out.eveningMilking = p.eveningMilking
   if (p.marginAlertPct !== undefined) out.marginAlertPct = p.marginAlertPct
   if (p.leaveDaysPerMonth !== undefined) out.leaveDaysPerMonth = p.leaveDaysPerMonth
+  if (p.morningFeeding !== undefined) out.morningFeeding = p.morningFeeding
+  if (p.eveningFeeding !== undefined) out.eveningFeeding = p.eveningFeeding
+  if (p.feedPushUps !== undefined) out.feedPushUps = p.feedPushUps
   if (p.notify) {
     const n = p.notify
     const lead = Number(Object.entries(LEADS).find(([, v]) => v === n.lead)?.[0] ?? 1)

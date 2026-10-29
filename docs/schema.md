@@ -41,7 +41,8 @@ id uuid (= JWT `sub`) · full_name · email · phone · **preferences** JSONB (t
 
 ## 2. `farm`
 name · village · district · state · country · latitude · longitude ·
-**settings** JSONB: milk rate ₹/L, morning and evening milking times, margin alert % (feed cost vs milk
+**settings** JSONB: milk rate ₹/L, morning and evening milking times, morning/evening TMR delivery
+times (default 1 h after each milking) and feed push-up times (default 09:00, 13:00, 21:00), margin alert % (feed cost vs milk
 income), notifications (on/off, health, breeding, checklist, lead days 0/1/3/7, reminder time, morning
 digest + time, quiet hours start/end). Theme and language moved to `app_user.preferences`.
 **milk_grading** JSONB (NULL = defaults): basis (OWN_LACTATION / BREED), breed peaks (litres, peak day),

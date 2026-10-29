@@ -122,9 +122,9 @@ public class HomeService {
                 new Link("MILK_AM", null)));
         tasks.add(sessionTask("MILK_PM", "Evening milking", byKey.get("MILK_PM"), settings.eveningMilking(), milkCount(day, false),
                 new Link("MILK_PM", null)));
-        tasks.add(sessionTask("FEED_AM", "Feeding AM", byKey.get("FEED_AM"), settings.morningMilking().plusHours(1), null,
+        tasks.add(sessionTask("FEED_AM", "Feeding AM", byKey.get("FEED_AM"), settings.morningFeeding(), null,
                 new Link("FEED_AM", null)));
-        tasks.add(sessionTask("FEED_PM", "Feeding PM", byKey.get("FEED_PM"), settings.eveningMilking().minusMinutes(90), null,
+        tasks.add(sessionTask("FEED_PM", "Feeding PM", byKey.get("FEED_PM"), settings.eveningFeeding(), null,
                 new Link("FEED_PM", null)));
         open.stream().filter(a -> !a.dueDate().isAfter(today))
                 .sorted(Comparator.comparing((Alert a) -> a.severity().ordinal()).thenComparing(Alert::dueDate))
@@ -255,7 +255,7 @@ public class HomeService {
             Object[] m = s != null && s.logged()
                     ? new Object[] {s.time() == null ? null : LocalDateTime.of(date, s.time()).atZone(FarmService.FARM_ZONE).toInstant(),
                     null, s.by()} : null;
-            LocalTime due = session.equals("AM") ? settings.morningMilking().plusHours(1) : settings.eveningMilking().minusMinutes(90);
+            LocalTime due = session.equals("AM") ? settings.morningFeeding() : settings.eveningFeeding();
             built.add(task("FEED_" + session, "Feed " + session, m, ticks, "due " + due.format(TIME), true, new Link("FEED_" + session, null)));
         }
         long reorder = jdbc.sql("""

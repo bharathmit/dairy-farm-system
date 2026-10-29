@@ -70,6 +70,7 @@ const PENDING_FARM_KEY = 'dairy.pendingFarm'
 /** Shown until the farm's own settings arrive. */
 const DEFAULT_FARM_SETTINGS: ApiSettings = {
   morningMilking: '06:00', eveningMilking: '18:00', marginAlertPct: 30, leaveDaysPerMonth: 4,
+  morningFeeding: '07:00', eveningFeeding: '19:00', feedPushUps: ['09:00', '13:00', '21:00'],
   notifications: { enabled: true, health: true, breeding: true, checklist: true, leadDays: 1, reminderTime: '08:00', digest: true, digestTime: '07:00', quietHoursStart: '22:00', quietHoursEnd: '05:00' },
 }
 const DEFAULT_PREFERENCES = { theme: 'SYSTEM', language: 'EN' }

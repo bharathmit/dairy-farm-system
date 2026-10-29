@@ -37,7 +37,7 @@ animals; they cannot delete, see finances or change settings.
 |---|---|---|
 | Me | `GET /me` (profile, preferences, farms with role and herd size) · `PUT /me` (name, phone) · `PUT /me/preferences` (theme, language) — outside farm prefix | any |
 | Farms | `GET/POST /farms` — outside farm prefix · `GET /farms/{farmId}` · `PUT /farms/{farmId}` | any / O/W / O |
-| Settings | `GET /settings` · `PUT /settings` (partial: milk rate, milking times, margin %, notifications) | O/W / O |
+| Settings | `GET /settings` · `PUT /settings` (partial: milk rate, milking times, feeding times `morningFeeding`/`eveningFeeding`/`feedPushUps`, margin %, notifications) | O/W / O |
 | Members | `GET/POST /members` · `GET/PUT/DELETE /members/{id}` · `PATCH /members/{id}/status` (active / left on) · `POST /members/{id}/invite` (resend). Sign-in per member: `login` NONE, PASSWORD (owner sets it) or INVITE (email link) | O |
 | Animals | `GET /animals` (q, species, category, status, sex, groupId, noGroup, sort=tag/name/newest/oldest, page, size) · `GET /animals/summary` | O/W |
 | | `GET /animals/details` (same filters, full records with parents and photo links — used by the app) | O/W |
