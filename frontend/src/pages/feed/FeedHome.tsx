@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { BottomNav, Footer, Screen, TopBar } from '../../components/ui'
+import { Footer, Screen, TopBar } from '../../components/ui'
 import { Icon } from '../../components/icons'
 import { LoadState } from '../../components/records'
 import { StockRow, Tile, useFeed } from '../../components/feed'
@@ -98,7 +98,6 @@ export default function FeedHome() {
         )}
       </div>
       <Footer className="mt-auto" />
-      <BottomNav active="feed" />
     </Screen>
   )
 }

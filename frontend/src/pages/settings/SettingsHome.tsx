@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { BottomNav, LogoMark, Screen } from '../../components/ui'
+import { LogoMark, Screen } from '../../components/ui'
 import { Icon, type IconName } from '../../components/icons'
 import { LogoutDialog } from '../../components/AccountButton'
 import { useStore } from '../../data/store'
@@ -87,7 +87,6 @@ export default function SettingsHome() {
       </div>
       <div className="mb-4 mt-3 text-center text-xs text-ink-3">Version 1.0.0<br />© 2026 Dairy Farm. All rights reserved.</div>
       <div className="flex-1" />
-      <BottomNav active="more" />
       {logout && <LogoutDialog onClose={() => setLogout(false)} />}
     </Screen>
   )

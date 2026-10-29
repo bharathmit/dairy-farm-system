@@ -42,7 +42,7 @@ export default function EquipmentService() {
         notes: notes.trim() || null, nextServiceDate: nextOverride || null,
       })
       notify(`Service saved for ${e.name}`)
-      nav('/money/equipment')
+      nav('/money/equipment', { replace: true })
     } catch (err) { notify(errorMessage(err)) } finally { setBusy(false) }
   }
 

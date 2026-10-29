@@ -46,7 +46,7 @@ export default function CalfFeeding() {
         colostrumLitres: toNum(colL) ?? null, colostrumAt: colAt || null, notes: notes.trim() || null,
       })
       notify('Feeding saved')
-      nav('/calves')
+      nav('/calves', { replace: true })
     } catch (e) { notify(errorMessage(e)) } finally { setBusy(false) }
   }
 

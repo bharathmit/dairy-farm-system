@@ -1,5 +1,5 @@
 import { Link, useSearchParams } from 'react-router-dom'
-import { BottomNav, Footer, Screen } from '../../components/ui'
+import { Footer, Screen } from '../../components/ui'
 import { Icon } from '../../components/icons'
 import { LoadState } from '../../components/records'
 import { AlertCard, alertDetail, refreshAlertCount, useAlerts } from '../../components/alerts'
@@ -109,7 +109,6 @@ export default function AlertsList() {
         )}
       </div>
       <Footer className="mt-auto" />
-      <BottomNav active="more" />
     </Screen>
   )
 }

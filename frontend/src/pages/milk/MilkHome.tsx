@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { BottomNav, Footer, Screen, TopBar } from '../../components/ui'
+import { Footer, Screen, TopBar } from '../../components/ui'
 import { GradeBadge, LoadState, useRecords } from '../../components/records'
 import { LineChart, RangePicker } from '../../components/charts'
 import { byMonth, dayTick, monthName, useRange, type Point } from '../../data/charts'
@@ -149,7 +149,6 @@ export default function MilkHome() {
         </div>
       </div>
       <Footer className="mt-auto" />
-      <BottomNav active="milk" />
     </Screen>
   )
 }

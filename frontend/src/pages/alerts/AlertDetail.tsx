@@ -24,7 +24,7 @@ export default function AlertDetail() {
   const closed = a && a.status !== 'OPEN'
 
   const act = async (fn: () => Promise<unknown>, msg: string) => {
-    try { await fn(); notify(msg); refreshAlertCount(farmId); nav('/alerts') } catch (e) { notify(errorMessage(e)) }
+    try { await fn(); notify(msg); refreshAlertCount(farmId); nav('/alerts', { replace: true }) } catch (e) { notify(errorMessage(e)) }
   }
   const canDismiss = a && (a.source !== 'RULE' || isOwner) && a.ruleCode !== 'WITHDRAWAL'
 
@@ -85,7 +85,7 @@ export default function AlertDetail() {
         )}
       </div>
       {a && !closed && (
-        <div className="sticky bottom-0 mt-auto flex flex-col gap-2.5 border-t border-line-soft bg-white px-4 pb-3 pt-3.5">
+        <div className="sticky bottom-[72px] z-10 xl:bottom-0 mt-auto flex flex-col gap-2.5 border-t border-line-soft bg-white px-4 pb-3 pt-3.5">
           {link && a.action && <Link to={link} className="btn">{a.action.label}</Link>}
           <div className="grid grid-cols-2 gap-2.5">
             <button type="button" className="btn2" onClick={() => act(() => al.done(a.id), 'Marked done')}>{a.ruleCode === 'WITHDRAWAL' ? 'Seen' : 'Mark done'}</button>

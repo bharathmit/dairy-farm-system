@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { BottomNav, Footer, LogoMark, Screen } from '../../components/ui'
+import { Footer, LogoMark, Screen } from '../../components/ui'
 import { Icon } from '../../components/icons'
 import AccountButton from '../../components/AccountButton'
 import { useStore } from '../../data/store'
@@ -59,7 +59,6 @@ export default function GroupList() {
         </div>
         <Footer className="bg-ground py-2" />
       </div>
-      <BottomNav active="more" />
     </Screen>
   )
 }

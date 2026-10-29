@@ -31,7 +31,7 @@ export default function AnimalImport() {
     setBusy(false)
     if (!res) return
     notify(`${res.created} ${res.created === 1 ? 'animal' : 'animals'} imported`)
-    nav('/animals')
+    nav('/animals', { replace: true })
   }
 
   const n = result?.ready ?? 0

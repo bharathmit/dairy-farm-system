@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { BottomNav, Chips, Footer, LogoMark, Screen, Sheet } from '../../components/ui'
+import { Chips, Footer, LogoMark, Screen, Sheet } from '../../components/ui'
 import { Icon } from '../../components/icons'
 import AccountButton from '../../components/AccountButton'
 import { ageText, CATEGORIES, daysInMilk, SPECIES, toneClass, useStore } from '../../data/store'
@@ -211,7 +211,6 @@ export default function AnimalList() {
         </Link>
       </div>
       <div className="sticky bottom-[72px] z-10 bg-ground xl:bottom-0"><Footer className="py-2" /></div>
-      <BottomNav active="more" />
       {open && <FiltersSheet initial={filters} onClose={() => setOpen(false)} onApply={(f) => { setFilters(f); setOpen(false) }} />}
     </Screen>
   )

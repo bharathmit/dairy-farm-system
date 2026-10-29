@@ -41,13 +41,13 @@ export default function MemberForm() {
     setBusy(false)
     if (!ok) return
     notify(editing ? 'Member updated' : 'Member added')
-    nav('/settings/team')
+    nav('/settings/team', { replace: true })
   }
 
   const toggleActive = async () => {
     if (!(await setMemberActive(m.id, !m.active))) return
     notify(m.active ? 'Member deactivated' : 'Member reactivated')
-    nav('/settings/team')
+    nav('/settings/team', { replace: true })
   }
 
   return (

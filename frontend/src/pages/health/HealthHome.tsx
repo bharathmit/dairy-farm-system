@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { BottomNav, Footer, Screen, TopBar } from '../../components/ui'
+import { Footer, Screen, TopBar } from '../../components/ui'
 import { LoadState, useRecords } from '../../components/records'
 import { HEALTH_TONE, healthLabel, shortDate, todayIso, useLoad, type HealthRecord, type HealthType } from '../../data/records'
 
@@ -94,7 +94,6 @@ export default function HealthHome() {
         </div>
       </div>
       <Footer className="mt-auto" />
-      <BottomNav active="home" />
     </Screen>
   )
 }

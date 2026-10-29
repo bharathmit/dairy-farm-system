@@ -73,7 +73,7 @@ export default function Calving() {
       })
       await refreshHerd()
       notify(res.calves.length ? `Calving saved · ${res.calves.map((c) => c.tag).join(', ')} added` : 'Calving saved')
-      nav(res.calves.length ? '/calves' : '/breeding')
+      nav(res.calves.length ? '/calves' : '/breeding', { replace: true })
     } catch (e) { notify(errorMessage(e)) } finally { setBusy(false) }
   }
 

@@ -56,7 +56,7 @@ export default function WeightLog() {
       if (next) {
         setWeight(''); setGirth(''); setHeight(''); setNotes('')
         const p = new URLSearchParams(); setParams(p, { replace: true })
-      } else nav(`/animals/${animalId}/growth`)
+      } else nav(`/animals/${animalId}/growth`, { replace: true })
     } catch (e) { notify(errorMessage(e)) } finally { setBusy(false) }
   }
 

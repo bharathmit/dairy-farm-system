@@ -41,7 +41,7 @@ export default function HeatForm() {
     try {
       const res = await br.addHeat({ animalId: Number(animalId), date, time, signs, intensity, notes: notes.trim() || undefined })
       notify(res.bestServiceAt ? 'Heat saved · inseminate about 12 h after first seen' : 'Heat saved')
-      nav(thenService ? `/breeding/service/new?animal=${animalId}&heat=${res.heat.id}` : '/breeding/heat-watch')
+      nav(thenService ? `/breeding/service/new?animal=${animalId}&heat=${res.heat.id}` : '/breeding/heat-watch', { replace: true })
     } catch (e) { notify(errorMessage(e)) } finally { setBusy(false) }
   }
   const lastHeat = last.data?.[0]

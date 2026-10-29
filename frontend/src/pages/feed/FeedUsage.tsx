@@ -73,7 +73,7 @@ export default function FeedUsage() {
         lines: lines.flatMap((l) => (l.item ? [{ itemId: l.item.id, kg: toNum(actual[l.item.id] ?? '') ?? 0 }] : [])).filter((l) => l.kg > 0), notes: notes.trim() || undefined,
       })
       notify(`${session === 'AM' ? '6 AM' : '6 PM'} feeding saved · ${kg(total)} kg`)
-      nav('/feed')
+      nav('/feed', { replace: true })
     } catch (e) { notify(errorMessage(e)) } finally { setBusy(false) }
   }
 

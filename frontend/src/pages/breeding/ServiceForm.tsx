@@ -84,11 +84,11 @@ export default function ServiceForm() {
       }
       const r = await br.saveService(body, id)
       notify(`Service saved · PD due ${shortDate(r.pdDueDate)}`)
-      nav(back)
+      nav(back, { replace: true })
     } catch (e) { notify(errorMessage(e)) } finally { setBusy(false) }
   }
   const remove = async () => {
-    try { await br.deleteService(Number(id)); notify('Service deleted'); nav(back) } catch (e) { notify(errorMessage(e)) }
+    try { await br.deleteService(Number(id)); notify('Service deleted'); nav(back, { replace: true }) } catch (e) { notify(errorMessage(e)) }
   }
 
   return (

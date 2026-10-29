@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { Footer, Screen, Sheet, TopBar } from '../../components/ui'
-import { Icon } from '../../components/icons'
 import { ContactSelect, LoadState } from '../../components/records'
 import { useBreeding } from '../../components/breeding'
 import { useStore } from '../../data/store'
@@ -42,8 +41,7 @@ function BatchSheet({ batch, onClose, onSaved }: { batch?: SemenBatch; onClose: 
   }
   return (
     <Sheet label={batch ? 'Edit semen batch' : 'Add semen batch'} onClose={onClose} tall>
-      <div className="flex items-center justify-between px-4 pb-2"><h2 className="m-0 text-xl font-bold">{batch ? batch.bullName : 'Add semen batch'}</h2>
-        <button type="button" aria-label="Close" onClick={onClose} className="flex h-11 w-11 items-center justify-center"><Icon name="close" /></button></div>
+      <div className="flex items-center justify-between px-4 pb-2"><h2 className="m-0 text-xl font-bold">{batch ? batch.bullName : 'Add semen batch'}</h2></div>
       <div className="flex flex-col gap-3 overflow-y-auto bg-ground px-4 py-3">
         <div className="grid grid-cols-2 gap-3">
           <div><label className="lab" htmlFor="sm-name">Bull name *</label><input className="inp" id="sm-name" value={d.bullName} onChange={(e) => set({ bullName: e.target.value })} /></div>

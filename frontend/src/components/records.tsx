@@ -159,8 +159,7 @@ function NewContactSheet({ role, onClose, onSaved }: { role: ContactRole; onClos
   }
   return (
     <Sheet label="Add contact" onClose={onClose} tall>
-      <div className="flex items-center justify-between px-4 pb-2"><h2 className="m-0 text-xl font-bold">Add contact</h2>
-        <button type="button" aria-label="Close" onClick={onClose} className="flex h-11 w-11 items-center justify-center"><Icon name="close" /></button></div>
+      <div className="flex items-center justify-between px-4 pb-2"><h2 className="m-0 text-xl font-bold">Add contact</h2></div>
       <div className="overflow-y-auto bg-ground px-4 py-3"><ContactFields value={c} onChange={setC} showMoney={isOwner} /></div>
       <div className="border-t border-line-soft bg-white p-4"><button type="button" className="btn" disabled={busy} onClick={save}>{busy ? 'Saving…' : 'Save contact'}</button></div>
     </Sheet>

@@ -60,7 +60,7 @@ export default function Attendance() {
       return { memberId: r.member.id, date: d, status: x.status, hours: toNum(x.hours) ?? null }
     }))
     setBusy(true)
-    try { await mo.saveAttendance(entries); notify('Attendance saved'); nav('/money/workers') } catch (e) { notify(errorMessage(e)) } finally { setBusy(false) }
+    try { await mo.saveAttendance(entries); notify('Attendance saved'); nav('/money/workers', { replace: true }) } catch (e) { notify(errorMessage(e)) } finally { setBusy(false) }
   }
   const totals = w ? w.rows.reduce((s, r) => { const t = rowTotals(r.member.id, r.wageRate, r.wageType); return { d: s.d + t.present, h: s.h + t.hours, a: s.a + t.amount } }, { d: 0, h: 0, a: 0 }) : null
   const nav7 = 'flex h-11 w-11 items-center justify-center rounded-[10px] border border-line bg-white disabled:opacity-40'

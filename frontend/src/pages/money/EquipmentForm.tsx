@@ -40,12 +40,12 @@ export default function EquipmentForm() {
         purchaseDate: f.purchaseDate || null, purchaseCost: toNum(f.purchaseCost) ?? null, notes: f.notes.trim() || null,
       }, id)
       notify(`${f.name.trim()} saved`)
-      nav('/money/equipment')
+      nav('/money/equipment', { replace: true })
     } catch (err) { notify(errorMessage(err)) } finally { setBusy(false) }
   }
   const remove = async () => {
     if (!e) return
-    try { await mo.deleteEquipment(e.id); notify(`${e.name} deleted`); nav('/money/equipment') } catch (err) { notify(errorMessage(err)) } finally { setConfirm(false) }
+    try { await mo.deleteEquipment(e.id); notify(`${e.name} deleted`); nav('/money/equipment', { replace: true }) } catch (err) { notify(errorMessage(err)) } finally { setConfirm(false) }
   }
 
   return (

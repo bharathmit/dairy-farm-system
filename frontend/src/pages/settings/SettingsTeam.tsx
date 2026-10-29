@@ -66,7 +66,7 @@ export default function SettingsTeam() {
 
       <p className="mx-5 mb-4 mt-3.5 text-[13px] leading-normal text-ink-3">Workers can add milk, feed, health and weight records and see health and feeding reminders. They can't delete records, see finances or change settings.</p>
 
-      <div className="sticky bottom-0 mt-auto bg-ground">
+      <div className="sticky bottom-[72px] z-10 xl:bottom-0 mt-auto bg-ground">
         <div className="px-5 pt-3">
           <Link to="/settings/team/new" className="btn gap-2"><Icon name="plus" size={18} color="#fff" strokeWidth={2.4} />Add member</Link>
         </div>

@@ -72,7 +72,7 @@ export default function TransactionForm() {
   const remove = async () => {
     if (!e) return
     setBusy(true)
-    try { await mo.deleteEntry(e.id); notify('Entry deleted'); nav('/money') } catch (err) { notify(errorMessage(err)) } finally { setBusy(false); setConfirm(false) }
+    try { await mo.deleteEntry(e.id); notify('Entry deleted'); nav('/money', { replace: true }) } catch (err) { notify(errorMessage(err)) } finally { setBusy(false); setConfirm(false) }
   }
 
   return (

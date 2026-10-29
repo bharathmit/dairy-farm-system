@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { BottomNav, Footer, Screen, TopBar } from '../../components/ui'
+import { Footer, Screen, TopBar } from '../../components/ui'
 import { Icon } from '../../components/icons'
 import { LoadState } from '../../components/records'
 import { ChoiceChips, OwnerOnlyScreen } from '../../components/money'
@@ -94,7 +94,6 @@ export default function Reports() {
         <p className="m-0 text-[13px] text-ink-3">Reports use the period above. PDF opens a printable page — choose "Save as PDF" when printing. Owner only.</p>
       </div>
       <Footer className="mt-auto" />
-      <BottomNav active="more" />
     </Screen>
   )
 }

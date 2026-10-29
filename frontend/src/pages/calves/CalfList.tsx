@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { BottomNav, Footer, Screen, TopBar } from '../../components/ui'
+import { Footer, Screen, TopBar } from '../../components/ui'
 import { LoadState } from '../../components/records'
 import { useBreeding } from '../../components/breeding'
 import { L, useLoad } from '../../data/records'
@@ -101,7 +101,6 @@ export default function CalfList() {
         {d && hidden > 0 && <div className="text-center text-xs text-ink-3">{hidden} other calf{hidden === 1 ? '' : 'ves'} hidden by the filter · <button type="button" onClick={() => set({ sex: 'ALL', age: 'm1,m2,m3,m4' })} className="border-0 bg-transparent p-0 font-semibold text-brand">Show all</button></div>}
       </div>
       <Footer className="mt-auto" />
-      <BottomNav active="more" />
     </Screen>
   )
 }

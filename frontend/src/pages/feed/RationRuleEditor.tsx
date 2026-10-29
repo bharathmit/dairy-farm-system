@@ -169,7 +169,7 @@ export default function RationRuleEditor() {
     try {
       await fd.saveRule(cat, { effectiveFrom: from, params })
       notify(`${ruleLabel(cat)} rule saved · from ${shortDate(from)}`)
-      nav('/feed/ration-rules')
+      nav('/feed/ration-rules', { replace: true })
     } catch (e) { notify(errorMessage(e)) } finally { setBusy(false) }
   }
 

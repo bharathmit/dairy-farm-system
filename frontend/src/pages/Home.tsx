@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { BottomNav, Footer, LogoMark, Screen } from '../components/ui'
+import { Footer, LogoMark, Screen } from '../components/ui'
 import { Icon } from '../components/icons'
 import AccountButton from '../components/AccountButton'
 import { LoadState } from '../components/records'
@@ -194,7 +194,6 @@ export default function Home() {
         </div>
       </div>
       <Footer className="mt-auto" />
-      <BottomNav active="home" />
       {barnSheet && <BarnSheet onClose={() => setBarnSheet(false)} onSaved={(b) => { setBarnSheet(false); home.setData((cur) => (cur ? { ...cur, barn: b } : cur)) }} />}
     </Screen>
   )

@@ -45,11 +45,11 @@ export default function HealthForm() {
     try {
       await rec.saveHealth({ ...draftBody(d, isOwner), ...schedule, animalId: Number(animalId) }, id)
       notify('Health record saved')
-      nav(back)
+      nav(back, { replace: true })
     } catch (e) { notify(errorMessage(e)) } finally { setBusy(false) }
   }
   const remove = async () => {
-    try { await rec.deleteHealth(Number(id)); notify('Health record deleted'); nav(back) } catch (e) { notify(errorMessage(e)) }
+    try { await rec.deleteHealth(Number(id)); notify('Health record deleted'); nav(back, { replace: true }) } catch (e) { notify(errorMessage(e)) }
   }
   const toggleDone = async () => {
     if (!existing.data) return

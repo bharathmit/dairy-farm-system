@@ -20,7 +20,7 @@ export default function SettingsPreferences() {
       <Segmented<Settings['language']> label="Language" className="mx-4" value={language} onChange={setLanguage}
         options={[{ value: 'English', label: 'English' }, { value: 'Tamil', label: <span lang="ta">தமிழ்</span> }]} />
       <ActionBar>
-        <button type="button" className="btn" onClick={() => { void updateSettings({ theme, language }).then((ok) => { if (ok) { notify('Preferences saved'); nav('/settings') } }) }}>Save</button>
+        <button type="button" className="btn" onClick={() => { void updateSettings({ theme, language }).then((ok) => { if (ok) { notify('Preferences saved'); nav('/settings', { replace: true }) } }) }}>Save</button>
       </ActionBar>
     </Screen>
   )

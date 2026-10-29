@@ -47,7 +47,7 @@ export default function ReminderForm() {
     } catch (e) { notify(errorMessage(e)) } finally { setBusy(false) }
   }
   const remove = async () => {
-    try { await al.deleteReminder(Number(id)); notify('Reminder deleted'); refreshAlertCount(farmId); nav('/alerts') } catch (e) { notify(errorMessage(e)) }
+    try { await al.deleteReminder(Number(id)); notify('Reminder deleted'); refreshAlertCount(farmId); nav('/alerts', { replace: true }) } catch (e) { notify(errorMessage(e)) }
   }
 
   return (

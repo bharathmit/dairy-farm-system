@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { BottomNav, Footer, Screen, TopBar } from '../../components/ui'
+import { Footer, Screen, TopBar } from '../../components/ui'
 import { Icon, type IconName } from '../../components/icons'
 import { LoadState } from '../../components/records'
 import { CowRow, useBreeding } from '../../components/breeding'
@@ -87,7 +87,6 @@ export default function BreedingHome() {
         )}
       </div>
       <Footer className="mt-auto" />
-      <BottomNav active="home" />
     </Screen>
   )
 }

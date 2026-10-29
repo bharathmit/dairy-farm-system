@@ -103,12 +103,12 @@ export default function FeedItemForm() {
         supplierContactId: d.supplier ? Number(d.supplier) : null, notes: d.notes.trim() || null, active: d.active,
       }, id)
       notify(`${saved.name} saved`)
-      nav('/feed')
+      nav('/feed', { replace: true })
     } catch (e) { notify(errorMessage(e)) } finally { setBusy(false) }
   }
   const remove = async () => {
     if (!existing.data) return
-    try { await fd.deleteItem(existing.data.id); notify('Item deleted'); nav('/feed') } catch (e) { setConfirm(false); notify(errorMessage(e)) }
+    try { await fd.deleteItem(existing.data.id); notify('Item deleted'); nav('/feed', { replace: true }) } catch (e) { setConfirm(false); notify(errorMessage(e)) }
   }
 
   return (

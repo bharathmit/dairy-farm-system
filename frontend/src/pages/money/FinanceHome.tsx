@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { BottomNav, Footer, Screen, TopBar } from '../../components/ui'
+import { Footer, Screen, TopBar } from '../../components/ui'
 import { LoadState } from '../../components/records'
 import { BarRow, ChoiceChips, OwnerNote, OwnerOnlyScreen, PERIODS, Stat, useMoney } from '../../components/money'
 import { useStore } from '../../data/store'
@@ -123,7 +123,6 @@ export default function FinanceHome() {
         )}
       </div>
       <Footer className="mt-auto" />
-      <BottomNav active="more" />
     </Screen>
   )
 }

@@ -21,7 +21,7 @@ export default function SettingsFarm() {
     if (!(await updateFarm({ ...f, name: f.name.trim() }))) return
     if (owner && !(await updateSettings({ leaveDaysPerMonth: Math.min(15, Math.max(0, Number(leave) || 0)) }))) return
     notify('Farm profile saved')
-    nav('/settings')
+    nav('/settings', { replace: true })
   }
 
   return (

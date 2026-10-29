@@ -1,7 +1,8 @@
-import { useEffect, useState, useSyncExternalStore, type ReactNode, type InputHTMLAttributes } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useContext, useEffect, useState, useSyncExternalStore, type ReactNode, type InputHTMLAttributes } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Icon, type IconName } from './icons'
 import { useStore } from '../data/store'
+import { MenuContext, useGoBack } from './menu'
 import { alertCountSnapshot, loadAlertCount, subscribeAlertCount } from '../data/alerts'
 
 /**
@@ -9,9 +10,11 @@ import { alertCountSnapshot, loadAlertCount, subscribeAlertCount } from '../data
  * lists and reports — grow to 1040 px on laptops (lg ≥ 1024 px). Forms stay at 720 px so fields stay readable.
  */
 export function Screen({ children, className = '', wide }: { children: ReactNode; className?: string; wide?: boolean }) {
+  const menu = useContext(MenuContext)
   return (
     <div className={`relative mx-auto flex min-h-[100dvh] w-full max-w-[430px] flex-col bg-ground shadow-sm md:max-w-[720px] ${wide ? 'lg:max-w-[1040px]' : ''} ${className}`}>
       {children}
+      {menu && <BottomNav />}
     </div>
   )
 }
@@ -45,11 +48,12 @@ export function Footer({ className = '' }: { className?: string }) {
   return <div className={`px-4 py-3 text-center text-xs text-ink-3 ${className}`}>© 2026 Dairy Farm. All rights reserved.</div>
 }
 
-/** Title bar: back/close button, logo, title, optional actions. */
+/** Title bar: back/close button, logo, title, optional actions. Back/close returns to the previous screen. */
 export function TopBar({ title, back, close, right, border }: {
   title: ReactNode; back?: string | number; close?: string; right?: ReactNode; border?: boolean
 }) {
   const nav = useNavigate()
+  const goBack = useGoBack()
   const target = close ?? back
   return (
     <div className={`sticky top-0 z-10 flex items-center gap-1 bg-ground px-3 py-2 ${border ? 'border-b border-line-soft' : ''}`}>
@@ -57,7 +61,7 @@ export function TopBar({ title, back, close, right, border }: {
         <button
           type="button"
           aria-label={close ? 'Close' : 'Back'}
-          onClick={() => (typeof target === 'number' ? nav(target) : nav(target))}
+          onClick={() => (typeof target === 'number' ? nav(target) : goBack(target))}
           className="flex h-11 w-11 items-center justify-center rounded-xl"
         >
           <Icon name={close ? 'close' : 'back'} />
@@ -153,7 +157,10 @@ export function Sheet({ onClose, children, label, tall }: { onClose: () => void;
     <div className="fixed inset-0 z-40 mx-auto flex max-w-[430px] flex-col justify-end md:max-w-none md:items-center md:justify-center md:p-6" role="dialog" aria-modal="true" aria-label={label}>
       <button type="button" aria-label="Close" onClick={onClose} className="absolute inset-0 bg-[rgba(20,30,24,.45)]" />
       <div className={`relative flex w-full flex-col overflow-hidden rounded-t-[22px] bg-white md:max-w-[560px] md:rounded-[22px] md:pt-3 ${tall ? 'max-h-[calc(100dvh-64px)]' : 'max-h-[90dvh]'}`}>
-        <div className="mx-auto mb-1 mt-2.5 h-1 w-10 shrink-0 rounded bg-line md:hidden" />
+        <div className="relative flex h-11 shrink-0 items-start justify-center md:-mt-3">
+          <div className="mt-2.5 h-1 w-10 rounded bg-line md:hidden" />
+          <button type="button" aria-label="Close" onClick={onClose} className="absolute right-1.5 top-0 flex h-11 w-11 items-center justify-center border-0 bg-transparent"><Icon name="close" /></button>
+        </div>
         {children}
       </div>
     </div>
@@ -227,7 +234,17 @@ function useOpenAlerts() {
   return snap?.count ?? 0
 }
 
-export function BottomNav({ active }: { active: 'home' | 'milk' | 'feed' | 'more' }) {
+type Tab = 'home' | 'milk' | 'feed' | 'more'
+function tabFor(path: string): Tab {
+  if (path.startsWith('/milk')) return 'milk'
+  if (path.startsWith('/feed')) return 'feed'
+  if (['/home', '/breeding', '/health', '/checklist'].some((p) => path.startsWith(p))) return 'home'
+  return 'more'
+}
+
+/** Main menu; shown by `Screen` on every farm screen except forms. */
+export function BottomNav() {
+  const active = tabFor(useLocation().pathname)
   const [adding, setAdding] = useState(false)
   const open = useOpenAlerts()
   const item = (key: typeof active, to: string, icon: Parameters<typeof Icon>[0]['name'], label: string, badge = 0) => (

@@ -46,7 +46,7 @@ export default function PayWages() {
     try {
       await mo.pay({ memberId: w.member.id, periodFrom: advance ? null : from, periodTo: advance ? null : to, amount: amt, paymentMethod: method, paidOn, advance, notes: notes.trim() || null })
       notify(`${rupees(amt)} ${advance ? 'advance' : 'wages'} paid to ${w.member.name}`)
-      nav('/money/workers')
+      nav('/money/workers', { replace: true })
     } catch (e) { notify(errorMessage(e)) } finally { setBusy(false) }
   }
 

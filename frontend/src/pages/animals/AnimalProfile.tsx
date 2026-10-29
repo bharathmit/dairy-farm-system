@@ -30,7 +30,7 @@ function StatusSheet({ animal, onClose }: { animal: Animal; onClose: () => void 
     const p = price.trim() === '' ? undefined : Number(price.replace(/,/g, ''))
     if (!(await changeAnimalStatus(animal.id, status, { date, price: status === 'Sold' ? p : undefined, reason, buyer: buyer.trim() || undefined }))) return
     notify(`${animal.tag} marked as ${status.toLowerCase()}`)
-    nav('/animals')
+    nav('/animals', { replace: true })
   }
 
   return (
@@ -89,7 +89,7 @@ function StatusSheet({ animal, onClose }: { animal: Animal; onClose: () => void 
           <p className="m-0 mb-5 text-[15px] leading-normal text-ink-2">This removes the animal and its records for good. To keep history, mark it as sold, dead or transferred instead.</p>
           <div className="grid grid-cols-2 gap-3">
             <button type="button" onClick={() => setConfirmDelete(false)} className="h-12 rounded-xl border border-line bg-white font-semibold text-ink">Cancel</button>
-            <button type="button" onClick={async () => { if (await deleteAnimal(animal.id)) { notify(`${animal.tag} deleted`); nav('/animals') } }} className="h-12 rounded-xl bg-danger font-semibold text-white">Delete</button>
+            <button type="button" onClick={async () => { if (await deleteAnimal(animal.id)) { notify(`${animal.tag} deleted`); nav('/animals', { replace: true }) } }} className="h-12 rounded-xl bg-danger font-semibold text-white">Delete</button>
           </div>
         </Dialog>
       )}

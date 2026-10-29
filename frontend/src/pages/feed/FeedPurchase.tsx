@@ -50,7 +50,7 @@ export default function FeedPurchase() {
         notes: notes.trim() || undefined,
       })
       notify(`${kg(q)} ${unit} of ${item.name} added to stock`)
-      nav('/feed')
+      nav('/feed', { replace: true })
     } catch (e) { notify(errorMessage(e)) } finally { setBusy(false) }
   }
 

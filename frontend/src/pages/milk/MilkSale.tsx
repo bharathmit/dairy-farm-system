@@ -104,7 +104,7 @@ export default function MilkSale() {
         fatPct: toNum(fat) ?? null, snfPct: toNum(snf) ?? null, paid, notes: notes.trim() || null,
       })
       notify('Sale saved')
-      nav('/milk')
+      nav('/milk', { replace: true })
     } catch (e) { notify(errorMessage(e)) } finally { setBusy(false) }
   }
 

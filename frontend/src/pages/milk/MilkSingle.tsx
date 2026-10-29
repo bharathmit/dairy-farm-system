@@ -95,7 +95,7 @@ export default function MilkSingle() {
         proteinPct: toNum(protein) ?? null, density: toNum(density) ?? null, scc: toNum(scc) ?? null, notes: notes.trim() || null,
       })
       notify(`Milk saved for ${f?.animal.tag ?? 'the cow'}`)
-      nav('/milk')
+      nav('/milk', { replace: true })
     } catch (e) { notify(errorMessage(e)) } finally { setBusy(false) }
   }
 

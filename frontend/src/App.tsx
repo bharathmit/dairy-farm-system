@@ -1,6 +1,7 @@
-import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom'
+import { BrowserRouter, matchPath, Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom'
 import { StoreProvider, useStore } from './data/store'
 import { Toast } from './components/ui'
+import { MenuContext } from './components/menu'
 import Login from './pages/auth/Login'
 import CreateAccount from './pages/auth/CreateAccount'
 import ForgotPassword from './pages/auth/ForgotPassword'
@@ -98,11 +99,29 @@ function RequireAuth() {
   return user ? <Outlet /> : <Navigate to="/login" replace state={{ from: loc.pathname }} />
 }
 
+/** Form screens: their own Save bar sits at the bottom, so no main menu. Every other farm screen shows it. */
+const FORMS = [
+  '/reminders/new', '/reminders/:id', '/settings/alert-rules',
+  '/animals/new', '/animals/import', '/animals/:id/edit', '/groups/new', '/groups/:id/edit',
+  '/breeding/heat/new', '/breeding/service/new', '/breeding/service/:id', '/breeding/pregnancy-check', '/breeding/calving',
+  '/calves/feeding', '/calves/feeding/group',
+  '/feed/items/new', '/feed/items/:id', '/feed/buy', '/feed/log', '/feed/formulas/new', '/feed/formulas/:id', '/feed/batch',
+  '/feed/ration-rules/:category',
+  '/money/entries/new', '/money/entries/:id', '/money/attendance', '/money/pay', '/money/equipment/new', '/money/equipment/:id',
+  '/money/equipment/:id/service', '/money/service',
+  '/milk/sheet', '/milk/cow', '/milk/sale', '/weight/new', '/health/new', '/health/batch', '/health/:id',
+  '/settings/farm', '/settings/team/new', '/settings/team/:id', '/settings/preferences', '/settings/milk-rate',
+  '/settings/milk-grading', '/settings/contacts/new', '/settings/contacts/:id',
+]
+const NOT_FORMS = ['/health/withdrawals']
+const isForm = (path: string) => !NOT_FORMS.includes(path) && FORMS.some((p) => matchPath(p, path))
+
 function RequireFarm() {
   const { farm, loading } = useStore()
+  const { pathname } = useLocation()
   if (!farm) return <Navigate to="/farms" replace />
   // Pages read the farm's data when they open (e.g. edit forms), so wait for it.
-  return loading ? <Loading /> : <Outlet />
+  return loading ? <Loading /> : <MenuContext.Provider value={!isForm(pathname)}><Outlet /></MenuContext.Provider>
 }
 
 function GlobalToast() {

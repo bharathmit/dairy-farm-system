@@ -54,7 +54,7 @@ export default function CalfFeedingGroup() {
     try {
       await br.saveFeedingSheet({ date, session, entries: calves.map((c) => ({ animalId: c.animal.id, litres: toNum(litres[c.animal.id] ?? '') ?? null, starterKg: toNum(starter[c.animal.id] ?? '') ?? null })) })
       notify(`${name} feeding saved for ${calves.length} calves`)
-      nav('/calves')
+      nav('/calves', { replace: true })
     } catch (e) { notify(errorMessage(e)) } finally { setBusy(false) }
   }
 

@@ -103,12 +103,12 @@ export default function FormulaEditor() {
       const f = await fd.saveFormula(body(), id)
       setServer(f)
       notify(f.warnings.length ? `Saved with ${f.warnings.length} warning${f.warnings.length === 1 ? '' : 's'}` : 'Formula saved')
-      nav(thenBatch ? `/feed/batch?formula=${f.id}` : id ? '/feed/formulas' : `/feed/formulas/${f.id}`, { replace: !thenBatch && !id })
+      nav(thenBatch ? `/feed/batch?formula=${f.id}` : id ? '/feed/formulas' : `/feed/formulas/${f.id}`, { replace: true })
     } catch (e) { notify(errorMessage(e)) } finally { setBusy(false) }
   }
   const remove = async () => {
     if (!id) return
-    try { await fd.deleteFormula(Number(id)); notify('Formula deleted'); nav('/feed/formulas') } catch (e) { setConfirm(false); notify(errorMessage(e)) }
+    try { await fd.deleteFormula(Number(id)); notify('Formula deleted'); nav('/feed/formulas', { replace: true }) } catch (e) { setConfirm(false); notify(errorMessage(e)) }
   }
   const mixes = (items.data ?? []).filter((i: FeedItem) => i.category === 'MIX')
   /** Custom compare: start from the chosen Mix targets values, then edit freely (not saved). */

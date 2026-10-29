@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { Footer, Screen, Segmented, Sheet, TopBar } from '../../components/ui'
-import { Icon } from '../../components/icons'
 import { ContactSelect, LoadState } from '../../components/records'
 import { ChoiceChips, OwnerOnlyScreen, PaymentChips, useMoney } from '../../components/money'
 import { useStore } from '../../data/store'
@@ -50,8 +49,7 @@ function NoteSheet({ draft, onClose, onSaved }: { draft: Draft; onClose: () => v
   }
   return (
     <Sheet label={d.id ? 'Edit note' : 'Add note'} onClose={onClose} tall>
-      <div className="flex items-center justify-between px-4 pb-2"><h2 className="m-0 text-xl font-bold">{d.id ? 'Edit note' : 'Procurement note'}</h2>
-        <button type="button" aria-label="Close" onClick={onClose} className="flex h-11 w-11 items-center justify-center"><Icon name="close" /></button></div>
+      <div className="flex items-center justify-between px-4 pb-2"><h2 className="m-0 text-xl font-bold">{d.id ? 'Edit note' : 'Procurement note'}</h2></div>
       <div className="flex flex-col gap-3 overflow-y-auto bg-ground px-4 py-3">
         <div><label className="lab" htmlFor="pn-title">What to buy *</label><input className="inp" id="pn-title" value={d.title} onChange={(e) => set({ title: e.target.value })} />
           {d.itemName && <div className="hint">Stock item: {d.itemName} — receiving adds it to stock.</div>}</div>
@@ -91,8 +89,7 @@ function ReceiveSheet({ note, onClose, onSaved }: { note: Note; onClose: () => v
   }
   return (
     <Sheet label="Mark received" onClose={onClose}>
-      <div className="flex items-center justify-between px-4 pb-2"><h2 className="m-0 text-xl font-bold">Received · {note.title}</h2>
-        <button type="button" aria-label="Close" onClick={onClose} className="flex h-11 w-11 items-center justify-center"><Icon name="close" /></button></div>
+      <div className="flex items-center justify-between px-4 pb-2"><h2 className="m-0 text-xl font-bold">Received · {note.title}</h2></div>
       <div className="flex flex-col gap-3 overflow-y-auto bg-ground px-4 py-3">
         <div className="grid grid-cols-2 gap-3">
           <div><label className="lab" htmlFor="rc-q">Quantity ({(note.unit ?? 'kg').toLowerCase()})</label><input className="inp" id="rc-q" inputMode="decimal" value={qty} onChange={(e) => setQty(decimal(e.target.value))} /></div>

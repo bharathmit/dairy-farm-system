@@ -78,7 +78,7 @@ export default function MilkSheet() {
     try {
       await rec.saveSheet(date, session, entries)
       notify(`${name} milk saved for ${entries.filter((e) => e.litres !== null).length} cows`)
-      nav('/milk')
+      nav('/milk', { replace: true })
     } catch (e) { notify(errorMessage(e)) } finally { setBusy(false) }
   }
 

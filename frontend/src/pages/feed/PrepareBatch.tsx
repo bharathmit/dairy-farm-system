@@ -47,7 +47,7 @@ export default function PrepareBatch() {
     try {
       const res = await fd.prepareBatch(formula.id, { date, batchKg, preparedByMemberId: by ? Number(by) : undefined, allowShort })
       notify(`${formula.mixItem.name} +${kg(batchKg, 0)} kg · now ${kg(res.mix.stock, 0)} kg`)
-      nav('/feed')
+      nav('/feed', { replace: true })
     } catch (e) { notify(errorMessage(e)) } finally { setBusy(false) }
   }
 

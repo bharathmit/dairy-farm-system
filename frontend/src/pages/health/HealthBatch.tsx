@@ -43,7 +43,7 @@ export default function HealthBatch() {
     try {
       const res = await rec.saveHealthBatch({ ...draftBody(d, isOwner), animalIds: [...picked].map(Number) })
       notify(`${res.count} health records saved`)
-      nav('/health')
+      nav('/health', { replace: true })
     } catch (e) { notify(errorMessage(e)) } finally { setBusy(false) }
   }
 

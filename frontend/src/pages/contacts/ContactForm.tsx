@@ -31,12 +31,12 @@ export default function ContactForm() {
       if (!isOwner) body.milkRate = existing.data?.milkRate ?? null
       await rec.saveContact(body, id ? Number(id) : undefined)
       notify('Contact saved')
-      nav('/settings/contacts')
+      nav('/settings/contacts', { replace: true })
     } catch (e) { notify(errorMessage(e)) } finally { setBusy(false) }
   }
   const remove = async () => {
     setConfirm(false)
-    try { await rec.deleteContact(Number(id)); notify('Contact deleted'); nav('/settings/contacts') } catch (e) { notify(errorMessage(e)) }
+    try { await rec.deleteContact(Number(id)); notify('Contact deleted'); nav('/settings/contacts', { replace: true }) } catch (e) { notify(errorMessage(e)) }
   }
 
   return (

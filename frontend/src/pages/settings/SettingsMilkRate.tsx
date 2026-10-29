@@ -46,7 +46,7 @@ export default function SettingsMilkRate() {
     if (!(rateNum > 0)) { notify('Enter a milk rate above ₹0'); return }
     if (!(await updateSettings({ milkRate: rateNum, morningMilking: morning, eveningMilking: evening, morningFeeding: feedAm, eveningFeeding: feedPm, feedPushUps: pushUps.filter(Boolean).sort(), marginAlertPct: pct }))) return
     notify('Milking & feeding margins saved')
-    nav('/settings')
+    nav('/settings', { replace: true })
   }
 
   return (

@@ -59,7 +59,7 @@ export default function PregnancyCheck() {
         expectedDueDate: result === 'PREGNANT' && due ? due : undefined,
       })
       notify(result === 'PREGNANT' ? `${r.animal.tag} confirmed pregnant` : `${r.animal.tag} back to open · added to heat watch`)
-      nav(back)
+      nav(back, { replace: true })
     } catch (e) { notify(errorMessage(e)) } finally { setBusy(false) }
   }
 
