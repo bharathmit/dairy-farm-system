@@ -40,6 +40,7 @@ UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile s
 - [x] Bottom nav: Home · Milk · + · Feed · More (alert badge on More). More: Herd under Records; Alerts under Alerts & tasks (shown to workers too, rule/schedule/checklist rows owner only). Farm pick and unknown routes land on Home.
 - [x] Fix: Daily checklist "Check heat stress" → Open now opens the barn reading sheet in place (was sending users to Home).
 - [x] Navigation: main menu on every farm screen except forms (form list in `App.tsx`, shown by `Screen`); back/✕ go to the previous screen (fallback to the page's own target when opened directly); saves and deletes replace the form in history; every popup (`Sheet`) has a ✕.
+- [x] Deploy fix (29 Oct 2026): Cloudflare Workers Builds failed for 437ea8a, ef9a537 and 1bc2cb9 while GitHub CI passed — the build was fine; `wrangler deploy` failed on the asset upload API call (`assets-upload-session`, code 10013, Cloudflare-side). No code change; redeployed with an empty commit (f2cf097), build passed.
 - [ ] Next release items → docs/backlog.md
 
 ## Branches
@@ -76,4 +77,5 @@ UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile s
 ## Notes / blockers
 - `V6_1__Finance_backfill` (Java migration) runs `FinanceSql.statements()` on a fresh DB, before later migrations: that SQL must only use columns that exist at V6 (e.g. not `production_record.discount`, V10). Run tests on an empty database before pushing a schema change.
 - Before first deploy: create the private `animal-photos` bucket and keep email confirmation on (see backend/README.md).
+- Cloudflare deploy failing with GitHub CI green: open the build log (Workers & Pages → dairy-farm-system → Deployments). Code 10013 on `assets-upload-session` is Cloudflare-side: Retry build or push an empty commit; if it keeps failing, renew the API token under Settings → Build, then try `npx wrangler deploy` from `frontend/` (docs/deploy.md).
 - Tests use Testcontainers in CI; locally they can use an existing Postgres via `TEST_DATABASE_URL`.
