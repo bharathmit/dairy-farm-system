@@ -59,7 +59,7 @@ export default function GroupList() {
         </div>
         <Footer className="bg-ground py-2" />
       </div>
-      <BottomNav active="herd" />
+      <BottomNav active="more" />
     </Screen>
   )
 }

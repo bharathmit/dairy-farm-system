@@ -211,7 +211,7 @@ export default function AnimalList() {
         </Link>
       </div>
       <div className="sticky bottom-[72px] z-10 bg-ground xl:bottom-0"><Footer className="py-2" /></div>
-      <BottomNav active="herd" />
+      <BottomNav active="more" />
       {open && <FiltersSheet initial={filters} onClose={() => setOpen(false)} onApply={(f) => { setFilters(f); setOpen(false) }} />}
     </Screen>
   )

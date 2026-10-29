@@ -227,7 +227,7 @@ function useOpenAlerts() {
   return snap?.count ?? 0
 }
 
-export function BottomNav({ active }: { active: 'home' | 'herd' | 'alerts' | 'more' }) {
+export function BottomNav({ active }: { active: 'home' | 'milk' | 'feed' | 'more' }) {
   const [adding, setAdding] = useState(false)
   const open = useOpenAlerts()
   const item = (key: typeof active, to: string, icon: Parameters<typeof Icon>[0]['name'], label: string, badge = 0) => (
@@ -241,12 +241,12 @@ export function BottomNav({ active }: { active: 'home' | 'herd' | 'alerts' | 'mo
       {/* Bottom bar on phone and tablet; a fixed left rail on desktop (xl ≥ 1280 px), with + on top. */}
       <nav aria-label="Main" className="sticky bottom-0 z-20 grid h-[72px] grid-cols-5 border-t border-line-soft bg-white xl:fixed xl:inset-y-0 xl:left-0 xl:h-auto xl:w-24 xl:auto-rows-[76px] xl:grid-cols-1 xl:content-start xl:gap-1 xl:border-r xl:border-t-0 xl:pt-5">
         {item('home', '/home', 'home', 'Home')}
-        {item('herd', '/animals', 'tag', 'Herd')}
+        {item('milk', '/milk', 'drop', 'Milk')}
         <button type="button" onClick={() => setAdding(true)} aria-label="Add a record" className="flex items-center justify-center border-0 bg-transparent xl:order-first">
           <span className="-mt-[18px] xl:mt-0 flex h-12 w-12 items-center justify-center rounded-full bg-brand shadow-[0_4px_10px_rgba(31,92,58,.3)]"><Icon name="plus" color="#fff" /></span>
         </button>
-        {item('alerts', '/alerts', 'bell', 'Alerts', open)}
-        {item('more', '/settings', 'menu', 'More')}
+        {item('feed', '/feed', 'leaf', 'Feed')}
+        {item('more', '/settings', 'menu', 'More', open)}
       </nav>
       {adding && <AddRecordSheet onClose={() => setAdding(false)} />}
     </>

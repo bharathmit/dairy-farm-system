@@ -40,6 +40,7 @@ export default function SettingsHome() {
 
       <div className="sec">Records</div>
       <div className="grp">
+        <Row to="/animals" icon="tag" title="Herd" sub="Animals, groups, tags" />
         <Row to="/milk" icon="drop" title="Milk" sub="Today, sheets, sales" />
         <Row to="/health" icon="health" title="Health" sub="Treatments, withdrawals, follow-ups" />
         <Row to="/breeding" icon="heart" title="Breeding" sub="Heat, services, pregnancy, calving" />
@@ -60,20 +61,25 @@ export default function SettingsHome() {
             <Row to="/money/procurement" icon="list" title="Procurement" sub="What to buy, ordered, received" />
             <Row to="/reports" icon="list" title="Reports" sub="Exports, cull advisor, compare cows" />
           </div>
-          <div className="sec">Alerts &amp; tasks</div>
-          <div className="grp">
+        </>
+      )}
+
+      <div className="sec">Alerts &amp; tasks</div>
+      <div className="grp">
+        <Row to="/alerts" icon="bell" title="Alerts" sub="Open alerts and reminders" />
+        {farm?.role === 'Owner' && (
+          <>
             <Row to="/settings/alert-rules" icon="bell" title="Alert rules" sub="What raises an alert, who sees it" />
             <Row to="/settings/health-schedules" icon="health" title="Health schedules" sub="Deworming and vaccination by age" />
             <Row to="/checklist" icon="check" title="Checklist tasks" sub="Daily built-in and custom tasks" />
-          </div>
-        </>
-      )}
+          </>
+        )}
+      </div>
 
       <div className="sec">App</div>
       <div className="grp">
         <Row to="/settings/notifications" icon="bell" title="Notifications" sub={settings.notify.enabled ? `Reminders ${settings.notify.lead.toLowerCase()} · ${settings.notify.digestTime} digest` : 'Reminders off'} />
         <Row to="/settings/preferences" icon="sun" title="Theme & language" sub={`${settings.theme} · ${lang}`} />
-        <Row to="/alerts" icon="bell" title="Alerts" sub="Open alerts and reminders" />
       </div>
 
       <div className="grp mt-5">

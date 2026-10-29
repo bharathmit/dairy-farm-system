@@ -211,7 +211,7 @@ export default function App() {
               <Route path="/settings/contacts/:id" element={<ContactForm />} />
             </Route>
           </Route>
-          <Route path="*" element={<Navigate to="/animals" replace />} />
+          <Route path="*" element={<Navigate to="/home" replace />} />
         </Routes>
         <GlobalToast />
       </BrowserRouter>

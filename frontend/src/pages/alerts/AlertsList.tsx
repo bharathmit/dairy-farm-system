@@ -109,7 +109,7 @@ export default function AlertsList() {
         )}
       </div>
       <Footer className="mt-auto" />
-      <BottomNav active="alerts" />
+      <BottomNav active="more" />
     </Screen>
   )
 }

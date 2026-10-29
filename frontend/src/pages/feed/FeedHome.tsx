@@ -98,7 +98,7 @@ export default function FeedHome() {
         )}
       </div>
       <Footer className="mt-auto" />
-      <BottomNav active="more" />
+      <BottomNav active="feed" />
     </Screen>
   )
 }

@@ -35,7 +35,7 @@ export default function FarmPicker() {
             <button
               key={f.id}
               type="button"
-              onClick={() => { chooseFarm(f.id); nav('/animals') }}
+              onClick={() => { chooseFarm(f.id); nav('/home') }}
               className={`box-border flex min-h-[72px] w-full items-center gap-3.5 rounded-[14px] bg-white p-4 text-left text-ink ${sel ? 'border-2 border-brand' : 'border border-[#DDE1D9]'}`}
             >
               <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl font-bold ${owner ? 'bg-brand-soft text-brand' : 'bg-[#F3E9D9] text-warn-ink'}`}>{f.initials}</div>

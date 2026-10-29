@@ -149,7 +149,7 @@ export default function MilkHome() {
         </div>
       </div>
       <Footer className="mt-auto" />
-      <BottomNav active="home" />
+      <BottomNav active="milk" />
     </Screen>
   )
 }
