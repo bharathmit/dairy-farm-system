@@ -34,9 +34,6 @@ export default function SettingsMilkRate() {
   const [pct, setPct] = useState(settings.marginAlertPct)
   // Locked by default so scrolling past the slider can't change it.
   const [pctEdit, setPctEdit] = useState(false)
-  const { farm } = useStore()
-  const owner = farm?.role === 'Owner'
-  const [leave, setLeave] = useState(String(settings.leaveDaysPerMonth))
 
   const rateNum = Number(rate) || 0
   const income = Math.round(LITRES_PER_DAY * DAYS * rateNum)
@@ -47,14 +44,14 @@ export default function SettingsMilkRate() {
 
   const save = async () => {
     if (!(rateNum > 0)) { notify('Enter a milk rate above ₹0'); return }
-    if (!(await updateSettings({ milkRate: rateNum, morningMilking: morning, eveningMilking: evening, morningFeeding: feedAm, eveningFeeding: feedPm, feedPushUps: pushUps.filter(Boolean).sort(), marginAlertPct: pct, ...(owner ? { leaveDaysPerMonth: Math.min(31, Math.max(0, Number(leave) || 0)) } : {}) }))) return
-    notify('Milk rate & margins saved')
+    if (!(await updateSettings({ milkRate: rateNum, morningMilking: morning, eveningMilking: evening, morningFeeding: feedAm, eveningFeeding: feedPm, feedPushUps: pushUps.filter(Boolean).sort(), marginAlertPct: pct }))) return
+    notify('Milking & feeding margins saved')
     nav('/settings')
   }
 
   return (
     <Screen>
-      <TopBar title="Milk rate & margins" back="/settings" />
+      <TopBar title="Milking & Feeding Margins" back="/settings" />
 
       <div className="sec">Milk rate</div>
       <div className="px-4">
@@ -106,17 +103,6 @@ export default function SettingsMilkRate() {
         </div>
         <div className="hint mt-0">Checked weekly. Margin = milk income minus all farm input costs and expenses.</div>
       </div>
-
-      {owner && (
-        <>
-          <div className="sec">Monthly wages</div>
-          <div className="px-4">
-            <label className="lab" htmlFor="ld">Paid leave days per month</label>
-            <input className="inp" id="ld" inputMode="numeric" value={leave} onChange={(e) => setLeave(e.target.value.replace(/\D/g, '').slice(0, 2))} />
-            <div className="hint">For workers on a monthly wage, absences beyond this are deducted at the daily rate (monthly pay ÷ days in month).</div>
-          </div>
-        </>
-      )}
 
       <div className="sec">How it works</div>
       <div className="mx-4 mb-4 rounded-[14px] bg-white p-4">

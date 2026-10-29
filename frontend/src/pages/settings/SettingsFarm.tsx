@@ -5,7 +5,9 @@ import { Icon } from '../../components/icons'
 import { useStore } from '../../data/store'
 
 export default function SettingsFarm() {
-  const { farm, updateFarm, notify } = useStore()
+  const { farm, settings, updateFarm, updateSettings, notify } = useStore()
+  const owner = farm?.role === 'Owner'
+  const [leave, setLeave] = useState(String(settings.leaveDaysPerMonth))
   const nav = useNavigate()
   const [f, setF] = useState({
     name: farm?.name ?? '', village: farm?.village ?? '', district: farm?.district ?? '', state: farm?.state ?? '', country: farm?.country ?? 'India',
@@ -17,6 +19,7 @@ export default function SettingsFarm() {
     e.preventDefault()
     if (!f.name.trim()) { notify('Farm name is required'); return }
     if (!(await updateFarm({ ...f, name: f.name.trim() }))) return
+    if (owner && !(await updateSettings({ leaveDaysPerMonth: Math.min(15, Math.max(0, Number(leave) || 0)) }))) return
     notify('Farm profile saved')
     nav('/settings')
   }
@@ -43,6 +46,13 @@ export default function SettingsFarm() {
               <button type="button" onClick={() => { setLocated(true); notify('Location saved') }} className="h-11 rounded-[10px] border border-brand bg-white px-3.5 text-sm font-semibold text-brand">Use my location</button>
             </div>
           </div>
+          {owner && (
+            <div>
+              <label className="lab" htmlFor="ld">Paid leave days per month</label>
+              <input className="inp" id="ld" inputMode="numeric" value={leave} onChange={(e) => setLeave(e.target.value.replace(/\D/g, '').slice(0, 2))} />
+              <div className="hint">Monthly wages: for workers on a monthly wage, absences beyond this are deducted at the daily rate (monthly pay ÷ days in month). 0–15 days.</div>
+            </div>
+          )}
           <div className="text-[13px] leading-normal text-ink-3">Currency is fixed to INR (₹). Weights in kg, milk in litres.</div>
         </div>
         <ActionBar><button type="submit" className="btn">Save changes</button></ActionBar>

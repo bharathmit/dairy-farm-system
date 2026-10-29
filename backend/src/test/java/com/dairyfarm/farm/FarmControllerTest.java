@@ -120,7 +120,9 @@ class FarmControllerTest extends IntegrationTest {
 
         mvc.perform(get("/api/v1/farms/{id}/settings", farmId).with(as(owner)))
                 .andExpect(jsonPath("$.milkRate").value(38.5))
-                .andExpect(jsonPath("$.morningMilking").value("05:30"));
+                .andExpect(jsonPath("$.morningMilking").value("05:30"))
+                .andExpect(jsonPath("$.eveningFeeding").value("18:00"))
+                .andExpect(jsonPath("$.feedPushUps[1]").value("21:00"));
     }
 
     @Test
