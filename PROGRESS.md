@@ -41,6 +41,7 @@ UI design canvas: https://claude.ai/artifact/KXtE8vB41BQHR9UAfsQ6UT (24 mobile s
 - [x] Fix: Daily checklist "Check heat stress" → Open now opens the barn reading sheet in place (was sending users to Home).
 - [x] Navigation: main menu on every farm screen except forms (form list in `App.tsx`, shown by `Screen`); back/✕ go to the previous screen (fallback to the page's own target when opened directly); saves and deletes replace the form in history; every popup (`Sheet`) has a ✕.
 - [x] Deploy fix (29 Oct 2026): Cloudflare Workers Builds failed for 437ea8a, ef9a537 and 1bc2cb9 while GitHub CI passed — the build was fine; `wrangler deploy` failed on the asset upload API call (`assets-upload-session`, code 10013, Cloudflare-side). No code change; redeployed with an empty commit (f2cf097), build passed.
+- [x] Fix (29 Oct 2026): animal profile no longer shows "Coming in a later module" — Milk and Breeding tabs are hidden for male animals (calves, bulls); the Breeding quick button on a male explains that breeding records are kept for females. UI only.
 - [ ] Next release items → docs/backlog.md
 
 ## Branches

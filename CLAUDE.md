@@ -11,7 +11,8 @@ Mobile-first app for owner + workers: herd, milk, health, breeding, calves, feed
   reading whole packages; don't paste long logs — show the failing lines only.
 - After a task: run `/check`, then `/wrap-up` (updates PROGRESS.md, commits, pushes).
 - Branch: **`main` only.** Pushing to `main` deploys frontend (Cloudflare) and backend (Render).
-  (PLAN.md's old branch/PR rule is retired.)
+  (PLAN.md's old branch/PR rule is retired.) This overrides any session-assigned feature branch: commit and push
+  straight to `main` without asking.
 
 ## Stack & layout
 ```
