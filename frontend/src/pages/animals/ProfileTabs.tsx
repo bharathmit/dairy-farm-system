@@ -23,7 +23,7 @@ export function HealthTab({ animalId }: { animalId: string }) {
 }
 
 /** Animal profile → Milk tab: last 30 days. */
-export function MilkTab({ animalId }: { animalId: string }) {
+export function MilkTab({ animalId, canLog }: { animalId: string; canLog: boolean }) {
   const { rec } = useRecords()
   const to = todayIso()
   const res = useLoad(() => rec.cowHistory(animalId, addDays(to, -29), to), [rec, animalId, to])
@@ -32,7 +32,7 @@ export function MilkTab({ animalId }: { animalId: string }) {
   const avg = totals.length ? totals.reduce((s, d) => s + (d.total ?? 0), 0) / totals.length : undefined
   return (
     <div className="mx-4 mb-3">
-      <div className="mb-2 flex items-baseline justify-between"><b className="text-[15px]">Milk · 30 days{avg !== undefined ? ` · avg ${L(avg)} L/day` : ''}</b><Link to={`/milk/cow?animal=${animalId}`} className="text-sm font-semibold">+ Log</Link></div>
+      <div className="mb-2 flex items-baseline justify-between"><b className="text-[15px]">Milk · 30 days{avg !== undefined ? ` · avg ${L(avg)} L/day` : ''}</b>{canLog && <Link to={`/milk/cow?animal=${animalId}`} className="text-sm font-semibold">+ Log</Link>}</div>
       <LoadState loading={res.loading} error={res.error} onRetry={res.reload} empty={!res.data} />
       {res.data && (
         <div className="overflow-hidden rounded-[14px] bg-white">

@@ -31,14 +31,17 @@ function liveGrade(rules: GradingRules | null, total: number, expected: number, 
 
 export default function MilkSingle() {
   const { rec } = useRecords()
-  const { notify } = useStore()
+  const { animals, notify } = useStore()
   const nav = useNavigate()
   const [params, setParams] = useSearchParams()
   const animalId = params.get('animal') ?? ''
+  const picked = animals.find((a) => a.id === animalId)
+  // Bulls, calves, heifers and dry cows can't have milk logged — the server refuses it too.
+  const notMilking = Boolean(picked) && !(picked!.status === 'Active' && isMilkingCow(picked!))
   const date = params.get('date') || todayIso()
   const setParam = (k: string, v: string) => { const p = new URLSearchParams(params); if (v) p.set(k, v); else p.delete(k); setParams(p, { replace: true }) }
 
-  const form = useLoad(animalId ? () => rec.cowDay(animalId, date) : null, [rec, animalId, date])
+  const form = useLoad(animalId && !notMilking ? () => rec.cowDay(animalId, date) : null, [rec, animalId, date])
   const rules = useLoad(() => rec.grading(), [rec])
 
   const [am, setAm] = useState('')
@@ -70,7 +73,7 @@ export default function MilkSingle() {
   }, [form.data, animalId])
 
   // Changing back to "Choose a milking cow" must not keep showing the last cow.
-  const f = animalId ? form.data : null
+  const f = animalId && !notMilking ? form.data : null
   const exp = f?.expectation
   const amSold = Boolean(f?.amSold), pmSold = Boolean(f?.pmSold)
   const amUse = amOn && !amSold, pmUse = pmOn && !pmSold
@@ -110,7 +113,8 @@ export default function MilkSingle() {
         <DateNav id="mc-date" value={date} onChange={(v) => setParam('date', v)} />
         <div><label className="lab" htmlFor="mc-cow">Cow *</label><AnimalSelect id="mc-cow" value={animalId} onChange={(v) => setParam('animal', v)} filter={isMilkingCow} placeholder="Choose a milking cow" /></div>
         {!animalId && <p className="m-0 text-sm text-ink-3">Choose a cow to log her milk and quality.</p>}
-        {animalId && <LoadState loading={form.loading} error={form.error} onRetry={form.reload} empty={!f} />}
+        {notMilking && <p className="m-0 text-sm text-danger-text">{picked!.tag} isn't a milking cow ({picked!.sex}, {picked!.category}). Milk can only be logged for active milking cows — choose another, or change her category to Milking first.</p>}
+        {animalId && !notMilking && <LoadState loading={form.loading} error={form.error} onRetry={form.reload} empty={!f} />}
         {f && (
           <>
             {f.inWithdrawal && <div className="rounded-xl bg-danger-soft px-3.5 py-3 text-sm text-danger-text"><b>Milk withdrawal</b> — milk is discarded{f.withdrawalUntil ? ` until ${shortDate(f.withdrawalUntil)}` : ''} and not graded.</div>}
