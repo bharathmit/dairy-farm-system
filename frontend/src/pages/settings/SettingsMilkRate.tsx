@@ -32,6 +32,8 @@ export default function SettingsMilkRate() {
   const [feedPm, setFeedPm] = useState(settings.eveningFeeding)
   const [pushUps, setPushUps] = useState(settings.feedPushUps)
   const [pct, setPct] = useState(settings.marginAlertPct)
+  // Locked by default so scrolling past the slider can't change it.
+  const [pctEdit, setPctEdit] = useState(false)
   const { farm } = useStore()
   const owner = farm?.role === 'Owner'
   const [leave, setLeave] = useState(String(settings.leaveDaysPerMonth))
@@ -94,9 +96,12 @@ export default function SettingsMilkRate() {
 
       <div className="sec">Margin alert threshold</div>
       <div className="px-4">
-        <label className="lab" htmlFor="ma">Alert me when margin falls below</label>
+        <div className="flex items-center justify-between">
+          <label className="lab" htmlFor="ma">Alert me when margin falls below</label>
+          <button type="button" className={`chip h-8 ${pctEdit ? 'chip-on' : ''}`} onClick={() => setPctEdit(!pctEdit)} aria-pressed={pctEdit}>{pctEdit ? 'Done' : 'Edit'}</button>
+        </div>
         <div className="flex items-center gap-3">
-          <input id="ma" type="range" min={0} max={60} value={pct} onChange={(e) => setPct(Number(e.target.value))} className="h-11 flex-1 accent-brand" aria-valuetext={`${pct} percent`} />
+          <input id="ma" type="range" min={0} max={60} value={pct} disabled={!pctEdit} onChange={(e) => setPct(Number(e.target.value))} className={`h-11 flex-1 accent-brand ${pctEdit ? '' : 'pointer-events-none opacity-50'}`} aria-valuetext={`${pct} percent`} />
           <span className="w-12 text-right text-base font-bold">{pct} %</span>
         </div>
         <div className="hint mt-0">Checked weekly. Margin = milk income minus all farm input costs and expenses.</div>
